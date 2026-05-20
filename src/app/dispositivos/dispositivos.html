@@ -1,0 +1,245 @@
+<div class="dashboard-wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <img src="lago.png" alt="logo" />
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">Manordomo</span>
+        <span class="logo-sub">Smart Home</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" [class.active]="activeNav === 'dashboard'" (click)="setActive('dashboard')" routerLink="/dashboard">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+        Dashboard
+      </a>
+      <a class="nav-item" [class.active]="activeNav === 'dispositivos'" (click)="setActive('dispositivos')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
+        </svg>
+        Dispositivos
+      </a>
+      <a class="nav-item" [class.active]="activeNav === 'gestos'" (click)="setActive('gestos')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
+          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+        </svg>
+        Gestos
+      </a>
+      <a class="nav-item" [class.active]="activeNav === 'historial'" (click)="setActive('historial')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        Historial de actividad
+      </a>
+      <a class="nav-item" [class.active]="activeNav === 'control'" (click)="setActive('control')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
+        Control
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a class="nav-item" [class.active]="activeNav === 'ajustes'" (click)="setActive('ajustes')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+        Ajustes
+      </a>
+      <a class="nav-item" [class.active]="activeNav === 'cuenta'" (click)="setActive('cuenta')" routerLink="/cuenta">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        Cuenta
+      </a>
+      <a class="nav-item signout" routerLink="/">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        Salir
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="dashboard-main">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Dispositivos</h1>
+        <p class="page-subtitle">Maneja y controla todos tus dispositivos conectados</p>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-wrapper">
+      <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input class="search-input"
+             type="text"
+             placeholder="Search"
+             [(ngModel)]="searchQuery"
+             (input)="applyFilter()" />
+    </div>
+
+    <!-- Device table section -->
+    <div class="devices-section">
+      <div class="section-header">
+        <div class="section-title-row">
+          <span class="wifi-dot">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+              <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3" stroke-linecap="round" />
+            </svg>
+          </span>
+          <div>
+            <h2 class="section-title">Todos los dispositivos</h2>
+            <p class="section-sub">{{ filteredDevices.length }} dispositivos en línea</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="devices-table">
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>Room</th>
+              <th>Status</th>
+              <th>Power</th>
+              <th>Last Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let device of filteredDevices" class="device-row">
+              <!-- Device -->
+              <td class="device-cell">
+                <span class="device-avatar" [style.background]="device.color">
+                  <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                    <ng-container [ngSwitch]="device.icon">
+                      <ng-container *ngSwitchCase="'light'">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'ac'">
+                        <path d="M8 3v3M16 3v3M8 18v3M16 18v3M3 8h3M18 8h3M3 16h3M18 16h3" />
+                        <rect x="5" y="5" width="14" height="14" rx="2" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'tv'">
+                        <rect x="2" y="7" width="20" height="15" rx="2" />
+                        <polyline points="17 2 12 7 7 2" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'speaker'">
+                        <rect x="4" y="2" width="16" height="20" rx="2" />
+                        <circle cx="12" cy="14" r="4" />
+                        <line x1="12" y1="6" x2="12.01" y2="6" stroke-width="3" stroke-linecap="round" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'camera'">
+                        <path d="M23 7l-7 5 7 5V7z" />
+                        <rect x="1" y="5" width="15" height="14" rx="2" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'lock'">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'fan'">
+                        <path d="M12 12c1.5-2.5 3.5-4 6-4a4 4 0 0 1 0 8c-2.5 0-4.5-1.5-6-4z" />
+                        <path d="M12 12c2.5 1.5 4 3.5 4 6a4 4 0 0 1-8 0c0-2.5 1.5-4.5 4-6z" />
+                        <path d="M12 12c-1.5 2.5-3.5 4-6 4a4 4 0 0 1 0-8c2.5 0 4.5 1.5 6 4z" />
+                        <path d="M12 12c-2.5-1.5-4-3.5-4-6a4 4 0 0 1 8 0c0 2.5-1.5 4.5-4 6z" />
+                      </ng-container>
+                      <ng-container *ngSwitchDefault>
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+                        <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3" stroke-linecap="round" />
+                      </ng-container>
+                    </ng-container>
+                  </svg>
+                </span>
+                <span class="device-name">{{ device.name }}</span>
+              </td>
+
+              <!-- Room -->
+              <td class="room-cell">{{ device.room }}</td>
+
+              <!-- Status -->
+              <td>
+                <span class="status-badge" [ngClass]="device.statusClass">{{ device.status }}</span>
+              </td>
+
+              <!-- Power -->
+              <td class="power-cell">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                {{ device.power }}
+              </td>
+
+              <!-- Last active -->
+              <td class="last-active-cell">{{ device.lastActive }}</td>
+
+              <!-- Actions -->
+              <td class="actions-cell">
+                <button class="action-btn" [class.active-power]="device.powered" (click)="togglePower(device)" title="Power">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                    <line x1="12" y1="2" x2="12" y2="12" />
+                  </svg>
+                </button>
+                <button class="action-btn" title="Settings">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </button>
+                <button class="action-btn" title="More">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="5" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="12" cy="19" r="1.5" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Empty state -->
+            <tr *ngIf="filteredDevices.length === 0">
+              <td colspan="6" class="empty-state">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <span>No se encontraron dispositivos</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
