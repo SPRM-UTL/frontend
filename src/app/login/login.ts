@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../services/auth.service';
-
+import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-login',
   imports: [RouterLink, FormsModule],
@@ -12,13 +12,13 @@ import { AuthService } from '../services/auth.service';
   styleUrl: './login.css'
 })
 export class Login {
-
   correo: string = '';
   contrasenia: string = '';
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   onLogin() {
@@ -36,7 +36,8 @@ export class Login {
 
         error: (error) => {
           console.error(error);
-          alert('Credenciales inválidas');
+          // alert('Credenciales inválidas');
+          this.toastService.error('Credenciales inválidas');
         }
       });
   }
