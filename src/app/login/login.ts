@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
+import { LoaderService } from '../services/loader.service';
+import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-login',
   imports: [RouterLink, FormsModule],
@@ -18,15 +20,22 @@ export class Login {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private loaderService: LoaderService
   ) { }
 
   onLogin() {
-
+    this.loaderService.show();
     this.authService.login(this.correo, this.contrasenia)
+     .pipe(
+
+        finalize(() => {
+          this.loaderService.hide();
+        })
+
+      )
       .subscribe({
         next: (response) => {
-
           console.log(response);
 
           localStorage.setItem('token', response.token);
@@ -36,7 +45,6 @@ export class Login {
 
         error: (error) => {
           console.error(error);
-          // alert('Credenciales inválidas');
           this.toastService.error('Credenciales inválidas');
         }
       });
