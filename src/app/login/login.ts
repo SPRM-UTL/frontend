@@ -1,21 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
+
 import { Router } from '@angular/router';
+
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../services/auth.service';
+
 import { ToastService } from '../services/toast.service';
+
 import { LoaderService } from '../services/loader.service';
+
 import { finalize } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, FormsModule],
+
+  standalone: true,
+
+  imports: [
+    RouterLink,
+    FormsModule,
+    CommonModule
+  ],
+
   templateUrl: './login.html',
+
   styleUrl: './login.css'
 })
+
 export class Login {
-  correo: string = '';
-  contrasenia: string = '';
+
+  showPassword = signal(false);
+
+  correo = '';
+
+  contrasenia = '';
 
   constructor(
     private router: Router,
@@ -24,29 +46,107 @@ export class Login {
     private loaderService: LoaderService
   ) { }
 
+  togglePassword() {
+
+    this.showPassword.update(v => !v);
+  }
+
   onLogin() {
+
+    if (!this.correo.trim()) {
+
+      this.toastService.warning(
+        'Ingresa tu correo'
+      );
+
+      return;
+    }
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(this.correo)) {
+
+      this.toastService.warning(
+        'Correo inválido'
+      );
+
+      return;
+    }
+
+    if (!this.contrasenia.trim()) {
+
+      this.toastService.warning(
+        'Ingresa tu contraseña'
+      );
+
+      return;
+    }
+
+    if (this.contrasenia.length < 8) {
+
+      this.toastService.warning(
+        'La contraseña debe tener mínimo 8 caracteres'
+      );
+
+      return;
+    }
+
     this.loaderService.show();
-    this.authService.login(this.correo, this.contrasenia)
-     .pipe(
 
-        finalize(() => {
-          this.loaderService.hide();
-        })
+    this.authService.login(
+      this.correo,
+      this.contrasenia
+    )
 
-      )
-      .subscribe({
-        next: (response) => {
-          console.log(response);
+    .pipe(
 
-          localStorage.setItem('token', response.token);
+      finalize(() => {
 
-          this.router.navigate(['/dashboard']);
-        },
+        this.loaderService.hide();
+      })
 
-        error: (error) => {
-          console.error(error);
-          this.toastService.error('Credenciales inválidas');
-        }
-      });
+    )
+
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(response);
+
+        localStorage.setItem(
+          'token',
+          response.data.token
+        );
+
+        localStorage.setItem(
+          'nombre',
+          response.data.nombre
+        );
+
+        this.toastService.success(
+          'Bienvenido'
+        );
+
+        // limpiar formulario
+
+        this.correo = '';
+
+        this.contrasenia = '';
+
+        // redireccionar
+
+        this.router.navigate(['/dashboard']);
+      },
+
+      error: (error) => {
+
+        console.error(error);
+
+        this.toastService.error(
+          error.error.data
+        );
+      }
+    });
   }
 }

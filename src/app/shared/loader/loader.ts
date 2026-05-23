@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { LoaderService } from '../../services/loader.service';
@@ -10,18 +10,7 @@ import { LoaderService } from '../../services/loader.service';
   templateUrl: './loader.html',
   styleUrl: './loader.css'
 })
-export class LoaderComponent implements OnInit {
+export class LoaderComponent {
 
-  visible = false;
-
-  constructor(private loaderService: LoaderService) { }
-
-  ngOnInit(): void {
-
-    this.loaderService.loading$
-      .subscribe((loading) => {
-
-        this.visible = loading;
-      });
-  }
+  constructor(public loaderService: LoaderService) {}
 }

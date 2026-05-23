@@ -1,5 +1,7 @@
-<div class="overlay" *ngIf="visible">
-
+<div
+  class="overlay"
+  *ngIf="loaderService.loading$ | async"
+>
   <div class="loader-container">
 
     <img
@@ -9,5 +11,4 @@
     />
 
   </div>
-
 </div>
