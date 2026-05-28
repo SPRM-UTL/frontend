@@ -1,12 +1,4 @@
-/* ── CSS VARIABLES ── */
-:root {
-  --cafe-primary: #2bbfaa;
-  --cafe-dark: #1a7a6e;
-  --cafe-light: #d4f0ec;
-  --bg: #fafaf7;
-  --white: #ffffff;
-  --text-muted: #6b9e98;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 * {
   box-sizing: border-box;
@@ -15,7 +7,7 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: var(--bg);
   color: var(--cafe-dark);
   height: 100dvh;
@@ -31,7 +23,7 @@ body {
 }
 
 /* ══════════════════════════════
-   SIDEBAR (identical to dashboard)
+   SIDEBAR
 ══════════════════════════════ */
 .sidebar {
   width: 230px;
@@ -76,7 +68,7 @@ body {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--white);
-  font-family: 'Georgia', serif;
+  font-family: 'Poppins', sans-serif;
   letter-spacing: 0.02em;
 }
 
@@ -167,7 +159,7 @@ body {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--cafe-dark);
-  font-family: 'Georgia', serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .page-subtitle {
@@ -251,7 +243,7 @@ body {
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--cafe-dark);
-  font-family: 'Georgia', serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .section-sub {
@@ -307,7 +299,6 @@ body {
   vertical-align: middle;
 }
 
-/* Device cell */
 .device-cell {
   display: flex;
   align-items: center;
@@ -331,13 +322,11 @@ body {
   white-space: nowrap;
 }
 
-/* Room */
 .room-cell {
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-/* Status badges */
 .status-badge {
   display: inline-block;
   padding: 0.22rem 0.7rem;
@@ -387,7 +376,6 @@ body {
   color: #065f46;
 }
 
-/* Power */
 .power-cell {
   display: flex;
   align-items: center;
@@ -396,13 +384,11 @@ body {
   white-space: nowrap;
 }
 
-/* Last active */
 .last-active-cell {
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-/* Actions */
 .actions-cell {
   display: flex;
   align-items: center;
@@ -441,7 +427,6 @@ body {
       border-color: var(--cafe-dark);
     }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   padding: 3rem !important;

@@ -1,61 +1,54 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+// cuenta.ts
+
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CuentaService } from './cuenta.service';
 
 @Component({
   selector: 'app-cuenta',
-  imports: [RouterLink, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
 })
 export class Cuenta {
-  activeNav = 'cuenta';
 
-  // User data — replace with real service calls
-  userName = 'JOSUÉ ARMANDO RIVERA HERNÁNDEZ';
-  userEmail = 'riverhernan16idgs@gmail.com';
+  private cuentaService = inject(CuentaService);
 
-  // Edit state
+  readonly userName  = this.cuentaService.userName;
+  readonly userEmail = this.cuentaService.userEmail;
+
   editingField: string | null = null;
   editValue = '';
 
-  // Toast
   toastVisible = false;
   private toastTimeout: any;
 
-  setActive(nav: string) {
-    this.activeNav = nav;
-  }
-
-  onEditAvatar() {
-    // Hook up file-picker or modal here
+  onEditAvatar(): void {
+    // TODO: conectar file-picker o modal
     console.log('Edit avatar clicked');
   }
 
-  startEdit(field: string, currentValue: string) {
+  startEdit(field: string, currentValue: string): void {
     this.editingField = field;
     this.editValue = currentValue;
-    // Focus the input after Angular renders it
     setTimeout(() => {
-      const input = document.querySelector<HTMLInputElement>('.field-input');
-      input?.focus();
+      document.querySelector<HTMLInputElement>('.field-input')?.focus();
     }, 50);
   }
 
-  saveField(field: string) {
+  saveField(field: string): void {
     if (!this.editValue.trim() && field !== 'password') return;
 
     switch (field) {
       case 'nombre':
-        this.userName = this.editValue.trim();
+        this.cuentaService.updateNombre(this.editValue.trim()).subscribe();
         break;
       case 'correo':
-        this.userEmail = this.editValue.trim();
+        this.cuentaService.updateEmail(this.editValue.trim()).subscribe();
         break;
       case 'password':
-        // Call your auth service here
-        console.log('Password change requested');
+        this.cuentaService.updatePassword(this.editValue).subscribe();
         break;
     }
 
@@ -64,16 +57,14 @@ export class Cuenta {
     this.showToast();
   }
 
-  cancelEdit() {
+  cancelEdit(): void {
     this.editingField = null;
     this.editValue = '';
   }
 
-  private showToast() {
+  private showToast(): void {
     clearTimeout(this.toastTimeout);
     this.toastVisible = true;
-    this.toastTimeout = setTimeout(() => {
-      this.toastVisible = false;
-    }, 3000);
+    this.toastTimeout = setTimeout(() => { this.toastVisible = false; }, 3000);
   }
 }
