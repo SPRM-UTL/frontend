@@ -1,9 +1,6 @@
 :host {
   display: block;
   height: 100dvh;
-  --cafe-primary: #2bbfaa;
-  --cafe-dark: #1a7a6e;
-  --cafe-light: #d4f0ec;
 }
 
 * {
@@ -19,7 +16,6 @@
   background: #fafaf7;
 }
 
-/* ── LEFT ── */
 .register-left {
   flex: 1;
   display: flex;
@@ -78,16 +74,6 @@ input {
   input:focus {
     border-color: var(--cafe-primary);
   }
-
-.toggle-pass {
-  display: block;
-  text-align: right;
-  font-size: 0.975rem;
-  color: var(--cafe-primary);
-  text-decoration: none;
-  margin-top: 0.5rem;
-  font-family: 'Arial', sans-serif;
-}
 
 .btn-primary {
   width: 100%;
@@ -172,7 +158,6 @@ footer {
   font-family: 'Arial', sans-serif;
 }
 
-/* ── RIGHT ── */
 .register-right {
   width: 45%;
   background: var(--cafe-dark);
@@ -203,7 +188,6 @@ footer {
   }
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .register-right {
     display: none;
@@ -218,37 +202,6 @@ footer {
     transform: none;
   }
 }
-.password-wrapper {
-
-  position: relative;
-
-  display: flex;
-
-  align-items: center;
-}
-
-.password-wrapper input {
-
-  width: 100%;
-
-  padding-right: 45px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #777;
-}
-
-.toggle-password:hover {
-  color: #00bfa6;
-}
 
 .password-wrapper {
   position: relative;
@@ -256,10 +209,10 @@ footer {
   align-items: center;
 }
 
-.password-wrapper input {
-  width: 100%;
-  padding-right: 50px;
-}
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 50px;
+  }
 
 .toggle-password {
   position: absolute;
@@ -276,6 +229,6 @@ footer {
   padding: 0;
 }
 
-.toggle-password:hover {
-  color: var(--cafe-primary);
-}
+  .toggle-password:hover {
+    color: var(--cafe-primary);
+  }

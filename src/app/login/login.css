@@ -9,12 +9,6 @@
   padding: 0;
 }
 
-#teal-mode {
-  --cafe-primary: #2bbfaa;
-  --cafe-dark: #1a7a6e;
-  --cafe-light: #d4f0ec;
-}
-
 .login-wrapper {
   display: flex;
   height: 100vh;
@@ -221,31 +215,17 @@ footer {
     transform: none;
   }
 }
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #777;
-}
 
-.toggle-password:hover {
-  color: #00bfa6;
-}
 .password-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.password-wrapper input {
-  width: 100%;
-  padding-right: 50px;
-}
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 50px;
+  }
 
 .toggle-password {
   position: absolute;
@@ -262,6 +242,6 @@ footer {
   padding: 0;
 }
 
-.toggle-password:hover {
-  color: var(--cafe-primary);
-}
+  .toggle-password:hover {
+    color: var(--cafe-primary);
+  }

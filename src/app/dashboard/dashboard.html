@@ -1,4 +1,4 @@
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper ">
 
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
@@ -13,7 +13,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7" rx="1" />
           <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -22,28 +22,28 @@
         </svg>
         Dashboard
       </a>
-      <a class="nav-item" routerLink="/dispositivos" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="3" />
           <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
         </svg>
         Dispositivos
       </a>
-      <a class="nav-item" routerLink="/gestos" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
           <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
         </svg>
         Gestos
       </a>
-      <a class="nav-item" routerLink="/historial" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
         Historial de actividad
       </a>
-      <a class="nav-item" routerLink="/control" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M12 20h9" />
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
@@ -53,14 +53,14 @@
     </nav>
 
     <div class="sidebar-bottom">
-      <a class="nav-item" routerLink="/ajustes" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="3" />
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
         Ajustes
       </a>
-      <a class="nav-item" routerLink="/cuenta" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
           <circle cx="12" cy="7" r="4" />
@@ -78,144 +78,9 @@
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
+  <!-- ── MAIN: cada página hija se renderiza aquí ── -->
   <main class="dashboard-main">
-    <h1 class="page-title">Dashboard</h1>
-
-    <!-- Welcome card -->
-    <div class="welcome-card">
-      <div class="welcome-content">
-        <p class="welcome-eyebrow">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-          Welcome back, Alex
-        </p>
-        <h2 class="welcome-title">Good Morning!</h2>
-        <p class="welcome-sub">You have <strong>8 devices online</strong> and <strong>3 active automations</strong></p>
-        <div class="welcome-actions">
-          <button class="btn-quick">Quick Actions</button>
-          <button class="btn-activity">View Activity</button>
-        </div>
-      </div>
-      <div class="welcome-deco">
-        <svg width="80" height="80" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" viewBox="0 0 24 24">
-          <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
-          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-        </svg>
-      </div>
-    </div>
-
-    <!-- Stats grid -->
-    <div class="stats-grid">
-      <div class="stat-card green">
-        <div class="stat-header">
-          <span class="stat-icon green-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
-              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-            </svg>
-          </span>
-          <span class="stat-badge green-badge">Activo</span>
-        </div>
-        <p class="stat-label">Gestos guardados</p>
-        <p class="stat-value">24</p>
-      </div>
-
-      <div class="stat-card teal">
-        <div class="stat-header">
-          <span class="stat-icon teal-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
-          </span>
-          <span class="stat-badge teal-badge">Activo</span>
-        </div>
-        <p class="stat-label">Automatizaciones</p>
-        <p class="stat-value">24</p>
-      </div>
-
-      <div class="stat-card blue">
-        <div class="stat-header">
-          <span class="stat-icon blue-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
-            </svg>
-          </span>
-          <span class="stat-badge blue-badge">Conectados</span>
-        </div>
-        <p class="stat-label">Dispositivos vinculados</p>
-        <p class="stat-value">24</p>
-      </div>
-
-      <div class="stat-card orange">
-        <div class="stat-header">
-          <span class="stat-icon orange-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          </span>
-          <span class="stat-badge orange-badge">Hoy</span>
-        </div>
-        <p class="stat-label">Acciones realizadas</p>
-        <p class="stat-value">24</p>
-      </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="quick-section">
-      <h3 class="quick-title">Acciones rápidas</h3>
-      <div class="quick-grid">
-        <div class="quick-card">
-          <span class="quick-icon">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
-            </svg>
-          </span>
-          <div>
-            <p class="quick-num">3</p>
-            <p class="quick-label">Todas las luces apagadas</p>
-          </div>
-        </div>
-
-        <div class="quick-card">
-          <span class="quick-icon">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </span>
-          <div>
-            <p class="quick-num">2</p>
-            <p class="quick-label">Modo nocturno</p>
-          </div>
-        </div>
-
-        <div class="quick-card">
-          <span class="quick-icon">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="2" y="7" width="20" height="15" rx="2" />
-              <polyline points="17 2 12 7 7 2" />
-            </svg>
-          </span>
-          <div>
-            <p class="quick-num">1</p>
-            <p class="quick-label">Modo cine</p>
-          </div>
-        </div>
-
-        <div class="quick-card">
-          <span class="quick-icon">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </span>
-          <div>
-            <p class="quick-num">3</p>
-            <p class="quick-label">Buenas noches</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <router-outlet />
   </main>
+
 </div>

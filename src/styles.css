@@ -13,4 +13,16 @@ body {
   --cafe-primary: #2bbfaa;
   --cafe-dark: #1a7a6e;
   --cafe-light: #d4f0ec;
+  --bg: #fafaf7;
+  --white: #ffffff;
+  --text-muted: #6b9e98;
+}
+
+.tema-cafe {
+  --cafe-primary: #b2881a;
+  --cafe-dark: #403d38;
+  --cafe-light: #ccc6ba;
+  --bg: #fafaf7;
+  --white: #ffffff;
+  --text-muted: #6b9e98;
 }
