@@ -5,14 +5,30 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HistorialService } from './historial.service';
 
+import {
+  LucideLightbulb,
+  LucideTv,
+  LucideSpeaker,
+  LucideFan,
+  LucideAirVent
+} from '@lucide/angular'
+
 @Component({
-  selector: 'app-historial',
-  imports: [CommonModule, FormsModule],
+  selector: 'app-historial',  
+  imports: [
+    CommonModule,
+    FormsModule,
+
+    LucideLightbulb,
+    LucideTv,
+    LucideSpeaker,
+    LucideFan,
+    LucideAirVent
+  ],
   templateUrl: './historial.html',
   styleUrl: './historial.css'
 })
 export class Historial implements OnInit {
-
   private historialService = inject(HistorialService);
 
   readonly searchQuery = signal('');
