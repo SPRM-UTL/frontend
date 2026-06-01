@@ -73,16 +73,46 @@
       <span class="col-accion">{{ a.accion }}</span>
 
       <span class="col-dispositivo">
-        <span class="disp-icon" [style.background]="a.dispositivoColor + '22'">
-          {{ a.dispositivoEmoji }}
+        <span class="disp-icon" [style.background]="a.color + '22'">
+
+          <svg
+            *ngIf="a.icono === 'lightbulb'"
+            lucideLightbulb
+            [size]="18">
+          </svg>
+
+          <svg
+            *ngIf="a.icono === 'tv'"
+            lucideTv
+            [size]="18">
+          </svg>
+
+          <svg
+            *ngIf="a.icono === 'speaker'"
+            lucideSpeaker
+            [size]="18">
+          </svg>
+
+          <svg
+            *ngIf="a.icono === 'fan'"
+            lucideFan
+            [size]="18">
+          </svg>
+
+          <svg
+            *ngIf="a.icono === 'air-vent'"
+            lucideAirVent
+            [size]="18">
+          </svg>
+
         </span>
+
         {{ a.dispositivo }}
       </span>
 
       <span class="col-estado">
         <span class="badge"
               [class.badge-ejecutado]="a.estado === 'Ejecutado'"
-              [class.badge-pendiente]="a.estado === 'Pendiente'"
               [class.badge-error]="a.estado === 'Error'">
           <span class="badge-dot"></span>
           {{ a.estado }}
