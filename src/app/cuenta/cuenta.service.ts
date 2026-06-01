@@ -1,12 +1,8 @@
 // cuenta.service.ts
-//
-// TODO (backend):
-//   1. Inyectar HttpClient y reemplazar los bloques MOCK.
-//   2. Actualizar BASE_URL con la URL real del API.
 
 import { Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-// import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 const BASE_URL = '/api/cuenta';
 
@@ -18,51 +14,58 @@ export interface UserProfile {
 @Injectable({ providedIn: 'root' })
 export class CuentaService {
 
-  readonly userName  = signal('JOSUÉ ARMANDO RIVERA HERNÁNDEZ');
-  readonly userEmail = signal('riverhernan16idgs@gmail.com');
+  readonly userName  = signal('');
+  readonly userEmail = signal('');
 
   readonly loading = signal<boolean>(false);
   readonly error   = signal<string | null>(null);
 
-  // constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
+
+  // ─────────────────────────────────────────
+  //  GET /api/cuenta/perfil
+  //  Carga los datos del usuario al iniciar.
+  // ─────────────────────────────────────────
+  loadPerfil(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http.get<UserProfile>(`${BASE_URL}/perfil`).subscribe({
+      next: perfil => {
+        this.userName.set(perfil.nombre);
+        this.userEmail.set(perfil.email);
+        this.loading.set(false);
+      },
+      error: err => {
+        this.error.set('No se pudo cargar el perfil.');
+        this.loading.set(false);
+        console.error(err);
+      }
+    });
+  }
 
   // ─────────────────────────────────────────
   //  PATCH /api/cuenta/nombre
   // ─────────────────────────────────────────
   updateNombre(nombre: string): Observable<void> {
-    // ── MOCK ──────────────────────────────────────────────────
-    this.userName.set(nombre);
-    return of(undefined);
-
-    // ── BACKEND (descomentar) ─────────────────────────────────
-    // return this.http.patch<void>(`${BASE_URL}/nombre`, { nombre }).pipe(
-    //   tap(() => this.userName.set(nombre))
-    // );
+    return this.http.patch<void>(`${BASE_URL}/nombre`, { nombre }).pipe(
+      tap(() => this.userName.set(nombre))
+    );
   }
 
   // ─────────────────────────────────────────
   //  PATCH /api/cuenta/email
   // ─────────────────────────────────────────
   updateEmail(email: string): Observable<void> {
-    // ── MOCK ──────────────────────────────────────────────────
-    this.userEmail.set(email);
-    return of(undefined);
-
-    // ── BACKEND (descomentar) ─────────────────────────────────
-    // return this.http.patch<void>(`${BASE_URL}/email`, { email }).pipe(
-    //   tap(() => this.userEmail.set(email))
-    // );
+    return this.http.patch<void>(`${BASE_URL}/email`, { email }).pipe(
+      tap(() => this.userEmail.set(email))
+    );
   }
 
   // ─────────────────────────────────────────
   //  PATCH /api/cuenta/password
   // ─────────────────────────────────────────
   updatePassword(password: string): Observable<void> {
-    // ── MOCK ──────────────────────────────────────────────────
-    console.log('Password change requested');
-    return of(undefined);
-
-    // ── BACKEND (descomentar) ─────────────────────────────────
-    // return this.http.patch<void>(`${BASE_URL}/password`, { password });
+    return this.http.patch<void>(`${BASE_URL}/password`, { password });
   }
 }

@@ -1,12 +1,8 @@
 // inicio.service.ts
-//
-// TODO (backend):
-//   1. Inyectar HttpClient y reemplazar los bloques MOCK.
-//   2. Actualizar BASE_URL con la URL real del API.
 
 import { Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-// import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
 const BASE_URL = '/api/inicio';
 
@@ -27,23 +23,6 @@ export interface AccionRapida {
   icon: string;
 }
 
-const MOCK_STATS: DashboardStats = {
-  gestosGuardados:        24,
-  automatizaciones:       24,
-  dispositivosVinculados: 24,
-  accionesHoy:            24,
-  devicesOnline:           8,
-  activeAutomations:       3,
-  userName: 'Alex',
-};
-
-const MOCK_ACCIONES: AccionRapida[] = [
-  { id: 1, cantidad: 3, label: 'Todas las luces apagadas', icon: 'light' },
-  { id: 2, cantidad: 2, label: 'Modo nocturno',            icon: 'moon'  },
-  { id: 3, cantidad: 1, label: 'Modo cine',                icon: 'tv'    },
-  { id: 4, cantidad: 3, label: 'Buenas noches',            icon: 'moon'  },
-];
-
 @Injectable({ providedIn: 'root' })
 export class InicioService {
 
@@ -53,16 +32,19 @@ export class InicioService {
   readonly loading = signal<boolean>(false);
   readonly error   = signal<string | null>(null);
 
-  // constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
   // ─────────────────────────────────────────
-  //  GET /api/inicio
+  //  GET /api/inicio/stats + /api/inicio/acciones
   // ─────────────────────────────────────────
   loadInicio(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.getStats$().subscribe({
+    forkJoin({
+      stats:    this.http.get<DashboardStats>(`${BASE_URL}/stats`),
+      acciones: this.http.get<AccionRapida[]>(`${BASE_URL}/acciones`),
+    }).subscribe({
       next: ({ stats, acciones }) => {
         this.stats.set(stats);
         this.acciones.set(acciones);
@@ -74,16 +56,5 @@ export class InicioService {
         console.error(err);
       }
     });
-  }
-
-  private getStats$(): Observable<{ stats: DashboardStats; acciones: AccionRapida[] }> {
-    // ── MOCK ──────────────────────────────────────────────────
-    return of({ stats: { ...MOCK_STATS }, acciones: [...MOCK_ACCIONES] });
-
-    // ── BACKEND (descomentar) ─────────────────────────────────
-    // return forkJoin({
-    //   stats:    this.http.get<DashboardStats>(`${BASE_URL}/stats`),
-    //   acciones: this.http.get<AccionRapida[]>(`${BASE_URL}/acciones`),
-    // });
   }
 }
