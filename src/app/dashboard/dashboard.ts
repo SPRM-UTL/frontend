@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoaderService } from '../services/loader.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service'; // Ajusta la ruta según donde estés
 
 @Component({
   selector: 'app-dashboard',
@@ -13,12 +14,15 @@ import { Subscription } from 'rxjs';
 export class Dashboard implements OnInit, OnDestroy {
 
   private routerSub!: Subscription;
-
+  private authService = inject(AuthService);
   constructor(
     private router: Router,
     private loaderService: LoaderService
   ) {}
-
+  // Este es el método que disparará tu HTML
+  onLogout() {
+    this.authService.logout();
+  }
   ngOnInit() {
     this.routerSub = this.router.events.subscribe(event => {
 

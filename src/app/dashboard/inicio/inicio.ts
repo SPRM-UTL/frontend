@@ -20,6 +20,6 @@ export class Inicio implements OnInit {
   readonly error    = this.inicioService.error;
 
   ngOnInit(): void {
-    this.inicioService.loadInicio();
+    //this.inicioService.loadInicio();
   }
 }
