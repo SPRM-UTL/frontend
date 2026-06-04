@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Actividad } from '../historial/actividad.model'; // Asegura que esta ruta sea la correcta
@@ -14,7 +14,9 @@ interface ApiResponse {
   providedIn: 'root'
 })
 export class HistorialService {
+
   private http = inject(HttpClient);
+
   private readonly apiUrl = 'https://localhost:7299/api/Fact_Historico_Actividad';
 
   // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
@@ -22,30 +24,34 @@ export class HistorialService {
   public error = signal<string | null>(null);
   public actividades = signal<Actividad[]>([]);
 
-  loadHistorial(): void {
-    this.loading.set(true);
-    this.error.set(null);
+ loadHistorial(): void {
 
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+  this.loading.set(true);
+  this.error.set(null);
+
+  this.http.get<ApiResponse>(this.apiUrl)
+    .pipe(
+      map(response => response.data)
+    )
+    .subscribe({
+
+      next: (data: Actividad[]) => {
+
+        this.actividades.set(data);
+
+        this.loading.set(false);
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        this.error.set(
+          'No se pudo cargar el historial.'
+        );
+
+        this.loading.set(false);
+      }
     });
-
-    // Usamos el operador .pipe(map(...)) para extraer la propiedad .data antes de suscribirnos
-    this.http.get<ApiResponse>(this.apiUrl, { headers })
-      .pipe(
-        map(response => response.data) // 🌟 Aquí entramos a la caja "data" que manda el middleware
-      )
-      .subscribe({
-        next: (data: Actividad[]) => {
-          this.actividades.set(data); // Guardamos solo el arreglo en el signal
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error al cargar historial', err);
-          this.error.set('No se pudo cargar el historial de actividades.');
-          this.loading.set(false);
-        }
-      });
   }
 }
