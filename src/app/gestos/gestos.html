@@ -1,6 +1,3 @@
-<!-- gestos.html — solo contenido, sin sidebar ni dashboard-wrapper -->
-
-<!-- Header -->
 <div class="page-header">
   <div>
     <h1 class="page-title">Gestos</h1>
@@ -15,109 +12,64 @@
   </button>
 </div>
 
-<!-- Search bar -->
 <div class="search-wrapper">
   <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
-  <input class="search-input"
-         type="text"
-         placeholder="Search"
+  <input class="search-input" type="text" placeholder="Search"
          [value]="searchQuery()"
          (input)="onSearch($any($event.target).value)" />
 </div>
 
-<!-- Filter bar -->
-<div class="filter-bar">
-  <div class="filter-label">
-    <span class="filter-emoji">👋</span>
-    <div>
-      <p class="filter-title">Todos los gestos</p>
-      <p class="filter-count">{{ totalActivos() }} gestos activos</p>
-    </div>
-  </div>
-</div>
-
-<!-- Estado de carga -->
 <div *ngIf="loading()" class="empty-state">
   <span class="empty-emoji">⏳</span>
   <p>Cargando gestos…</p>
 </div>
 
-<!-- Estado de error -->
 <div *ngIf="error()" class="empty-state">
   <span class="empty-emoji">⚠️</span>
   <p>{{ error() }}</p>
 </div>
 
-<!-- Gestos grid -->
 <div class="gestos-grid" *ngIf="!loading()">
   <div class="gesto-card" *ngFor="let gesto of gestosFiltrados()">
 
     <div class="gesto-card-header">
-      <span class="gesto-emoji">{{ gesto.emoji }}</span>
+      <span class="gesto-emoji">👋</span>
       <span class="badge"
-            [class.badge-activo]="gesto.estado === 'Activo'"
-            [class.badge-pausado]="gesto.estado === 'Pausado'">
-        {{ gesto.estado }}
+            [class.badge-activo]="gesto.tipoDisparadorNombre === 'Activo'"
+            [class.badge-pausado]="gesto.tipoDisparadorNombre === 'Pausado'">
+        {{ gesto.tipoDisparadorNombre ?? '—' }}
       </span>
     </div>
 
-    <h3 class="gesto-nombre">{{ gesto.nombre }}</h3>
+    <h3 class="gesto-nombre">{{ gesto.nombreGesto }}</h3>
 
-    <div class="gesto-dispositivo">
-      <span class="dispositivo-icon" [style.background]="gesto.dispositivoIconColor + '22'">
-        {{ gesto.dispositivoIconEmoji }}
-      </span>
-      <div>
-        <p class="dispositivo-label">Dispositivo</p>
-        <p class="dispositivo-nombre">{{ gesto.dispositivo }}</p>
-      </div>
+    <div class="gesto-accion">
+      <p class="accion-label">ID IA</p>
+      <p class="accion-valor">{{ gesto.identificadorIa }}</p>
     </div>
 
     <div class="gesto-accion">
-      <p class="accion-label">Acción</p>
-      <p class="accion-valor">{{ gesto.accion }}</p>
+      <p class="accion-label">Confianza mínima</p>
+      <p class="accion-valor">{{ gesto.nivelConfianzaMinimo }}</p>
     </div>
 
     <div class="gesto-footer">
-      <span class="gesto-tiempo">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        {{ gesto.tiempo }}
-      </span>
       <div class="gesto-actions">
-        <!-- Ver -->
-        <button class="action-btn" title="Ver">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
-        <!-- Editar -->
-        <button class="action-btn" title="Editar">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-        </button>
-        <!-- Pausar / Activar -->
         <button class="action-btn"
-                [title]="gesto.estado === 'Activo' ? 'Pausar' : 'Activar'"
+                [title]="gesto.tipoDisparadorNombre === 'Activo' ? 'Pausar' : 'Activar'"
                 (click)="toggleEstado(gesto)">
-          <svg *ngIf="gesto.estado === 'Activo'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg *ngIf="gesto.tipoDisparadorNombre === 'Activo'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <rect x="6" y="4" width="4" height="16" />
             <rect x="14" y="4" width="4" height="16" />
           </svg>
-          <svg *ngIf="gesto.estado === 'Pausado'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg *ngIf="gesto.tipoDisparadorNombre !== 'Activo'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
         </button>
-        <!-- Eliminar -->
-        <button class="action-btn action-btn-danger" title="Eliminar" (click)="eliminarGesto(gesto.id)">
+        <button class="action-btn action-btn-danger" title="Eliminar" (click)="eliminarGesto(gesto.skGestoId)">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <polyline points="3 6 5 6 21 6" />
             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
@@ -130,7 +82,6 @@
 
   </div>
 
-  <!-- Empty state -->
   <div class="empty-state" *ngIf="gestosFiltrados().length === 0 && !loading()">
     <span class="empty-emoji">🔍</span>
     <p>No se encontraron gestos</p>

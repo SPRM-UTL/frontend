@@ -1,220 +1,44 @@
-<!-- control.html — solo contenido, sin sidebar ni dashboard-wrapper -->
-
 <div class="page-header">
   <div>
     <h1 class="page-title">Control</h1>
+    <p class="page-subtitle">Historial de actividad registrada</p>
   </div>
 </div>
 
-<!-- Estado de carga -->
 <div *ngIf="loading()" class="empty-state">
-  <span>⏳</span><p>Cargando dispositivos…</p>
+  <span>⏳</span><p>Cargando historial…</p>
 </div>
 
-<!-- Estado de error -->
 <div *ngIf="error()" class="empty-state">
   <span>⚠️</span><p>{{ error() }}</p>
 </div>
 
-<ng-container *ngIf="!loading()">
-
-  <!-- Categorías -->
-  <section class="section-block">
-    <h2 class="section-title">Dispositivos Asociados</h2>
-    <p class="section-sub">Dispositivos vinculados a gestos y automatizaciones</p>
-    <div class="categorias-grid">
-      <button class="cat-card"
-              *ngFor="let cat of categorias()"
-              [class.cat-active]="selectedCategoria === cat.nombre"
-              (click)="selectedCategoria = cat.nombre"
-              [style.--cat-color]="cat.color"
-              [style.--cat-bg]="cat.bg">
-        <span class="cat-emoji">{{ cat.emoji }}</span>
-        <p class="cat-nombre">{{ cat.nombre }}</p>
-        <p class="cat-cantidad">{{ cat.cantidad }} dispositivos</p>
-      </button>
-    </div>
-  </section>
-
-  <!-- ── LIGHTING ── -->
-  <section class="device-section">
-    <div class="device-section-header">
-      <div class="section-label">
-        <span class="section-dot" style="background:#f97316"></span>
-        <div>
-          <p class="ds-title">Iluminación</p>
-          <p class="ds-sub">Luces y Lámparas</p>
-        </div>
-      </div>
-      <button class="btn-view-all">Ver Todo</button>
-    </div>
-
-    <div class="devices-grid">
-      <div class="device-card luz-card"
-           *ngFor="let luz of luces()"
-           [class.device-on]="luz.encendido"
-           [class.device-off]="!luz.encendido">
-
-        <div class="device-card-header">
-          <span class="device-icon" [style.background]="luz.encendido ? '#fff3e0' : '#f3f4f6'">
-            <span style="font-size:1.1rem">💡</span>
-          </span>
-          <button class="power-btn" [class.power-on]="luz.encendido" (click)="toggleLuz(luz)">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-              <line x1="12" y1="2" x2="12" y2="12" />
-            </svg>
-          </button>
-        </div>
-
-        <p class="device-name">{{ luz.nombre }}</p>
-        <p class="device-location">{{ luz.ubicacion }}</p>
-
-        <ng-container *ngIf="luz.encendido; else offTpl">
-          <div class="slider-row">
-            <span class="slider-label">Brightness</span>
-            <span class="slider-val">{{ luz.brillo }}%</span>
-          </div>
-          <input class="slider" type="range" min="0" max="100"
-                 [value]="luz.brillo"
-                 (input)="onBrilloChange(luz, $any($event.target).valueAsNumber)" />
-          <div class="tono-btns">
-            <button class="tono-btn" [class.tono-active]="luz.tono==='warm'" (click)="setTono(luz,'warm')">☀️ Warm</button>
-            <button class="tono-btn" [class.tono-active]="luz.tono==='cool'" (click)="setTono(luz,'cool')">🌙 Cool</button>
-          </div>
-        </ng-container>
-        <ng-template #offTpl>
-          <p class="device-off-label">Device is off</p>
-        </ng-template>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ── ENTERTAINMENT ── -->
-  <section class="device-section">
-    <div class="device-section-header">
-      <div class="section-label">
-        <span class="section-dot" style="background:#8b5cf6"></span>
-        <div>
-          <p class="ds-title">Entretenimiento</p>
-          <p class="ds-sub">TVs y bocinas</p>
-        </div>
-      </div>
-      <button class="btn-view-all">Ver Todo</button>
-    </div>
-
-    <div class="devices-grid">
-      <div class="device-card tv-card"
-           *ngFor="let tv of tvs()"
-           [class.device-on]="tv.encendido"
-           [class.device-off]="!tv.encendido">
-
-        <div class="device-card-header">
-          <span class="device-icon" [style.background]="tv.encendido ? '#f3e8ff' : '#f3f4f6'">
-            <span style="font-size:1.1rem">📺</span>
-          </span>
-          <button class="power-btn" [class.power-on-purple]="tv.encendido" (click)="toggleTv(tv)">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-              <line x1="12" y1="2" x2="12" y2="12" />
-            </svg>
-          </button>
-        </div>
-
-        <p class="device-name">{{ tv.nombre }}</p>
-        <p class="device-location">{{ tv.ubicacion }}</p>
-
-        <ng-container *ngIf="tv.encendido; else tvOffTpl">
-          <div class="now-playing-row">
-            <span class="now-playing-label">NOW PLAYING</span>
-            <span class="live-badge">Live</span>
-          </div>
-          <p class="now-playing-app">{{ tv.nowPlaying }}</p>
-          <div class="slider-row" style="margin-top:0.5rem">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            </svg>
-            <span class="slider-label">Volume</span>
-            <span class="slider-val">{{ tv.volumen }}%</span>
-          </div>
-          <input class="slider slider-purple" type="range" min="0" max="100"
-                 [value]="tv.volumen"
-                 (input)="onVolumenChange(tv, $any($event.target).valueAsNumber)" />
-          <div class="apps-row">
-            <button class="app-btn" *ngFor="let app of tv.apps"
-                    [class.app-active]="tv.app===app"
-                    (click)="setApp(tv, app)">{{ app }}</button>
-          </div>
-        </ng-container>
-        <ng-template #tvOffTpl>
-          <p class="device-off-label">Device is off</p>
-        </ng-template>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ── CLIMATE ── -->
-  <section class="device-section">
-    <div class="device-section-header">
-      <div class="section-label">
-        <span class="section-dot" style="background:#3b82f6"></span>
-        <div>
-          <p class="ds-title">Control del Clima</p>
-          <p class="ds-sub">Temperatura y Velocidad</p>
-        </div>
-      </div>
-      <button class="btn-view-all">Ver Todo</button>
-    </div>
-
-    <div class="devices-grid">
-      <div class="device-card ac-card"
-           *ngFor="let ac of acs()"
-           [class.device-on]="ac.encendido"
-           [class.device-off]="!ac.encendido">
-
-        <div class="device-card-header">
-          <span class="device-icon" [style.background]="ac.encendido ? '#eff6ff' : '#f3f4f6'">
-            <span style="font-size:1.1rem">❄️</span>
-          </span>
-          <button class="power-btn" [class.power-on-blue]="ac.encendido" (click)="toggleAc(ac)">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-              <line x1="12" y1="2" x2="12" y2="12" />
-            </svg>
-          </button>
-        </div>
-
-        <p class="device-name">{{ ac.nombre }}</p>
-        <p class="device-location">{{ ac.ubicacion }}</p>
-
-        <ng-container *ngIf="ac.encendido; else acOffTpl">
-          <div class="temp-control">
-            <button class="temp-btn" (click)="decrementTemp(ac)">−</button>
-            <span class="temp-val">{{ ac.temp }}°</span>
-            <button class="temp-btn" (click)="incrementTemp(ac)">+</button>
-          </div>
-          <div class="modo-btns">
-            <button class="modo-btn" [class.modo-active-blue]="ac.modo==='cool'"   (click)="setModo(ac,'cool')">❄️ Cool</button>
-            <button class="modo-btn" [class.modo-active-orange]="ac.modo==='heat'" (click)="setModo(ac,'heat')">🔥 Heat</button>
-            <button class="modo-btn" [class.modo-active-gray]="ac.modo==='auto'"   (click)="setModo(ac,'auto')">✨ Auto</button>
-          </div>
-          <div class="humidity-row">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-            </svg>
-            <span class="slider-label">Humidity</span>
-            <span class="slider-val">{{ ac.humedad }}%</span>
-          </div>
-        </ng-container>
-        <ng-template #acOffTpl>
-          <p class="device-off-label">Device is off</p>
-        </ng-template>
-
-      </div>
-    </div>
-  </section>
-
-</ng-container>
+<div class="table-wrapper" *ngIf="!loading()">
+  <table class="devices-table">
+    <thead>
+      <tr>
+        <th>ID Actividad</th>
+        <th>Usuario</th>
+        <th>Gesto</th>
+        <th>Aparato</th>
+        <th>Confianza IA</th>
+        <th>Tiempo respuesta</th>
+        <th>Exitosa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let act of actividades()">
+        <td>{{ act.skActividadId }}</td>
+        <td>{{ act.skUsuarioId }}</td>
+        <td>{{ act.skGestoId }}</td>
+        <td>{{ act.skAparatoId }}</td>
+        <td>{{ act.confianzaIa }}</td>
+        <td>{{ act.tiempoRespuesta }} ms</td>
+        <td>{{ act.ejecucionExitosa ? '✅' : '❌' }}</td>
+      </tr>
+      <tr *ngIf="actividades().length === 0 && !loading()">
+        <td colspan="7" class="empty-state">Sin registros</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

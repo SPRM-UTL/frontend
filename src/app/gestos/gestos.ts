@@ -20,33 +20,20 @@ export class Gestos implements OnInit {
     const q = this.searchQuery().toLowerCase().trim();
     return q
       ? this.gestosService.gestos().filter(g =>
-          g.nombre.toLowerCase().includes(q)     ||
-          g.dispositivo.toLowerCase().includes(q) ||
-          g.accion.toLowerCase().includes(q)
+          g.nombreGesto.toLowerCase().includes(q) ||
+          (g.tipoDisparadorNombre ?? '').toLowerCase().includes(q)
         )
       : this.gestosService.gestos();
   });
 
-  readonly totalActivos = computed(() =>
-    this.gestosService.gestos().filter(g => g.estado === 'Activo').length
-  );
-
   readonly loading = this.gestosService.loading;
   readonly error   = this.gestosService.error;
 
-  ngOnInit(): void {
-    this.gestosService.loadGestos();
-  }
+  ngOnInit(): void { this.gestosService.loadGestos(); }
 
-  onSearch(value: string): void {
-    this.searchQuery.set(value);
-  }
+  onSearch(value: string): void { this.searchQuery.set(value); }
 
-  toggleEstado(gesto: Gesto): void {
-    this.gestosService.toggleEstado(gesto);
-  }
+  toggleEstado(gesto: Gesto): void { this.gestosService.toggleEstado(gesto); }
 
-  eliminarGesto(id: number): void {
-    this.gestosService.eliminarGesto(id);
-  }
+  eliminarGesto(id: number): void { this.gestosService.eliminarGesto(id); }
 }
