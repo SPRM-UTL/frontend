@@ -89,7 +89,7 @@ input {
 .btn-primary {
   width: 100%;
   padding: 0.94rem;
-  background: var(--cafe-primary);
+  background: var(--cafe-dark);
   color: white;
   border: none;
   border-radius: 8px;
@@ -172,7 +172,7 @@ footer {
 /* ── RIGHT SIDE ── */
 .login-right {
   width: 45%;
-  background: var(--cafe-dark);
+  background: var(--cafe-primary );
   border-radius: 16px;
   margin: 1.5rem;
   display: flex;

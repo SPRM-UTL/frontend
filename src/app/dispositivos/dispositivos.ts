@@ -1,7 +1,7 @@
 import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DevicesService } from './devices.service';   // ← minúscula
+import { DevicesService } from './devices.service';
 import { Device } from './device.model';
 
 @Component({
@@ -14,17 +14,15 @@ export class Dispositivos implements OnInit {
 
   private devicesService = inject(DevicesService);
 
-  activeNav = 'dispositivos';
-
   readonly searchQuery = signal('');
 
   readonly filteredDevices = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
     return q
       ? this.devicesService.devices().filter(d =>
-          d.name.toLowerCase().includes(q) ||
-          d.room.toLowerCase().includes(q) ||
-          d.status.toLowerCase().includes(q)
+          d.nombreAparato.toLowerCase().includes(q) ||
+          d.tipoAparato.toLowerCase().includes(q)   ||
+          d.accionNombre.toLowerCase().includes(q)
         )
       : this.devicesService.devices();
   });
@@ -32,19 +30,9 @@ export class Dispositivos implements OnInit {
   readonly loading = this.devicesService.loading;
   readonly error   = this.devicesService.error;
 
-  ngOnInit(): void {
-    this.devicesService.loadDevices();
-  }
+  ngOnInit(): void { this.devicesService.loadDevices(); }
 
-  setActive(nav: string): void {
-    this.activeNav = nav;
-  }
+  onSearch(value: string): void { this.searchQuery.set(value); }
 
-  onSearch(value: string): void {
-    this.searchQuery.set(value);
-  }
-
-  togglePower(device: Device): void {
-    this.devicesService.togglePower(device);
-  }
+  togglePower(device: Device): void { this.devicesService.togglePower(device); }
 }
