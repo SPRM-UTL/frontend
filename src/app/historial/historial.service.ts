@@ -17,7 +17,7 @@ export class HistorialService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://localhost:7299/api/Fact_Historico_Actividad';
+  private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
 
   // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
   public loading = signal<boolean>(false);

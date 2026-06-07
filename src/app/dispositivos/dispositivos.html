@@ -61,21 +61,22 @@
     <table class="devices-table">
       <thead>
         <tr>
-          <th>Device</th>
-          <th>Room</th>
-          <th>Status</th>
-          <th>Power</th>
-          <th>Last Active</th>
-          <th>Actions</th>
+          <th>Dispositivo</th>
+          <th>Tipo</th>
+          <th>Acción</th>
+          <th>Bluetooth</th>
+          <th>MAC</th>
+          <th>Sincronización</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let device of filteredDevices()" class="device-row">
           <!-- Device -->
           <td class="device-cell">
-            <span class="device-avatar" [style.background]="device.color">
+            <!-- <span class="device-avatar" [style.background]="device.color"> -->
+            <span class="device-avatar">
               <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                <ng-container [ngSwitch]="device.icon">
+                <ng-container [ngSwitch]="device.icono">
                   <ng-container *ngSwitchCase="'light'">
                     <circle cx="12" cy="12" r="3" />
                     <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
@@ -116,31 +117,35 @@
                 </ng-container>
               </svg>
             </span>
-            <span class="device-name">{{ device.name }}</span>
+            <span class="device-name">{{ device.nombre_aparato  }}</span>
           </td>
 
           <!-- Room -->
-          <td class="room-cell">{{ device.room }}</td>
+          <td class="room-cell">{{ device.tipo_aparato  }}</td>
 
           <!-- Status -->
-          <td>
+          <!-- <td>
             <span class="status-badge" [ngClass]="device.statusClass">{{ device.status }}</span>
-          </td>
+          </td> -->
 
           <!-- Power -->
           <td class="power-cell">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
-            {{ device.power }}
+            {{ device.accion_nombre }}
           </td>
 
+          <td>{{ device.nombre_bluetooth }}</td>
+
+          <td>{{ device.mac_bluetooth }}</td>
           <!-- Last active -->
-          <td class="last-active-cell">{{ device.lastActive }}</td>
+          <td class="last-active-cell">{{ device.fecha_sincronizacion }}</td>
 
           <!-- Actions -->
           <td class="actions-cell">
-            <button class="action-btn" [class.active-power]="device.powered" (click)="togglePower(device)" title="Power">
+            <!-- <button class="action-btn" [class.active-power]="device.powered" (click)="(device)" title="Power"> -->
+            <button class="action-btn" (click)="$event.preventDefault()" title="Power">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
                 <line x1="12" y1="2" x2="12" y2="12" />
