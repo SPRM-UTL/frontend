@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Gesto, GestoEstadoUpdate } from './gesto.model';
 
-const BASE_URL = '/api/gestos';
+const BASE_URL = '/api/aparatos';
 
 @Injectable({ providedIn: 'root' })
 export class GestosService {

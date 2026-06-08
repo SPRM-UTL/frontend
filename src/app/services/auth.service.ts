@@ -9,7 +9,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-  private apiUrl = 'https://localhost:7299/api/Auth';
+  private apiUrl = 'http://localhost:5295/api/Auth';
 
   // En tu AuthService.ts
   constructor(private http: HttpClient, private router: Router) {
