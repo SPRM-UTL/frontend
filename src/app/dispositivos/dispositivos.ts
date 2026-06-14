@@ -3,11 +3,27 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DevicesService } from './devices.service';
 import { Device } from './device.model';
+import {
+  LucideLightbulb,
+  LucideTv,
+  LucideSpeaker,
+  LucideCamera,
+  LucideLock,
+  LucideFan,
+  LucideWifi
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-dispositivos',
   standalone: true, // Asegúrate de tener esto si usas Angular 17+
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,
+    LucideLightbulb,
+    LucideTv,
+    LucideSpeaker,
+    LucideCamera,
+    LucideLock,
+    LucideFan,
+    LucideWifi],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })

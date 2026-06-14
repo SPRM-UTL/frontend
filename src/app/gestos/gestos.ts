@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GestosService } from './gestos.service';
 import { Gesto } from './gesto.model';
+import { LucideHand, LucideUser,} from '@lucide/angular'
 
 @Component({
   selector: 'app-gestos',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideHand, LucideUser],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
 })
@@ -18,13 +19,13 @@ export class Gestos implements OnInit {
 
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-    return q
-      ? this.gestosService.gestos().filter(g =>
-          g.nombre.toLowerCase().includes(q)     ||
-          g.dispositivo.toLowerCase().includes(q) ||
-          g.accion.toLowerCase().includes(q)
-        )
-      : this.gestosService.gestos();
+     return q
+    ? this.gestosService.gestos().filter(g =>
+        (g.nombre_gesto ?? '').toLowerCase().includes(q) ||
+        (g.tipo_disparador_nombre ?? '').toLowerCase().includes(q) ||
+        String(g.sk_gesto_id).includes(q)
+      )
+    : this.gestosService.gestos();
   });
 
   readonly totalActivos = computed(() =>
@@ -42,11 +43,11 @@ export class Gestos implements OnInit {
     this.searchQuery.set(value);
   }
 
-  toggleEstado(gesto: Gesto): void {
-    this.gestosService.toggleEstado(gesto);
-  }
+  // toggleEstado(gesto: Gesto): void {
+  //   this.gestosService.toggleEstado(gesto);
+  // }
 
-  eliminarGesto(id: number): void {
-    this.gestosService.eliminarGesto(id);
-  }
+  // eliminarGesto(id: number): void {
+  //   this.gestosService.eliminarGesto(id);
+  // }
 }

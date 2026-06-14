@@ -56,7 +56,21 @@
   <div class="gesto-card" *ngFor="let gesto of gestosFiltrados()">
 
     <div class="gesto-card-header">
-      <span class="gesto-emoji">{{ gesto.emoji }}</span>
+      <!-- En esta parte se decide qué icono se va usar según el contenido del campo icono en la bd -->
+      <span class="gesto-emoji">
+        <svg
+          *ngIf="gesto.icono === 'hand'"
+          lucideHand
+          [size]="28">
+        </svg>
+
+        <svg
+          *ngIf="gesto.icono === 'user'"
+          lucideUser
+          [size]="28">
+        </svg>
+      </span>
+
       <span class="badge"
             [class.badge-activo]="gesto.estado === 'Activo'"
             [class.badge-pausado]="gesto.estado === 'Pausado'">
@@ -64,21 +78,20 @@
       </span>
     </div>
 
-    <h3 class="gesto-nombre">{{ gesto.nombre }}</h3>
-
+    <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
     <div class="gesto-dispositivo">
       <span class="dispositivo-icon" [style.background]="gesto.dispositivoIconColor + '22'">
         {{ gesto.dispositivoIconEmoji }}
       </span>
       <div>
         <p class="dispositivo-label">Dispositivo</p>
-        <p class="dispositivo-nombre">{{ gesto.dispositivo }}</p>
+        <p class="dispositivo-nombre">Aparato #{{ gesto.sk_aparato_id }}</p>
       </div>
     </div>
 
     <div class="gesto-accion">
       <p class="accion-label">Acción</p>
-      <p class="accion-valor">{{ gesto.accion }}</p>
+      <p class="accion-valor">  {{ gesto.tipo_disparador_nombre }}</p>
     </div>
 
     <div class="gesto-footer">
@@ -105,7 +118,7 @@
           </svg>
         </button>
         <!-- Pausar / Activar -->
-        <button class="action-btn"
+        <!-- <button class="action-btn"
                 [title]="gesto.estado === 'Activo' ? 'Pausar' : 'Activar'"
                 (click)="toggleEstado(gesto)">
           <svg *ngIf="gesto.estado === 'Activo'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -115,16 +128,16 @@
           <svg *ngIf="gesto.estado === 'Pausado'" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
-        </button>
+        </button> -->
         <!-- Eliminar -->
-        <button class="action-btn action-btn-danger" title="Eliminar" (click)="eliminarGesto(gesto.id)">
+        <!-- <button class="action-btn action-btn-danger" title="Eliminar" (click)="eliminarGesto(gesto.skGestoId)">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <polyline points="3 6 5 6 21 6" />
             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
             <path d="M10 11v6M14 11v6" />
             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
           </svg>
-        </button>
+        </button> -->
       </div>
     </div>
 
