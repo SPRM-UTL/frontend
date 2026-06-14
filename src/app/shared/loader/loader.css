@@ -1,54 +1,163 @@
+/* ==================================
+   OVERLAY
+================================== */
 .overlay {
-
   position: fixed;
-
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  background: rgba(0, 0, 0, 0.45);
-
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
   display: flex;
-
   justify-content: center;
   align-items: center;
-
   z-index: 99999;
-
-  backdrop-filter: blur(3px);
 }
 
-.loader-container {
-
+/* ==================================
+   CONTENEDOR
+================================== */
+.loader-wrapper {
   display: flex;
-
   justify-content: center;
   align-items: center;
+  max-width: 90vw;
+  padding: 1rem;
 }
 
+/* ==================================
+   GRUPO LOGO + TEXTO
+================================== */
+.loader-group {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  transform: translateX(167px);
+  animation: slideToCenter 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
+  animation-delay: 0.5s;
+}
+
+/* ==================================
+   LOGO
+   - Comienza GRANDE (scale 2)
+   - Termina en scale 0.75 (un poco más grande que antes)
+================================== */
 .loader-logo {
-
   width: 120px;
-
-  animation: pulse 1.2s infinite ease-in-out;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  transform-origin: center;
+  animation: shrinkLogo 0.5s ease-in-out forwards;
 }
 
-@keyframes pulse {
+/* ==================================
+   TEXTO
+================================== */
+.loader-text {
+  display: flex;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 58px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
 
+/* ==================================
+   LETRAS INDIVIDUALES
+================================== */
+.loader-text span {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(10px);
+  animation: letterFade 0.2s ease forwards;
+}
+
+.loader-text span:nth-child(1) { animation-delay: 0.60s; }
+.loader-text span:nth-child(2) { animation-delay: 0.68s; }
+.loader-text span:nth-child(3) { animation-delay: 0.76s; }
+.loader-text span:nth-child(4) { animation-delay: 0.84s; }
+.loader-text span:nth-child(5) { animation-delay: 0.92s; }
+.loader-text span:nth-child(6) { animation-delay: 1.00s; }
+.loader-text span:nth-child(7) { animation-delay: 1.08s; }
+.loader-text span:nth-child(8) { animation-delay: 1.16s; }
+.loader-text span:nth-child(9) { animation-delay: 1.24s; }
+
+/* ==================================
+   ANIMACIONES
+================================== */
+@keyframes shrinkLogo {
   0% {
-    transform: scale(1);
-    opacity: 0.8;
+    transform: scale(2);     /* Logo muy grande al inicio */
   }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-
   100% {
-    transform: scale(1);
-    opacity: 0.8;
+    transform: scale(0.75);  /* Tamaño final: un poco más grande (antes era 0.5) */
+  }
+}
+
+@keyframes slideToCenter {
+  0% {
+    transform: translateX(167px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes letterFade {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* ==================================
+   RESPONSIVE (también con final más grande)
+================================== */
+@media (max-width: 700px) {
+  .loader-logo { width: 90px; }
+  .loader-text { font-size: 38px; }
+  .loader-group { gap: 20px; transform: translateX(109px); }
+  @keyframes shrinkLogo {
+    0% { transform: scale(1.8); }
+    100% { transform: scale(0.75); }
+  }
+  @keyframes slideToCenter {
+    0% { transform: translateX(109px); }
+    100% { transform: translateX(0); }
+  }
+}
+
+@media (max-width: 520px) {
+  .loader-logo { width: 72px; }
+  .loader-text { font-size: 28px; }
+  .loader-group { gap: 14px; transform: translateX(79px); }
+  @keyframes shrinkLogo {
+    0% { transform: scale(1.6); }
+    100% { transform: scale(0.75); }
+  }
+  @keyframes slideToCenter {
+    0% { transform: translateX(79px); }
+    100% { transform: translateX(0); }
+  }
+}
+
+@media (min-width: 1400px) {
+  .loader-logo { width: 140px; }
+  .loader-text { font-size: 68px; }
+  .loader-group { gap: 36px; transform: translateX(198px); }
+  @keyframes shrinkLogo {
+    0% { transform: scale(2.2); }
+    100% { transform: scale(0.75); }
+  }
+  @keyframes slideToCenter {
+    0% { transform: translateX(198px); }
+    100% { transform: translateX(0); }
   }
 }

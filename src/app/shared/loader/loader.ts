@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { LoaderService } from '../../services/loader.service';
 
 @Component({
@@ -11,6 +10,5 @@ import { LoaderService } from '../../services/loader.service';
   styleUrl: './loader.css'
 })
 export class LoaderComponent {
-
   constructor(public loaderService: LoaderService) {}
 }
