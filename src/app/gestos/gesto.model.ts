@@ -1,18 +1,15 @@
-// gesto.model.ts
-
 export interface Gesto {
-  id: number;
-  nombre: string;
-  emoji: string;
-  dispositivo: string;
-  dispositivoIconColor: string;
-  dispositivoIconEmoji: string;
-  accion: string;
-  tiempo: string;
-  estado: 'Activo' | 'Pausado';
-}
+  sk_gesto_id: number;
+  bk_gesto_id: number;
+  nombre_gesto: string;
+  identificador_ia: number;
+  nivel_confianza_minimo: number;
+  tipo_disparador_nombre: string;
+  sk_aparato_id: number | null;
 
-export interface GestoEstadoUpdate {
-  id: number;
-  estado: 'Activo' | 'Pausado';
+  estado?: 'Activo' | 'Pausado';
+  icono?: string;
+  dispositivoIconColor?: string;
+  dispositivoIconEmoji?: string;
+  tiempo?: string;
 }
