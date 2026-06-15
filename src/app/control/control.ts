@@ -25,6 +25,38 @@ export class Control implements OnInit {
 
   selectedCategoria = 'Luces';
 
+  categoryIcon(nombre: string): string {
+    const normalized = nombre.toLowerCase();
+    if (normalized.includes('luz')) return 'lightbulb';
+    if (normalized.includes('tv') || normalized.includes('entreten')) return 'tv';
+    if (normalized.includes('clima') || normalized.includes('aire') || normalized.includes('vent')) return 'air-vent';
+    return 'circle-user-round';
+  }
+
+  lightIcon(): string {
+    return 'lightbulb';
+  }
+
+  tvIcon(): string {
+    return 'tv';
+  }
+
+  acIcon(): string {
+    return 'air-vent';
+  }
+
+  warmIcon(): string {
+    return 'sun';
+  }
+
+  coolIcon(): string {
+    return 'snowflake';
+  }
+
+  autoIcon(): string {
+    return 'sparkles';
+  }
+
   ngOnInit(): void {
     this.controlService.loadControl();
   }

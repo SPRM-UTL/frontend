@@ -114,14 +114,23 @@ export class Login {
 
         console.log(response);
 
+        const data = response?.data ?? response;
+
         localStorage.setItem(
           'token',
-          response.data.token
+          data.token
         );
+
+        if (data.id != null) {
+          localStorage.setItem(
+            'userId',
+            String(data.id)
+          );
+        }
 
         localStorage.setItem(
           'nombre',
-          response.data.nombre
+          data.nombre
         );
 
         this.toastService.success(

@@ -272,3 +272,48 @@
 @media (max-width: 768px) {
   .dashboard-main { padding: 1.25rem; }
 }
+/* Máscara universal (mismo CSS que usaste en historial y gestos) */
+.icon-mask {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: var(--cafe-primary);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+/* Tamaños específicos para dispositivos */
+.search-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.wifi-dot .icon-mask {
+  width: 16px;
+  height: 16px;
+}
+
+.table-feedback .icon-mask {
+  width: 20px;
+  height: 20px;
+}
+
+.device-avatar .icon-mask {
+  width: 16px;
+  height: 16px;
+}
+
+.power-cell .icon-mask,
+.actions-cell .action-btn .icon-mask {
+  width: 14px;
+  height: 14px;
+}
+
+.empty-state .icon-mask {
+  width: 32px;
+  height: 32px;
+}

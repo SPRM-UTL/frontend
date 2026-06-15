@@ -1,6 +1,5 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
 
 import { Device } from './device.model';
 
@@ -18,7 +17,8 @@ export class DevicesService {
   private http = inject(HttpClient);
 
   private readonly apiUrl =
-    'http://localhost:5295/api/aparatos';
+    'http://localhost:5295/api/Dim_Aparatos';
+    //'https://backend-neao.onrender.com/api/Dim_Aparatos';
 
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);
@@ -27,13 +27,11 @@ export class DevicesService {
 // Si tu API devuelve { "data": [...] }
 loadDevices(): void {
   this.loading.set(true);
-  this.http.get<any>(this.apiUrl) // Usa 'any' para inspeccionar
+  this.http.get<ApiResponse>(this.apiUrl)
     .subscribe({
-      next: (response: any) => {
-        // Si la respuesta es un objeto, accede a la propiedad que contiene el array
-        // Cambia 'data' por el nombre de la propiedad real que veas en la consola
+      next: (response: ApiResponse) => {
         console.log('Respuesta cruda del servidor:', response);
-        this.devices.set(response.data || response); 
+        this.devices.set(response.data || []);
         this.loading.set(false);
       },
       error: (err) => {

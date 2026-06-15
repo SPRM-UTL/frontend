@@ -16,8 +16,9 @@ interface ApiResponse {
 export class HistorialService {
 
   private http = inject(HttpClient);
+     private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
 
-  private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
+  //private readonly apiUrl = 'http://backend-neao.onrender.com/api/Fact_Historico_Actividad';
 
   // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
   public loading = signal<boolean>(false);

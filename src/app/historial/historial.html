@@ -1,4 +1,4 @@
-<!-- historial.html — solo contenido, sin sidebar ni dashboard-wrapper -->
+<!-- historial.html — iconos con color primario usando CSS mask (sin traductor) -->
 
 <!-- Header -->
 <div class="page-header">
@@ -10,10 +10,8 @@
 
 <!-- Search -->
 <div class="search-wrapper">
-  <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
+  <span class="icon-mask search-icon"
+  style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
   <input class="search-input"
          type="text"
          placeholder="Search"
@@ -23,13 +21,15 @@
 
 <!-- Estado de carga -->
 <div *ngIf="loading()" class="empty-state">
-  <span>⏳</span>
+  <span class="icon-mask"
+  style="mask-image: url('/icons/rotate-ccw.svg'); -webkit-mask-image: url('/icons/rotate-ccw.svg'); width:32px; height:32px;"></span>
   <p>Cargando historial…</p>
 </div>
 
 <!-- Estado de error -->
 <div *ngIf="error()" class="empty-state">
-  <span>⚠️</span>
+  <span class="icon-mask"
+  style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width:32px; height:32px;"></span>
   <p>{{ error() }}</p>
 </div>
 
@@ -39,10 +39,8 @@
   <div class="table-title-row">
     <div class="table-title-left">
       <span class="title-icon">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
+        <span class="icon-mask"
+              style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
       </span>
       <span class="table-title-text">Actividad reciente</span>
     </div>
@@ -63,10 +61,8 @@
     <div class="table-row" *ngFor="let a of actividadesFiltradas()">
 
       <span class="col-hora">
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
+        <span class="icon-mask"
+              style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
         {{ a.hora }}
       </span>
 
@@ -74,39 +70,11 @@
 
       <span class="col-dispositivo">
         <span class="disp-icon" [style.background]="a.color + '22'">
-
-          <svg
-            *ngIf="a.icono === 'lightbulb'"
-            lucideLightbulb
-            [size]="18">
-          </svg>
-
-          <svg
-            *ngIf="a.icono === 'tv'"
-            lucideTv
-            [size]="18">
-          </svg>
-
-          <svg
-            *ngIf="a.icono === 'speaker'"
-            lucideSpeaker
-            [size]="18">
-          </svg>
-
-          <svg
-            *ngIf="a.icono === 'fan'"
-            lucideFan
-            [size]="18">
-          </svg>
-
-          <svg
-            *ngIf="a.icono === 'air-vent'"
-            lucideAirVent
-            [size]="18">
-          </svg>
-
+          <!-- Usamos directamente a.icono como nombre del archivo -->
+          <span class="icon-mask"
+                [style.maskImage]="'url(/icons/' + a.icono + '.svg)'"
+                [style.webkitMaskImage]="'url(/icons/' + a.icono + '.svg)'"></span>
         </span>
-
         {{ a.dispositivo }}
       </span>
 
@@ -122,21 +90,16 @@
       <span class="col-metodo">
         <span class="metodo-icon">
           <ng-container *ngIf="a.metodo === 'Gesto'">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" />
-              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-            </svg>
+            <span class="icon-mask"
+                  style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
           </ng-container>
           <ng-container *ngIf="a.metodo === 'App móvil'">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="5" y="2" width="14" height="20" rx="2" />
-              <line x1="12" y1="18" x2="12" y2="18" stroke-linecap="round" stroke-width="2.5" />
-            </svg>
+            <span class="icon-mask"
+                  style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg');"></span>
           </ng-container>
           <ng-container *ngIf="a.metodo === 'Automatización'">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
+            <span class="icon-mask"
+                  style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
           </ng-container>
         </span>
         {{ a.metodo }}
@@ -144,11 +107,11 @@
 
     </div>
 
-    <!-- Empty state -->
+    <!-- Estado vacío -->
     <div class="empty-state" *ngIf="actividadesFiltradas().length === 0 && !loading()">
-      <span>🔍</span>
+      <span class="icon-mask"
+            style="mask-image: url('/icons/search-alert.svg'); -webkit-mask-image: url('/icons/search-alert.svg'); width:32px; height:32px;"></span>
       <p>No se encontraron registros</p>
     </div>
   </div>
-
 </div>

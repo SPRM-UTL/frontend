@@ -264,7 +264,31 @@
   font-family: var(--font-body);
 }
 
-.empty-emoji { font-size: 2.5rem; }
+.empty-emoji {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-emoji img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.filter-icon-img {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.gesto-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ══════════════════════════════
    RESPONSIVE
@@ -281,4 +305,48 @@
   .gestos-grid { grid-template-columns: 1fr; }
   .page-header { flex-direction: column; gap: 0.75rem; }
   .btn-agregar { width: 100%; justify-content: center; }
+}
+/* Máscara universal para iconos SVG (color primario) */
+.icon-mask {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: var(--cafe-primary);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+/* Tamaños específicos según contexto */
+.search-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-agregar .icon-mask {
+  width: 16px;
+  height: 16px;
+}
+
+.filter-icon .icon-mask {
+  width: 20px;
+  height: 20px;
+}
+
+.empty-state .icon-mask {
+  width: 32px;
+  height: 32px;
+}
+
+.gesto-tiempo .icon-mask {
+  width: 12px;
+  height: 12px;
+}
+
+.action-btn .icon-mask {
+  width: 14px;
+  height: 14px;
 }

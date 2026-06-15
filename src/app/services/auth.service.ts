@@ -9,8 +9,8 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-  //private apiUrl = 'http://localhost:5295/api/Auth';
-    private apiUrl = 'https://backend-neao.onrender.com/api/Auth';
+  private apiUrl = 'http://localhost:5295/api/Auth';
+    //private apiUrl = 'https://backend-neao.onrender.com/api/Auth';
   // En tu AuthService.ts
   constructor(private http: HttpClient, private router: Router) {
     // Ejecuta la verificación cada 60 segundos automáticamente
@@ -24,9 +24,19 @@ export class AuthService {
 
     return this.http.post<any>(`${this.apiUrl}/login`, body).pipe(
       tap(response => {
+        const data = response?.data ?? response;
+
         //Guardar token y calcular expiración
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
+        if (data && data.token) {
+          localStorage.setItem('token', data.token);
+
+          if (data.id != null) {
+            localStorage.setItem('userId', String(data.id));
+          }
+
+          if (data.nombre) {
+            localStorage.setItem('nombre', data.nombre);
+          }
 
           // Calculamos expiración: 30 minutos desde ahora (según tu middleware)
           const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
@@ -48,6 +58,8 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('nombre');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('token_exp');
     }
     this.router.navigate(['/login']);
   }

@@ -12,9 +12,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
-    //provideHttpClient()
-    // En tu app.config.ts:
-    provideHttpClient(withInterceptors([tokenInterceptor,authInterceptor]))
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([tokenInterceptor, authInterceptor])
+    )
   ]
 };

@@ -45,7 +45,25 @@
   font-size: 0.95rem;
   font-family: var(--font-body);
 }
-.empty-state span { font-size: 2rem; }
+
+.control-icon-mask {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  flex-shrink: 0;
+}
+
+.empty-icon {
+  width: 2rem;
+  height: 2rem;
+}
 
 /* ══ CATEGORIAS ══ */
 .categorias-grid {
@@ -78,7 +96,19 @@
     box-shadow: 0 4px 14px rgba(0,0,0,0.08);
   }
 
-.cat-emoji   { font-size: 1.6rem; line-height: 1; }
+.cat-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cat-color, var(--cafe-primary));
+}
+
+.cat-icon .control-icon-mask {
+  width: 1.2rem;
+  height: 1.2rem;
+}
 .cat-nombre  { font-size: 0.85rem; font-weight: 700; font-family: var(--font-heading); color: var(--cafe-dark); }
 .cat-cantidad{ font-size: 0.73rem; font-family: var(--font-data); color: var(--text-muted); }
 
@@ -135,6 +165,12 @@
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  color: var(--cafe-dark);
+}
+
+.device-icon .control-icon-mask {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .power-btn {
@@ -185,9 +221,19 @@
   border: 1.5px solid #e5e7eb;
   background: var(--white); color: #6b7280;
   cursor: pointer; transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
 }
   .tono-btn:hover { border-color: #f97316; color: #f97316; }
 .tono-active { background: #fff3e0 !important; border-color: #f97316 !important; color: #f97316 !important; }
+
+.tone-icon,
+.mode-icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
 
 /* ══ NOW PLAYING ══ */
 .now-playing-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }

@@ -8,9 +8,11 @@ import { Dispositivos } from './dispositivos/dispositivos';
 import { Gestos }       from './gestos/gestos';
 import { Historial }    from './historial/historial';
 import { Control }      from './control/control';
+import { Ajustes }      from './ajustes/ajustes';
 
 export const routes: Routes = [
   { path: '',         component: Login },
+  { path: 'login',    component: Login },
   { path: 'register', component: Register },
 
   {
@@ -24,6 +26,7 @@ export const routes: Routes = [
       { path: 'gestos',       component: Gestos },
       { path: 'historial',    component: Historial },
       { path: 'control',      component: Control },
+      { path: 'ajustes',      component: Ajustes },
     ]
   },
 ];

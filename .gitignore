@@ -42,5 +42,8 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
-.vs/ 
-node_modules/ 
+.vs/
+node_modules/
+
+/context
+.aider*

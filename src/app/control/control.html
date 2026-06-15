@@ -8,12 +8,16 @@
 
 <!-- Estado de carga -->
 <div *ngIf="loading()" class="empty-state">
-  <span>⏳</span><p>Cargando dispositivos…</p>
+  <span class="control-icon-mask empty-icon"
+        style="mask-image: url('/icons/rotate-ccw.svg'); -webkit-mask-image: url('/icons/rotate-ccw.svg');"></span>
+  <p>Cargando dispositivos…</p>
 </div>
 
 <!-- Estado de error -->
 <div *ngIf="error()" class="empty-state">
-  <span>⚠️</span><p>{{ error() }}</p>
+  <span class="control-icon-mask empty-icon"
+        style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
+  <p>{{ error() }}</p>
 </div>
 
 <ng-container *ngIf="!loading()">
@@ -29,7 +33,11 @@
               (click)="selectedCategoria = cat.nombre"
               [style.--cat-color]="cat.color"
               [style.--cat-bg]="cat.bg">
-        <span class="cat-emoji">{{ cat.emoji }}</span>
+        <span class="cat-icon">
+          <span class="control-icon-mask"
+                [style.maskImage]="'url(/icons/' + categoryIcon(cat.nombre) + '.svg)'"
+                [style.webkitMaskImage]="'url(/icons/' + categoryIcon(cat.nombre) + '.svg)'"></span>
+        </span>
         <p class="cat-nombre">{{ cat.nombre }}</p>
         <p class="cat-cantidad">{{ cat.cantidad }} dispositivos</p>
       </button>
@@ -57,7 +65,9 @@
 
         <div class="device-card-header">
           <span class="device-icon" [style.background]="luz.encendido ? '#fff3e0' : '#f3f4f6'">
-            <span style="font-size:1.1rem">💡</span>
+            <span class="control-icon-mask"
+                  [style.maskImage]="'url(/icons/' + lightIcon() + '.svg)'"
+                  [style.webkitMaskImage]="'url(/icons/' + lightIcon() + '.svg)'"></span>
           </span>
           <button class="power-btn" [class.power-on]="luz.encendido" (click)="toggleLuz(luz)">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -79,8 +89,18 @@
                  [value]="luz.brillo"
                  (input)="onBrilloChange(luz, $any($event.target).valueAsNumber)" />
           <div class="tono-btns">
-            <button class="tono-btn" [class.tono-active]="luz.tono==='warm'" (click)="setTono(luz,'warm')">☀️ Warm</button>
-            <button class="tono-btn" [class.tono-active]="luz.tono==='cool'" (click)="setTono(luz,'cool')">🌙 Cool</button>
+            <button class="tono-btn" [class.tono-active]="luz.tono==='warm'" (click)="setTono(luz,'warm')">
+              <span class="control-icon-mask tone-icon"
+                    [style.maskImage]="'url(/icons/' + warmIcon() + '.svg)'"
+                    [style.webkitMaskImage]="'url(/icons/' + warmIcon() + '.svg)'"></span>
+              Warm
+            </button>
+            <button class="tono-btn" [class.tono-active]="luz.tono==='cool'" (click)="setTono(luz,'cool')">
+              <span class="control-icon-mask tone-icon"
+                    [style.maskImage]="'url(/icons/' + coolIcon() + '.svg)'"
+                    [style.webkitMaskImage]="'url(/icons/' + coolIcon() + '.svg)'"></span>
+              Cool
+            </button>
           </div>
         </ng-container>
         <ng-template #offTpl>
@@ -112,7 +132,9 @@
 
         <div class="device-card-header">
           <span class="device-icon" [style.background]="tv.encendido ? '#f3e8ff' : '#f3f4f6'">
-            <span style="font-size:1.1rem">📺</span>
+            <span class="control-icon-mask"
+                  [style.maskImage]="'url(/icons/' + tvIcon() + '.svg)'"
+                  [style.webkitMaskImage]="'url(/icons/' + tvIcon() + '.svg)'"></span>
           </span>
           <button class="power-btn" [class.power-on-purple]="tv.encendido" (click)="toggleTv(tv)">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -132,10 +154,8 @@
           </div>
           <p class="now-playing-app">{{ tv.nowPlaying }}</p>
           <div class="slider-row" style="margin-top:0.5rem">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            </svg>
+            <span class="control-icon-mask tone-icon"
+                  style="mask-image: url('/icons/speaker.svg'); -webkit-mask-image: url('/icons/speaker.svg');"></span>
             <span class="slider-label">Volume</span>
             <span class="slider-val">{{ tv.volumen }}%</span>
           </div>
@@ -177,7 +197,9 @@
 
         <div class="device-card-header">
           <span class="device-icon" [style.background]="ac.encendido ? '#eff6ff' : '#f3f4f6'">
-            <span style="font-size:1.1rem">❄️</span>
+            <span class="control-icon-mask"
+                  [style.maskImage]="'url(/icons/' + acIcon() + '.svg)'"
+                  [style.webkitMaskImage]="'url(/icons/' + acIcon() + '.svg)'"></span>
           </span>
           <button class="power-btn" [class.power-on-blue]="ac.encendido" (click)="toggleAc(ac)">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -197,14 +219,28 @@
             <button class="temp-btn" (click)="incrementTemp(ac)">+</button>
           </div>
           <div class="modo-btns">
-            <button class="modo-btn" [class.modo-active-blue]="ac.modo==='cool'"   (click)="setModo(ac,'cool')">❄️ Cool</button>
-            <button class="modo-btn" [class.modo-active-orange]="ac.modo==='heat'" (click)="setModo(ac,'heat')">🔥 Heat</button>
-            <button class="modo-btn" [class.modo-active-gray]="ac.modo==='auto'"   (click)="setModo(ac,'auto')">✨ Auto</button>
+            <button class="modo-btn" [class.modo-active-blue]="ac.modo==='cool'"   (click)="setModo(ac,'cool')">
+              <span class="control-icon-mask mode-icon"
+                    [style.maskImage]="'url(/icons/' + coolIcon() + '.svg)'"
+                    [style.webkitMaskImage]="'url(/icons/' + coolIcon() + '.svg)'"></span>
+              Cool
+            </button>
+            <button class="modo-btn" [class.modo-active-orange]="ac.modo==='heat'" (click)="setModo(ac,'heat')">
+              <span class="control-icon-mask mode-icon"
+                    [style.maskImage]="'url(/icons/' + warmIcon() + '.svg)'"
+                    [style.webkitMaskImage]="'url(/icons/' + warmIcon() + '.svg)'"></span>
+              Heat
+            </button>
+            <button class="modo-btn" [class.modo-active-gray]="ac.modo==='auto'"   (click)="setModo(ac,'auto')">
+              <span class="control-icon-mask mode-icon"
+                    [style.maskImage]="'url(/icons/' + autoIcon() + '.svg)'"
+                    [style.webkitMaskImage]="'url(/icons/' + autoIcon() + '.svg)'"></span>
+              Auto
+            </button>
           </div>
           <div class="humidity-row">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-            </svg>
+            <span class="control-icon-mask tone-icon"
+                  style="mask-image: url('/icons/droplet.svg'); -webkit-mask-image: url('/icons/droplet.svg');"></span>
             <span class="slider-label">Humidity</span>
             <span class="slider-val">{{ ac.humedad }}%</span>
           </div>

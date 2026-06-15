@@ -54,7 +54,7 @@
 ================================== */
 .loader-text {
   display: flex;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family:  var(--font-title);
   font-size: 58px;
   font-weight: 700;
   color: #fff;

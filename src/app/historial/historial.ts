@@ -5,25 +5,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HistorialService } from './historial.service';
 
-import {
-  LucideLightbulb,
-  LucideTv,
-  LucideSpeaker,
-  LucideFan,
-  LucideAirVent
-} from '@lucide/angular'
-
 @Component({
-  selector: 'app-historial',  
+  selector: 'app-historial',
   imports: [
     CommonModule,
-    FormsModule,
-
-    LucideLightbulb,
-    LucideTv,
-    LucideSpeaker,
-    LucideFan,
-    LucideAirVent
+    FormsModule
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css'
