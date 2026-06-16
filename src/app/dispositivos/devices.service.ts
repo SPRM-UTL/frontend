@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { map,Observable } from 'rxjs';
 
 import { Device } from './device.model';
 
@@ -41,6 +41,17 @@ loadDevices(): void {
         this.loading.set(false);
       }
     });
+}
+/**
+ * Registrar dispositivo
+ */
+createDevice(device: any): Observable<any> {
+
+  return this.http.post(
+    this.apiUrl,
+    device
+  );
+
 }
 }
 

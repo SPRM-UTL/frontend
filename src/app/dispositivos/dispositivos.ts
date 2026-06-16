@@ -36,6 +36,7 @@ export class Dispositivos implements OnInit {
 
   // La señal de dispositivos expuesta directamente para acceso fácil
   readonly devices = this.devicesService.devices;
+  readonly mostrarModal = signal(false);
 
   readonly filteredDevices = computed(() => {
     const allDevices = this.devices();
@@ -65,4 +66,75 @@ export class Dispositivos implements OnInit {
   onSearch(value: string): void {
     this.searchQuery.set(value);
   }
+  /**
+   * Modelo del formulario
+   */
+nuevoDispositivo = {
+
+  nombre_aparato: '',
+
+  tipo_aparato: '',
+
+  accion_nombre: '',
+
+  comando_bluetooth: '',
+
+  icono: '',
+
+  nombre_bluetooth: '',
+
+  mac_bluetooth: '',
+
+  fecha_sincronizacion: null
+
+};
+  /**
+   * Abre el modal de alta de dispositivos
+   */
+  abrirModal(): void {
+    this.mostrarModal.set(true);
+  }
+
+  /**
+   * Cierra el modal
+   */
+ cerrarModal(): void {
+
+  this.mostrarModal.set(false);
+
+  //this.limpiarFormulario();
+
+}
+// private limpiarFormulario(): void {
+
+//   this.nuevoDispositivo = {
+//     nombreAparato: '',
+//     tipoAparato: '',
+//     nombreBluetooth: '',
+//     macBluetooth: ''
+//   };
+// }
+
+guardarDispositivo(): void {
+   console.log('Entró a guardar');
+  this.devicesService
+      .createDevice(this.nuevoDispositivo)
+      .subscribe({
+
+        next: () => {
+
+          alert('Dispositivo registrado correctamente');
+          this.cerrarModal();
+          this.devicesService.loadDevices();
+
+        },
+
+        error: (err) => {
+          console.error(err);
+          alert('Error al registrar dispositivo');
+        }
+
+      });
+
+}
 }
