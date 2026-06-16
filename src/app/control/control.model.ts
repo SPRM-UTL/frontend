@@ -1,39 +1,89 @@
-// control.model.ts
-
+// ============================================
+// Categorías mostradas en la parte superior
+// ============================================
 export interface Categoria {
-  nombre: string;
+
+  // Nombre mostrado al usuario
+  nombre_aparato: string;
+
+  // Cantidad de dispositivos
   cantidad: number;
+
+  // Emoji de la categoría
   emoji: string;
+
+  // Color principal
   color: string;
+
+  // Color de fondo
   bg: string;
 }
 
+// ============================================
+// Luces
+// ============================================
 export interface Luz {
+
+  // Id único de la BD
   id: number;
-  nombre: string;
+
+  // Nombre visible
+  nombre_aparato: string;
+
+  // Ubicación física
   ubicacion: string;
+
+  // Encendido / apagado
   encendido: boolean;
+
+  // Brillo 0 - 100
   brillo: number;
+
+  // Temperatura de color
   tono: 'warm' | 'cool';
 }
 
-export interface Tv {
+// ============================================
+// Bocinas
+// ============================================
+export interface Bocina {
+
+  // Id único
   id: number;
-  nombre: string;
+
+  // Nombre
+  nombre_aparato: string;
+
+  // Ubicación
   ubicacion: string;
+
+  // Estado
   encendido: boolean;
-  nowPlaying: string;
+
+  // Volumen
   volumen: number;
-  app: string;
-  apps: string[];
+
+  // Música actual
+  reproduciendo: string;
 }
 
-export interface Ac {
+// ============================================
+// Ventiladores
+// ============================================
+export interface Ventilador {
+
+  // Id único
   id: number;
-  nombre: string;
+
+  // Nombre
+  nombre_aparato: string;
+
+  // Ubicación
   ubicacion: string;
+
+  // Encendido
   encendido: boolean;
-  temp: number;
-  modo: 'cool' | 'heat' | 'auto';
-  humedad: number;
+
+  // Velocidad 1-5
+  velocidad: number;
 }

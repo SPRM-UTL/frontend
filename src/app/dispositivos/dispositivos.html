@@ -6,7 +6,7 @@
     <h1 class="page-title">Dispositivos</h1>
     <p class="page-subtitle">Maneja y controla todos tus dispositivos conectados</p>
   </div>
-  <button class="btn-agregar">
+  <button class="btn-agregar" (click)="abrirModal()">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <line x1="12" y1="5" x2="12" y2="19" />
       <line x1="5" y1="12" x2="19" y2="12" />
@@ -187,4 +187,121 @@
       </tbody>
     </table>
   </div>
+</div>
+<!-- =====================================================
+     MODAL AGREGAR DISPOSITIVO
+===================================================== -->
+
+<div
+  *ngIf="mostrarModal()"
+  class="modal-backdrop"
+  (click)="cerrarModal()">
+
+  <div
+    class="modal-container"
+    (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+
+      <h2>Agregar dispositivo</h2>
+
+      <button
+        class="btn-close"
+        (click)="cerrarModal()">
+
+        ✕
+      </button>
+
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoDispositivo.nombre_aparato"
+          placeholder="Ej. Luz Sala" />
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Tipo</label>
+
+        <select
+          [(ngModel)]="nuevoDispositivo.tipo_aparato">
+
+          <option value="">
+            Selecciona un tipo
+          </option>
+
+          <option value="Sensor">
+            Sensor
+          </option>
+
+          <option value="Televisión">
+            Televisión
+          </option>
+
+          <option value="Ventilador">
+            Ventilador
+          </option>
+
+          <option value="Cámara">
+            Cámara
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Bluetooth</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoDispositivo.nombre_bluetooth"
+          placeholder="ESP32-BT" />
+
+      </div>
+
+      <div class="form-group">
+
+        <label>MAC</label>
+
+        <input
+          type="text"
+          [(ngModel)]="nuevoDispositivo.mac_bluetooth"
+          placeholder="AA:BB:CC:DD:EE:FF" />
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+
+      <button
+        class="btn-secondary"
+        (click)="cerrarModal()">
+
+        Cancelar
+      </button>
+
+      <button
+        class="btn-primary" (click)="guardarDispositivo()">
+
+        Guardar dispositivo
+      </button>
+
+    </div>
+
+  </div>
+
 </div>

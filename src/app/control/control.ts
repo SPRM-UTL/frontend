@@ -4,11 +4,25 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ControlService } from './control.service';
-import { Luz, Tv, Ac } from './control.model';
+import { Luz, Bocina, Ventilador } from './control.model';
+import {
+  LucideLightbulb,
+  LucideSpeaker,
+  LucideFan
+} from '@lucide/angular'
+
+type CategoriaSeleccionada =
+  | 'Luces'
+  | 'Bocinas'
+  | 'Ventiladores';
 
 @Component({
   selector: 'app-control',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,
+    LucideLightbulb,
+    LucideSpeaker,
+    LucideFan
+  ],
   templateUrl: './control.html',
   styleUrl: './control.css'
 })
@@ -18,12 +32,12 @@ export class Control implements OnInit {
 
   readonly categorias = this.controlService.categorias;
   readonly luces      = this.controlService.luces;
-  readonly tvs        = this.controlService.tvs;
-  readonly acs        = this.controlService.acs;
+  readonly bocinas        = this.controlService.bocinas;
+  readonly ventiladores        = this.controlService.ventiladores;
   readonly loading    = this.controlService.loading;
   readonly error      = this.controlService.error;
 
-  selectedCategoria = 'Luces';
+  categoriaSeleccionada: CategoriaSeleccionada = 'Luces';
 
   ngOnInit(): void {
     this.controlService.loadControl();
@@ -38,24 +52,90 @@ export class Control implements OnInit {
     this.controlService.updateLuz({ ...luz, brillo: value });
   }
 
-  // ── TVs ──
-  toggleTv(tv: Tv): void { this.controlService.toggleTv(tv.id); }
-  setApp(tv: Tv, app: string): void {
-    this.controlService.updateTv({ ...tv, app });
-  }
-  onVolumenChange(tv: Tv, value: number): void {
-    this.controlService.updateTv({ ...tv, volumen: value });
-  }
+// ── Bocinas ──
 
-  // ── ACs ──
-  toggleAc(ac: Ac): void { this.controlService.toggleAc(ac.id); }
-  setModo(ac: Ac, modo: 'cool' | 'heat' | 'auto'): void {
-    this.controlService.updateAc({ ...ac, modo });
+// Encender / apagar
+toggleBocina(bocina: Bocina): void {
+  this.controlService.toggleBocina(bocina.id);
+}
+
+// Subir volumen
+incrementVolumen(bocina: Bocina): void {
+
+  // Evita pasar de 100
+  if (bocina.volumen < 100) {
+
+    this.controlService.updateBocina({
+      ...bocina,
+      volumen: bocina.volumen + 5
+    });
+
   }
-  incrementTemp(ac: Ac): void {
-    if (ac.encendido) this.controlService.updateAc({ ...ac, temp: ac.temp + 1 });
+}
+
+// Bajar volumen
+decrementVolumen(bocina: Bocina): void {
+
+  // Evita valores negativos
+  if (bocina.volumen > 0) {
+
+    this.controlService.updateBocina({
+      ...bocina,
+      volumen: bocina.volumen - 5
+    });
+
   }
-  decrementTemp(ac: Ac): void {
-    if (ac.encendido && ac.temp > 16) this.controlService.updateAc({ ...ac, temp: ac.temp - 1 });
+}
+
+// Cambio desde slider
+onVolumenChange(
+  bocina: Bocina,
+  value: number
+): void {
+
+  this.controlService.updateBocina({
+    ...bocina,
+    volumen: value
+  });
+
+}
+
+  // ── Ventiladors ──
+  toggleVentilador(Ventilador: Ventilador): void { this.controlService.toggleVentilador(Ventilador.id); }
+  setModo(Ventilador: Ventilador): void {
+    this.controlService.updateVentilador({ ...Ventilador });
   }
+incrementVelocidad(
+  ventilador: Ventilador
+): void {
+
+  if (ventilador.velocidad < 5) {
+
+    this.controlService
+        .updateVentilador({
+
+      ...ventilador,
+
+      velocidad:
+        ventilador.velocidad + 1
+    });
+
+  }
+}
+decrementVelocidad(
+  ventilador: Ventilador
+): void {
+
+  if (
+    ventilador.encendido &&
+    ventilador.velocidad > 1
+  ) {
+
+    this.controlService.updateVentilador({
+      ...ventilador,
+      velocidad: ventilador.velocidad - 1
+    });
+
+  }
+}
 }
