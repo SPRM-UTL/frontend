@@ -1,49 +1,87 @@
 .toast {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
 
-  min-width: 250px;
-
-  padding: 16px 20px;
-
-  border-radius: 12px;
-
+  min-width: 280px;
+  max-width: 90vw;
+  padding: 14px 24px;
+  border-radius: 16px;
   color: white;
-
   font-weight: 500;
-
   z-index: 9999;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-
-  animation: slideIn 0.3s ease;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background-color: #31867c; /* El color teal de la imagen */
 }
 
+.toast-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.toast-icon .icon-mask {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+}
+
+.toast-message {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.slide-in {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.slide-out {
+  animation: slideDownFade 0.4s ease-in forwards;
+}
+
+/* Colores por tipo con el mismo tono base o variaciones */
 .success {
-  background-color: #22c55e;
+  background-color: #31867c;
 }
 
 .error {
-  background-color: #ef4444;
+  background-color: #b91c1c; /* Un rojo que combine mejor */
 }
 
 .warning {
-  background-color: #f59e0b;
+  background-color: #d97706; /* Un naranja/ambar */
 }
 
 .info {
-  background-color: #3b82f6;
+  background-color: #31867c;
 }
 
-@keyframes slideIn {
+@keyframes slideUp {
   from {
-    transform: translateX(100%);
+    transform: translate(-50%, 80px);
     opacity: 0;
   }
-
   to {
-    transform: translateX(0);
+    transform: translate(-50%, 0);
     opacity: 1;
+  }
+}
+
+@keyframes slideDownFade {
+  from {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, 40px);
+    opacity: 0;
   }
 }

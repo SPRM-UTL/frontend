@@ -1,7 +1,11 @@
 <div
   *ngIf="visible"
   class="toast"
-  [ngClass]="type"
+  [ngClass]="[type, isClosing ? 'slide-out' : 'slide-in']"
+  (click)="close()"
 >
-  {{ message }}
+  <span class="toast-icon">
+    <span class="icon-mask" [style.mask-image]="'url(' + icon + ')'" [style.-webkit-mask-image]="'url(' + icon + ')'"></span>
+  </span>
+  <span class="toast-message">{{ message }}</span>
 </div>

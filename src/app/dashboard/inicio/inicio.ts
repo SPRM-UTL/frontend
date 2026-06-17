@@ -1,9 +1,10 @@
-import { Component, afterNextRender, inject, computed } from '@angular/core';
+import { Component, afterNextRender, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
 import { DevicesService } from '../../dispositivos/devices.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-inicio',
@@ -15,6 +16,7 @@ import { DevicesService } from '../../dispositivos/devices.service';
 export class Inicio {
   public readonly inicioService = inject(InicioService);
   public readonly devicesService = inject(DevicesService);
+  private readonly toastService = inject(ToastService);
 
   readonly stats = this.inicioService.stats;
   readonly acciones = this.inicioService.acciones;

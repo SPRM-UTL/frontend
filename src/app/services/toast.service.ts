@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 export interface Toast {
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  icon?: string;
 }
 
 @Injectable({
@@ -15,23 +17,23 @@ export class ToastService {
 
   toastState$ = this.toastSubject.asObservable();
 
-  show(message: string, type: Toast['type']) {
-    this.toastSubject.next({ message, type });
+  show(message: string, type: Toast['type'], duration?: number, icon?: string) {
+    this.toastSubject.next({ message, type, duration, icon });
   }
 
-  success(message: string) {
-    this.show(message, 'success');
+  success(message: string, duration?: number, icon?: string) {
+    this.show(message, 'success', duration, icon);
   }
 
-  error(message: string) {
-    this.show(message, 'error');
+  error(message: string, duration?: number, icon?: string) {
+    this.show(message, 'error', duration, icon);
   }
 
-  warning(message: string) {
-    this.show(message, 'warning');
+  warning(message: string, duration?: number, icon?: string) {
+    this.show(message, 'warning', duration, icon);
   }
 
-  info(message: string) {
-    this.show(message, 'info');
+  info(message: string, duration?: number, icon?: string) {
+    this.show(message, 'info', duration, icon);
   }
 }

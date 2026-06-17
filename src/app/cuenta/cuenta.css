@@ -374,33 +374,7 @@
   cursor: pointer;
 }
 
-/* --- TOAST --- */
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: var(--cafe-dark);
-  color: var(--white);
-  padding: 1rem 1.75rem;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  font-family: var(--font-body);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  transform: translateY(20px);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-  pointer-events: none;
-  z-index: 1000;
-}
-
-.toast-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* --- SAVE/CANCEL --- */
 
 .icon-mask {
   display: inline-block;
