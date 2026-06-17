@@ -67,8 +67,10 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('nombre');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('token_exp');
     }
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   // 2. MÉTODO PARA OBTENER FECHA: Decodifica el token (ejemplo simple)

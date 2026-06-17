@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
@@ -39,7 +39,7 @@ export type ChartType =
     }
   `]
 })
-export class DynamicChartComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('chartRef') chartComponent: any;
   @ViewChild('chartContainer') containerRef!: ElementRef<HTMLDivElement>;
 
@@ -63,22 +63,23 @@ export class DynamicChartComponent implements AfterViewInit, OnDestroy, OnChange
   private defaultPalette = ['#2bbfaa', '#1f8a7a', '#4cd4c0', '#0e5c50', '#7fe0d0', '#a8f0e0', '#3a9e8c'];
   private seriesNameList: string[] = [];
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    this.buildChartConfig();
+  }
+
   ngAfterViewInit() {
-    this.runAfterFrame(() => {
-      this.buildChartConfig();
-      this.setupResizeObserver();
-      this.forceResize();
-    });
+    this.setupResizeObserver();
+    setTimeout(() => this.forceResize(), 100);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['series'] || changes['categories'] || changes['labels'] ||
         changes['colors'] || changes['chartType'] || changes['height'] ||
         changes['additionalOptions'] || changes['seriesNames']) {
-      this.runAfterFrame(() => {
-        this.buildChartConfig();
-        this.forceResize();
-      });
+      this.buildChartConfig();
+      setTimeout(() => this.forceResize(), 100);
     }
   }
 
@@ -113,7 +114,7 @@ export class DynamicChartComponent implements AfterViewInit, OnDestroy, OnChange
   }
 
   private buildChartConfig() {
-    if (typeof window === 'undefined' || !this.containerRef?.nativeElement) {
+    if (typeof window === 'undefined') {
       return;
     }
 

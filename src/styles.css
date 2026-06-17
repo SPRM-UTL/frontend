@@ -14,40 +14,50 @@ body {
 }
 
 /* ══════════════════════════════
-   PALETAS DE COLOR
+   GLOBAL STYLES & TYPOGRAPHY
 ══════════════════════════════ */
-
-/* Paleta teal — aplicada globalmente */
 :root {
-  --cafe-primary: #2bbfaa;
-  --cafe-dark: #1a7a6e;
-  --cafe-light: #d4f0ec;
-  --bg: #fafaf7;
+  --cafe-primary: #3aafa9;
+  --cafe-dark: #2b7a78;
+  --cafe-light: #f1f5f9;
+  --bg: #ffffff;
   --white: #ffffff;
-  --text-muted: #6b9e98;
+  --text-muted: #8a8a8a;
+  --black: #000000;
+  --red: #e53935;
 
-  --font-title:   'Poppins', sans-serif;
-  --font-heading: 'Sora', sans-serif;
-  --font-body:    'DM Sans', sans-serif;
-  --font-data:    'Inter', sans-serif;
+  /* Font Assignments based on image */
+  --font-title:   'Poppins', sans-serif;   /* For big titles and headers */
+  --font-heading: 'Sora', sans-serif;      /* For section titles and labels */
+  --font-body:    'DM Sans', sans-serif;   /* For general descriptive text */
+  --font-data:    'Inter', sans-serif;     /* For numbers and technical data */
 }
 
-.tema-cafe {
-  --cafe-primary: #b2881a;
-  --cafe-dark: #403d38;
-  --cafe-light: #ccc6ba;
-  --bg: #fafaf7;
-  --white: #ffffff;
-  --text-muted: #6b9e98;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* ══════════════════════════════
-   LAYOUT
-══════════════════════════════ */
-.dashboard-wrapper {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+body {
+  background: #fafaf7;
+  font-family: var(--font-body);
+  color: var(--cafe-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+button, input, select, textarea {
+  font-family: var(--font-body);
+}
+
+.stat-number, .time-text, .mac-cell, .bt-cell {
+  font-family: var(--font-data) !important;
 }
 
 /* ══════════════════════════════
@@ -240,8 +250,28 @@ body {
   }
 
 /* ══════════════════════════════
-   DEVICES SECTION
+   HELPERS
 ══════════════════════════════ */
+.icon-mask {
+  display: inline-block;
+  background-color: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  flex-shrink: 0;
+}
+
+.spin {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 .devices-section {
   background: var(--white);
   border: 1.5px solid var(--cafe-light);

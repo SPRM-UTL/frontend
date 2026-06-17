@@ -11,16 +11,10 @@
   <div class="avatar-section">
     <div class="avatar-wrapper">
       <div class="avatar-circle">
-        <svg width="52" height="52" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" viewBox="0 0 24 24">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
+        <img src="/icons/user.svg" width="52" alt="Avatar" style="filter: brightness(0) invert(1);">
       </div>
       <button class="avatar-edit-btn" (click)="onEditAvatar()">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-        </svg>
+        <img src="/icons/pencil.svg" width="14" alt="Editar">
       </button>
     </div>
     <div class="avatar-info">
@@ -45,10 +39,7 @@
                (keydown.escape)="cancelEdit()" />
         <div class="field-actions">
           <button class="field-btn-icon" *ngIf="editingField !== 'nombre'" (click)="startEdit('nombre', userName())">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
+            <img src="/icons/pencil.svg" width="16" alt="Editar">
           </button>
           <div class="save-cancel" *ngIf="editingField === 'nombre'">
             <button class="btn-save" (click)="saveField('nombre')">Guardar</button>
@@ -71,10 +62,7 @@
                (keydown.escape)="cancelEdit()" />
         <div class="field-actions">
           <button class="field-btn-icon" *ngIf="editingField !== 'correo'" (click)="startEdit('correo', userEmail())">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
+            <img src="/icons/pencil.svg" width="16" alt="Editar">
           </button>
           <div class="save-cancel" *ngIf="editingField === 'correo'">
             <button class="btn-save" (click)="saveField('correo')">Guardar</button>
@@ -98,10 +86,7 @@
                (keydown.escape)="cancelEdit()" />
         <div class="field-actions">
           <button class="field-btn-icon" *ngIf="editingField !== 'password'" (click)="startEdit('password', '')">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
+            <img src="/icons/pencil.svg" width="16" alt="Editar">
           </button>
           <div class="save-cancel" *ngIf="editingField === 'password'">
             <button class="btn-save" (click)="saveField('password')">Guardar</button>
@@ -115,9 +100,7 @@
 
   <!-- Toast -->
   <div class="toast" [class.toast-visible]="toastVisible">
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
+    <img src="/icons/check.svg" width="16" alt="Guardado" style="filter: brightness(0) invert(1);">
     Cambios guardados correctamente
   </div>
 

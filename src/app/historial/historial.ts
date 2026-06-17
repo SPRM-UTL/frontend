@@ -2,25 +2,13 @@ import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HistorialService } from './historial.service';
-import {
-  LucideLightbulb,
-  LucideTv,
-  LucideSpeaker,
-  LucideFan,
-  LucideAirVent
-} from '@lucide/angular';
 
 @Component({
-  selector: 'app-historial',  
+  selector: 'app-historial',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    LucideLightbulb,
-    LucideTv,
-    LucideSpeaker,
-    LucideFan,
-    LucideAirVent
+    FormsModule
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css'
@@ -30,14 +18,9 @@ export class Historial implements OnInit {
 
   readonly searchQuery = signal('');
 
-  /**
-   * Filtrado reactivo mediante computed sobre la señal de actividades del servicio
-   */
   readonly actividadesFiltradas = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
     const lista = this.historialService.actividades();
-    
-    // Verificación de seguridad por si la lista no es un arreglo válido aún
     if (!Array.isArray(lista)) return [];
     if (!q) return lista;
 
@@ -49,16 +32,39 @@ export class Historial implements OnInit {
     );
   });
 
-  // Vinculación directa a los estados de carga y error del servicio
   readonly loading = this.historialService.loading;
   readonly error   = this.historialService.error;
 
   ngOnInit(): void {
-    // Disparo directo y limpio: el servicio se encarga de la suscripción interna
     this.historialService.loadHistorial();
   }
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
+  }
+
+  getIconPath(icono: string | undefined): string {
+    if (!icono) return '/icons/sparkles.svg';
+    const iconMap: Record<string, string> = {
+      'lightbulb': 'lightbulb.svg',
+      'tv': 'tv.svg',
+      'speaker': 'speaker.svg',
+      'fan': 'fan.svg',
+      'camera': 'camera.svg',
+      'lock': 'lock.svg',
+      'wifi': 'wifi.svg',
+      'bolt': 'bolt.svg',
+      'hand': 'hand.svg'
+    };
+    return `/icons/${iconMap[icono] || 'sparkles.svg'}`;
+  }
+
+  getMethodIcon(metodo: string | undefined): string {
+    const m = (metodo || '').toLowerCase();
+    if (m.includes('gesto')) return '/icons/hand.svg';
+    if (m.includes('app') || m.includes('móvil')) return '/icons/smartphone.svg';
+    if (m.includes('auto')) return '/icons/bolt.svg';
+    if (m.includes('voz')) return '/icons/mic.svg';
+    return '/icons/sparkles.svg';
   }
 }

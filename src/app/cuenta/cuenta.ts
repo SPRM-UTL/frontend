@@ -1,6 +1,6 @@
 // cuenta.ts
 
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CuentaService } from './cuenta.service';
@@ -11,7 +11,11 @@ import { CuentaService } from './cuenta.service';
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
 })
-export class Cuenta {
+export class Cuenta implements OnInit {
+
+  ngOnInit(): void {
+    this.cuentaService.loadPerfil();
+  }
 
   private cuentaService = inject(CuentaService);
 

@@ -1,38 +1,17 @@
 import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import {
   Router,
-  NavigationStart,
-  NavigationEnd,
-  NavigationCancel,
-  NavigationError,
   RouterLink,
   RouterLinkActive,
   RouterOutlet
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { LoaderService } from '../services/loader.service';
 import { AuthService } from '../services/auth.service';
 import { CuentaService } from '../cuenta/cuenta.service';
 import { InicioService } from './inicio/inicio.service';
 import { HistorialService } from '../historial/historial.service';
 import { Actividad } from '../historial/actividad.model';
-
-import {
-  LucideBell,
-  LucideSun,
-  LucideHand,
-  LucideAlertTriangle,
-  LucideZap,
-  LucideInfo,
-  LucideCamera,
-  LucideWifi,
-  LucideLock,
-  LucideFan,
-  LucideSpeaker,
-  LucideTv,
-  LucideLightbulb
-} from '@lucide/angular';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,34 +20,17 @@ import {
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    CommonModule,
-
-    // Lucide (standalone)
-    LucideBell,
-    LucideSun,
-    LucideHand,
-    LucideAlertTriangle,
-    LucideZap,
-    LucideInfo,
-    LucideCamera,
-    LucideWifi,
-    LucideLock,
-    LucideFan,
-    LucideSpeaker,
-    LucideTv,
-    LucideLightbulb
+    CommonModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class Dashboard {
-  private routerSub?: Subscription;
   private timerId?: any;
 
   // Servicios inyectados
   private authService = inject(AuthService);
   private router = inject(Router);
-  private loaderService = inject(LoaderService);
   private historialService = inject(HistorialService);
 
   // Inyectamos ambos de forma pública para usarlos correctamente en el HTML
@@ -90,6 +52,15 @@ export class Dashboard {
   // Panel de notificaciones
   readonly panelOpen = signal(false);
 
+  // Control del menú móvil (Flotante)
+  readonly menuOpen = signal(false);
+
+  // Control de fecha móvil
+  readonly datePanelOpen = signal(false);
+
+  // Control del sidebar (ChatGPT Style)
+  readonly sidebarCollapsed = signal(true);
+
   readonly recentActivities = computed(() => {
     const all = this.historialService.actividades();
     if (!Array.isArray(all)) return [];
@@ -106,17 +77,6 @@ export class Dashboard {
     // Clock
     this.updateClock();
     this.timerId = setInterval(() => this.updateClock(), 1000);
-
-    // Router loader
-    this.routerSub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.loaderService.show();
-      }
-
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
-        setTimeout(() => this.loaderService.hide(), 400);
-      }
-    });
 
     // SSR-safe: cargar historial únicamente en cliente
     afterNextRender(() => {
@@ -138,7 +98,6 @@ export class Dashboard {
   }
 
   ngOnDestroy() {
-    if (this.routerSub) this.routerSub.unsubscribe();
     if (this.timerId) clearInterval(this.timerId);
   }
 
@@ -166,54 +125,37 @@ export class Dashboard {
       .toUpperCase();
   }
 
-  // Referencias para usar en el template (switch).
-  readonly lucideBell = LucideBell;
-  readonly lucideSun = LucideSun;
-  readonly lucideHand = LucideHand;
-  readonly lucideAlertTriangle = LucideAlertTriangle;
-  readonly lucideZap = LucideZap;
-  readonly lucideInfo = LucideInfo;
-  readonly lucideCamera = LucideCamera;
-  readonly lucideWifi = LucideWifi;
-  readonly lucideLock = LucideLock;
-  readonly lucideFan = LucideFan;
-  readonly lucideSpeaker = LucideSpeaker;
-  readonly lucideTv = LucideTv;
-  readonly lucideLightbulb = LucideLightbulb;
-
-  lucideIconForActivity(a: Actividad): any {
-
-    // Error override
-    if (a.estado === 'Error') return LucideAlertTriangle;
+  iconPathForActivity(a: Actividad): string {
+    if (a.estado === 'Error') return '/icons/triangle-alert.svg';
 
     const accion = (a.accion ?? '').toLowerCase();
     const icono = (a.icono ?? '').toLowerCase();
 
     const hayEncendido = accion.includes('encend') || accion.includes('on') || icono.includes('bolt') || icono.includes('zap');
-    if (hayEncendido) return LucideZap;
+    if (hayEncendido) return '/icons/cloud-lightning.svg';
 
     const hayCamara = icono.includes('camera') || accion.includes('cám') || accion.includes('cam');
-    if (hayCamara) return LucideCamera;
+    if (hayCamara) return '/icons/camera.svg';
 
     const hayWifi = icono.includes('wifi') || accion.includes('wifi') || accion.includes('red');
-    if (hayWifi) return LucideWifi;
+    if (hayWifi) return '/icons/wifi.svg';
 
     const hayLock = icono.includes('lock') || accion.includes('bloq') || accion.includes('segur');
-    if (hayLock) return LucideLock;
+    if (hayLock) return '/icons/lock.svg';
 
     const hayFan = icono.includes('fan') || accion.includes('ventil') || accion.includes('aire');
-    if (hayFan) return LucideFan;
+    if (hayFan) return '/icons/fan.svg';
 
     const haySpeaker = icono.includes('speaker') || accion.includes('altav') || accion.includes('audio');
-    if (haySpeaker) return LucideSpeaker;
+    if (haySpeaker) return '/icons/speaker.svg';
 
     const hayTv = icono.includes('tv') || accion.includes('tv') || accion.includes('tele');
-    if (hayTv) return LucideTv;
+    if (hayTv) return '/icons/tv.svg';
 
     const hayLight = icono.includes('lightbulb') || icono.includes('light') || accion.includes('luz') || accion.includes('ilumin');
-    if (hayLight) return LucideLightbulb;
+    if (hayLight) return '/icons/lightbulb.svg';
 
-    return LucideInfo;
+    return '/icons/sparkles.svg';
   }
 
   togglePanel(): void {
@@ -223,5 +165,16 @@ export class Dashboard {
   closePanel(): void {
     this.panelOpen.set(false);
   }
-}
 
+  toggleSidebar(): void {
+    this.sidebarCollapsed.set(!this.sidebarCollapsed());
+  }
+
+  toggleMenu(): void {
+    this.menuOpen.set(!this.menuOpen());
+  }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+}
