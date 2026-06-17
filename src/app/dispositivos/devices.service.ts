@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { map,Observable } from 'rxjs';
 
 import { Device } from './device.model';
-
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
 interface ApiResponse {
   success: boolean;
   status: number;
@@ -17,9 +18,8 @@ export class DevicesService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl =
-    'http://localhost:5295/api/aparatos';
-
+  //private readonly apiUrl = 'http://localhost:5295/api/aparatos';
+  private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}`;
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);
   public devices = signal<Device[]>([]);

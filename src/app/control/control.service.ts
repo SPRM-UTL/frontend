@@ -6,10 +6,11 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 // Importa las interfaces o tipados (modelos de datos) para asegurar que la información que manejamos tenga la estructura correcta.
 import { Luz, Bocina, Ventilador, Categoria } from './control.model';
-
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
 // Define una constante con la ruta base de la API para no tener que escribir '/api/control' en cada petición.
-const BASE_URL = 'http://localhost:5295/api/aparatos/control';
-
+//const BASE_URL = 'http://localhost:5295/api/aparatos/control';
+const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.control}`;
 export interface ControlResponse {
   luces: Luz[];
   bocinas: Bocina[];

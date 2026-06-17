@@ -2,7 +2,8 @@ import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Actividad } from '../historial/actividad.model'; // Asegura que esta ruta sea la correcta
-
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
 // Definimos la estructura exacta que el middleware entrega
 interface ApiResponse {
   success: boolean;
@@ -17,8 +18,8 @@ export class HistorialService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
-
+ // private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
+  private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
   // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);

@@ -3,8 +3,9 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-
-const BASE_URL = '/api/cuenta';
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
+const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
 
 export interface UserProfile {
   nombre: string;
@@ -21,7 +22,7 @@ export class CuentaService {
   readonly error   = signal<string | null>(null);
 
   constructor(private http: HttpClient) {}
-
+ 
   // ─────────────────────────────────────────
   //  GET /api/cuenta/perfil
   //  Carga los datos del usuario al iniciar.
