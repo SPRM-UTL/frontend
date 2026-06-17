@@ -1,9 +1,8 @@
-import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Actividad } from '../historial/actividad.model'; // Asegura que esta ruta sea la correcta
+import { Actividad } from '../historial/actividad.model';
 
-// Definimos la estructura exacta que el middleware entrega
 interface ApiResponse {
   success: boolean;
   status: number;
@@ -14,44 +13,64 @@ interface ApiResponse {
   providedIn: 'root'
 })
 export class HistorialService {
-
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
+  // URL directa de producción en Render
+  private readonly apiUrl = 'https://backend-neao.onrender.com/api/Fact_Historico_Actividad';
 
-  // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);
   public actividades = signal<Actividad[]>([]);
 
- loadHistorial(): void {
-
-  this.loading.set(true);
-  this.error.set(null);
-
-  this.http.get<ApiResponse>(this.apiUrl)
-    .pipe(
-      map(response => response.data)
-    )
-    .subscribe({
-
-      next: (data: Actividad[]) => {
-
-        this.actividades.set(data);
-
-        this.loading.set(false);
-      },
-
-      error: (err) => {
-
-        console.error(err);
-
-        this.error.set(
-          'No se pudo cargar el historial.'
-        );
-
-        this.loading.set(false);
-      }
+  /**
+   * Obtiene los headers con el token de localStorage de forma segura para SSR
+   */
+  private getHeaders(): HttpHeaders {
+    let token = '';
+    if (typeof window !== 'undefined' && window.localStorage) {
+      token = localStorage.getItem('token') ?? '';
+    }
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
+  }
+
+  /**
+   * Carga el historial mediante suscripción interna directa (Void) - Para tu componente
+   */
+  loadHistorial(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http.get<ApiResponse>(this.apiUrl, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response?.data || response)
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.actividades.set(Array.isArray(data) ? data : []);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.error.set('No se pudo cargar el historial.');
+          this.loading.set(false);
+        }
+      });
+  }
+
+  /**
+   * Método especial para forkJoin en el Inicio Dashboard (Regresa Observable)
+   */
+  getHistorialObservable(): Observable<Actividad[]> {
+    return this.http.get<ApiResponse>(this.apiUrl, { headers: this.getHeaders() }).pipe(
+      map(response => {
+        const data = response?.data || response;
+        const arrayData = Array.isArray(data) ? data : [];
+        this.actividades.set(arrayData); // Sincroniza la señal por si acaso
+        return arrayData;
+      })
+    );
   }
 }

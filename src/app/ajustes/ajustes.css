@@ -1,0 +1,124 @@
+/* ajustes.css — estilos exclusivos de la página de ajustes */
+
+.ajustes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 860px;
+}
+
+.config-card {
+  background: var(--white);
+  border: 1.5px solid var(--cafe-light);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.config-header {
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1.5px solid var(--cafe-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.config-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.config-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(43, 191, 170, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cafe-primary);
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.config-icon-img {
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: var(--cafe-primary);
+}
+
+.config-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--cafe-dark);
+  font-family: var(--font-heading);
+  margin-bottom: 0.1rem;
+}
+
+.config-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
+  padding: 1.1rem 1.5rem 1.5rem;
+}
+
+.kv {
+  background: rgba(212, 240, 236, 0.25);
+  border: 1.5px solid rgba(212, 240, 236, 0.7);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  min-height: 64px;
+}
+
+.kv-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-data);
+  margin-bottom: 0.35rem;
+}
+
+.kv-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cafe-dark);
+  font-family: var(--font-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note {
+  background: rgba(43, 191, 170, 0.08);
+  border: 1.5px solid rgba(43, 191, 170, 0.22);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  color: var(--cafe-dark);
+}
+
+.note p {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .config-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .config-grid { grid-template-columns: 1fr; }
+}
+

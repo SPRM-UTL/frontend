@@ -1,60 +1,175 @@
-// inicio.service.ts
+import { Injectable, signal, inject } from '@angular/core';
+import { catchError, finalize, forkJoin, map, of } from 'rxjs';
+import { Device } from '../../dispositivos/device.model';
+import { Gesto } from '../../gestos/gesto.model';
+import { Actividad } from '../../historial/actividad.model';
+import { DevicesService } from '../../dispositivos/devices.service';
+import { GestosService } from '../../gestos/gestos.service';
+import { HistorialService } from '../../historial/historial.service';
 
-import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
-
-const BASE_URL = '/api/inicio';
-
-export interface DashboardStats {
-  gestosGuardados: number;
-  automatizaciones: number;
-  dispositivosVinculados: number;
-  accionesHoy: number;
-  devicesOnline: number;
-  activeAutomations: number;
-  userName: string;
-}
-
-export interface AccionRapida {
-  id: number;
-  cantidad: number;
-  label: string;
-  icon: string;
-}
+// Importación de tus interfaces reales de dashboard
+import { DashboardStats, UltimoGesto, AparatoUtilizado } from './inicio.model';
 
 @Injectable({ providedIn: 'root' })
 export class InicioService {
+  private devicesService = inject(DevicesService);
+  private gestosService = inject(GestosService);
+  private historialService = inject(HistorialService);
 
-  readonly stats    = signal<DashboardStats | null>(null);
-  readonly acciones = signal<AccionRapida[]>([]);
-
+  readonly stats = signal<DashboardStats | null>(null);
+  readonly acciones = signal<AparatoUtilizado[]>([]);
   readonly loading = signal<boolean>(false);
-  readonly error   = signal<string | null>(null);
+  readonly error = signal<string | null>(null);
 
-  constructor(private http: HttpClient) {}
-
-  // ─────────────────────────────────────────
-  //  GET /api/inicio/stats + /api/inicio/acciones
-  // ─────────────────────────────────────────
-  loadInicio(): void {
+  loadInicio(id: number, token: string): void {
     this.loading.set(true);
     this.error.set(null);
 
+    const fallbackName = typeof localStorage !== 'undefined'
+      ? localStorage.getItem('nombre') ?? 'Usuario'
+      : 'Usuario';
+
+    const fallbackStats: DashboardStats = {
+      gestosGuardados: 0,
+      automatizaciones: 0,
+      dispositivosVinculados: 0,
+      accionesHoy: 0,
+      devicesOnline: 0,
+      activeAutomations: 0,
+      userName: fallbackName,
+      dispositivosActivos: 0,
+      estadoConexion: 'Desconectado',
+      ultimoGesto: null,
+      aparatosUtilizados: [],
+      actividadReciente: []
+    };
+
     forkJoin({
-      stats:    this.http.get<DashboardStats>(`${BASE_URL}/stats`),
-      acciones: this.http.get<AccionRapida[]>(`${BASE_URL}/acciones`),
-    }).subscribe({
-      next: ({ stats, acciones }) => {
+      // ── SOLUCIÓN DE ERRORES DE COMPILACIÓN EN EL FORKJOIN ──
+      // 1. Usamos getDevicesObservable() que sí retorna un flujo reactivo frío en vez de void.
+      dispositivos: this.devicesService.getDevicesObservable(),
+      // 2. loadGestos sigue retornando un Observable clásico, se queda igual.
+      gestos: this.gestosService.loadGestos(token),
+      // 3. Usamos getHistorialObservable() que también retorna un flujo reactivo frío.
+      historial: this.historialService.getHistorialObservable()
+    }).pipe(
+      map(({ dispositivos, gestos, historial }) => {
+        const dispositivosData = Array.isArray(dispositivos) ? dispositivos : [];
+        const gestosData = Array.isArray(gestos) ? gestos : [];
+        const actividades = Array.isArray(historial) ? historial : [];
+
+        const userName = typeof localStorage !== 'undefined'
+          ? localStorage.getItem('nombre') ?? fallbackName
+          : fallbackName;
+        const estadoConexion = dispositivosData.length > 0 ? 'En línea' : 'Desconectado';
+        const ultimoGesto = this.obtenerUltimoGesto(gestosData, actividades);
+        const aparatosUtilizados = this.obtenerAparatosUtilizados(dispositivosData, actividades);
+        const dispositivosActivos = this.contarDispositivosActivos(actividades);
+        const accionesHoy = this.contarAccionesHoy(actividades);
+
+        const stats: DashboardStats = {
+          gestosGuardados: gestosData.length,
+          automatizaciones: 0,
+          dispositivosVinculados: dispositivosData.length,
+          accionesHoy,
+          devicesOnline: dispositivosData.length,
+          activeAutomations: 0,
+          userName,
+          dispositivosActivos,
+          estadoConexion,
+          ultimoGesto,
+          aparatosUtilizados,
+          actividadReciente: actividades.slice(0, 5)
+        };
+
+        this.acciones.set(aparatosUtilizados);
+        return stats;
+      }),
+      catchError((err) => {
+        console.error('Error en loadInicio:', err);
+        this.error.set('No se pudo cargar la información del dashboard.');
+        this.acciones.set([]);
+        return of(fallbackStats);
+      }),
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: (stats) => {
         this.stats.set(stats);
-        this.acciones.set(acciones);
-        this.loading.set(false);
-      },
-      error: err => {
-        this.error.set('No se pudo cargar el dashboard.');
-        this.loading.set(false);
-        console.error(err);
       }
     });
+  }
+
+  private obtenerUltimoGesto(gestos: Gesto[], actividades: Actividad[]): UltimoGesto | null {
+    if (actividades.length === 0) return null;
+
+    const ultimaActividad = actividades[0];
+    const gesto = gestos.find(g =>
+      g.nombre_gesto.toLowerCase().includes(ultimaActividad.accion.toLowerCase())
+    );
+
+    return {
+      nombre: gesto?.nombre_gesto || ultimaActividad.accion,
+      icono: gesto?.icono,
+      accionEjecutada: ultimaActividad.dispositivo,
+      timestamp: ultimaActividad.hora
+    };
+  }
+
+  private obtenerAparatosUtilizados(dispositivos: Device[], actividades: Actividad[]): AparatoUtilizado[] {
+    const contadores: Record<string, { dispositivo: Device; count: number }> = {};
+
+    actividades.forEach(actividad => {
+      const dispositivo = dispositivos.find(d =>
+        d.nombre_aparato.toLowerCase() === actividad.dispositivo.toLowerCase()
+      );
+
+      if (dispositivo) {
+        const key = String(dispositivo.sk_aparato_id);
+        if (!contadores[key]) {
+          contadores[key] = { dispositivo, count: 0 };
+        }
+        contadores[key].count++;
+      }
+    });
+
+    return Object.values(contadores)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5)
+      .map(item => ({
+        sk_aparato_id: item.dispositivo.sk_aparato_id,
+        nombre_aparato: item.dispositivo.nombre_aparato,
+        tipo_aparato: item.dispositivo.tipo_aparato,
+        icono: item.dispositivo.icono,
+        veces_utilizado: item.count
+      }));
+  }
+
+  private contarDispositivosActivos(actividades: Actividad[]): number {
+    const ahora = new Date();
+    const hace2Horas = new Date(ahora.getTime() - 2 * 60 * 60 * 1000);
+    const dispositivosActivos = new Set<string>();
+
+    actividades.forEach(actividad => {
+      try {
+        const partes = actividad.hora?.split(':') ?? [];
+        if (partes.length >= 2) {
+          const [hora, minuto] = partes.map(Number);
+          const fecha = new Date();
+          fecha.setHours(hora, minuto);
+
+          if (fecha >= hace2Horas && fecha <= ahora) {
+            dispositivosActivos.add(actividad.dispositivo);
+          }
+        }
+      } catch {
+        // Formato inválido ignorado de forma segura
+      }
+    });
+
+    return dispositivosActivos.size;
+  }
+
+  private contarAccionesHoy(actividades: Actividad[]): number {
+    return actividades.length;
   }
 }

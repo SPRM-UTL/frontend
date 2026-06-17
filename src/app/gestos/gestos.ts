@@ -1,17 +1,18 @@
-import { Component, computed, OnInit, signal, inject } from '@angular/core';
+import { Component, computed, signal, inject, afterNextRender } from '@angular/core'; // <-- Cambiamos OnInit por afterNextRender
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GestosService } from './gestos.service';
 import { Gesto } from './gesto.model';
-import { LucideHand, LucideUser,} from '@lucide/angular'
+import { LucideHand, LucideUser } from '@lucide/angular';
 
 @Component({
   selector: 'app-gestos',
+  standalone: true,
   imports: [CommonModule, FormsModule, LucideHand, LucideUser],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
 })
-export class Gestos implements OnInit {
+export class Gestos { // <-- Quitamos "implements OnInit"
 
   private gestosService = inject(GestosService);
 
@@ -19,7 +20,7 @@ export class Gestos implements OnInit {
 
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-     return q
+    return q
     ? this.gestosService.gestos().filter(g =>
         (g.nombre_gesto ?? '').toLowerCase().includes(q) ||
         (g.tipo_disparador_nombre ?? '').toLowerCase().includes(q) ||
@@ -35,8 +36,15 @@ export class Gestos implements OnInit {
   readonly loading = this.gestosService.loading;
   readonly error   = this.gestosService.error;
 
-  ngOnInit(): void {
-    this.gestosService.loadGestos();
+  constructor() {
+    // ── DISPARO SEGURO Y COMPLETO EN EL NAVEGADOR ──
+    afterNextRender(() => {
+      // Nos suscribimos explícitamente para activar el flujo frío y que Render responda
+      this.gestosService.loadGestos().subscribe({
+        next: (data) => console.log('Gestos cargados en componente:', data),
+        error: (err) => console.error('Error al activar la petición de gestos:', err)
+      });
+    });
   }
 
   onSearch(value: string): void {

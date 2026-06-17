@@ -111,30 +111,36 @@ export class Login {
     .subscribe({
 
       next: (response) => {
+        const payload = response?.data ?? response;
+        const data = payload?.data ?? payload;
 
-        console.log(response);
+        const token = data?.token ?? payload?.token ?? '';
+        const nombre = data?.nombre ?? payload?.nombre ?? data?.name ?? payload?.name
+          ?? data?.usuario?.nombre ?? payload?.usuario?.nombre
+          ?? data?.user?.nombre ?? payload?.user?.nombre
+          ?? data?.user?.name ?? payload?.user?.name
+          ?? '';
+        const userId = data?.id ?? payload?.id ?? data?.userId ?? payload?.userId
+          ?? data?.usuario?.id ?? payload?.usuario?.id
+          ?? data?.user?.id ?? payload?.user?.id
+          ?? data?.user?.userId ?? payload?.user?.userId;
 
-        localStorage.setItem(
-          'token',
-          response.data.token
-        );
+        if (token) {
+          localStorage.setItem('token', token);
+        }
 
-        localStorage.setItem(
-          'nombre',
-          response.data.nombre
-        );
+        if (nombre) {
+          localStorage.setItem('nombre', nombre);
+        }
 
-        this.toastService.success(
-          'Bienvenido'
-        );
+        if (userId) {
+          localStorage.setItem('userId', String(userId));
+        }
 
-        // limpiar formulario
+        this.toastService.success('Bienvenido');
 
         this.correo = '';
-
         this.contrasenia = '';
-
-        // redireccionar
 
         this.router.navigate(['/dashboard']);
       },

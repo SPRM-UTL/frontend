@@ -1,63 +1,143 @@
-<div class="dashboard-wrapper">
-
-
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar">
+<div class="dashboard-wrapper" (click)="closePanel()">
+  <aside class="sidebar" (click)="$event.stopPropagation()">
     <div class="sidebar-logo">
-        <img src="icons/logo.svg" class="logo-icon" alt="Logo">
-      <div class="logo-text">
-        <span class="logo-name">Manordomo</span>
-        <!-- <span class="logo-sub">Smart Home</span> -->
-      </div>
+      <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
+      <div class="logo-text"><span class="logo-name">Manordomo</span></div>
     </div>
 
-   <nav class="sidebar-nav">
-  <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active">
-    <img src="icons/layout-dashboard.svg" class="nav-icon-img" alt="Dashboard">
-    <span class="nav-text">Dashboard</span>
-  </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active">
+        <img src="/icons/layout-dashboard.svg" class="nav-icon-img" alt="Dashboard">
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active">
+        <img src="/icons/smartphone.svg" class="nav-icon-img" alt="Dispositivos">
+        <span class="nav-text">Dispositivos</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active">
+        <img src="/icons/hand.svg" class="nav-icon-img" alt="Gestos">
+        <span class="nav-text">Gestos</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active">
+        <img src="/icons/clock.svg" class="nav-icon-img" alt="Historial de actividad">
+        <span class="nav-text">Historial de actividad</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active">
+        <img src="/icons/pencil.svg" class="nav-icon-img" alt="Control">
+        <span class="nav-text">Control</span>
+      </a>
+    </nav>
 
-  <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active">
-    <img src="icons/smartphone.svg" class="nav-icon-img" alt="Dispositivos">
-    <span class="nav-text">Dispositivos</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active">
-    <img src="icons/hand.svg" class="nav-icon-img" alt="Gestos">
-    <span class="nav-text">Gestos</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active">
-    <img src="icons/clock.svg" class="nav-icon-img" alt="Historial de actividad">
-    <span class="nav-text">Historial de actividad</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active">
-    <img src="icons/pencil.svg" class="nav-icon-img" alt="Control">
-    <span class="nav-text">Control</span>
-  </a>
-</nav>
-
-<div class="sidebar-bottom">
-  <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active">
-    <img src="icons/bolt.svg" class="nav-icon-img" alt="Ajustes">
-    <span class="nav-text">Ajustes</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active">
-    <img src="icons/user.svg" class="nav-icon-img" alt="Cuenta">
-    <span class="nav-text">Cuenta</span>
-  </a>
-
-  <a class="nav-item signout" (click)="onLogout()" style="cursor: pointer;">
-    <img src="icons/log-out.svg" class="nav-icon-img" alt="Salir">
-    <span class="nav-text">Salir</span>
-  </a>
-</div>
+    <div class="sidebar-bottom">
+      <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active">
+        <img src="/icons/bolt.svg" class="nav-icon-img" alt="Ajustes">
+        <span class="nav-text">Ajustes</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active">
+        <img src="/icons/user.svg" class="nav-icon-img" alt="Cuenta">
+        <span class="nav-text">Cuenta</span>
+      </a>
+      <a class="nav-item signout" (click)="onLogout(); $event.stopPropagation();" style="cursor: pointer;">
+        <img src="/icons/log-out.svg" class="nav-icon-img" alt="Salir">
+        <span class="nav-text">Salir</span>
+      </a>
+    </div>
   </aside>
 
-  <main class="dashboard-main">
+  <header class="top-bar">
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Dashboard</p>
+        <h1>
+          ¡Buenos días, {{ userName() }}!
+          <svg lucideHand [size]="18" class="wave-icon" aria-hidden="true"></svg>
+        </h1>
+
+        <p class="hero-subtitle">
+          {{ inicioService.stats()?.devicesOnline ?? 0 }} dispositivos conectados ·
+          {{ inicioService.stats()?.activeAutomations ?? 0 }} automatizaciones activas
+        </p>
+      </div>
+
+      <div class="hero-actions" (click)="$event.stopPropagation()">
+        <button class="notif-button" type="button" aria-label="Notificaciones" (click)="togglePanel()">
+          <svg lucideBell [size]="20"></svg>
+          @if (notifCount() > 0) {
+            <span class="notif-badge">{{ notifCount() }}</span>
+          }
+        </button>
+
+        @if (panelOpen()) {
+          <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones" (click)="$event.stopPropagation()">
+            @if (panelLoading()) {
+              <div class="notif-empty">
+                <span class="notif-spin">
+                  <svg lucideSun [size]="18"></svg>
+                </span>
+                <p>Cargando notificaciones…</p>
+              </div>
+            } @else if (panelError()) {
+              <div class="notif-empty">
+                <p>{{ panelError() }}</p>
+              </div>
+            } @else {
+              <div class="notif-list">
+                @for (a of recentActivities(); track a.id) {
+                  <article class="notif-item">
+                    <span class="notif-icon">
+                      <svg
+                        [attr.data-kind]="a.estado"
+                        [ngSwitch]="true">
+                      </svg>
+
+                      <ng-container [ngSwitch]="lucideIconForActivity(a)">
+                        <svg *ngSwitchCase="lucideAlertTriangle" lucideAlertTriangle [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideZap" lucideZap [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideCamera" lucideCamera [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideWifi" lucideWifi [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideLock" lucideLock [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideFan" lucideFan [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideSpeaker" lucideSpeaker [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideTv" lucideTv [size]="16"></svg>
+                        <svg *ngSwitchCase="lucideLightbulb" lucideLightbulb [size]="16"></svg>
+                        <svg *ngSwitchDefault lucideInfo [size]="16"></svg>
+                      </ng-container>
+                    </span>
+
+                    <div class="notif-content">
+                      <p class="notif-action">{{ a.accion }}</p>
+                      <p class="notif-meta">{{ a.dispositivo }} · {{ a.hora }}</p>
+                    </div>
+
+                    <span class="notif-status" [class.is-error]="a.estado === 'Error'">
+                      {{ a.estado }}
+                    </span>
+                  </article>
+                }
+
+                @if (recentActivities().length === 0) {
+                  <div class="notif-empty">
+                    <p>No hay actividad reciente</p>
+                  </div>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        <div class="date-pill">
+          <svg lucideSun [size]="18" class="date-icon" aria-hidden="true"></svg>
+          <div>
+            <strong>{{ dayLabel }}</strong>
+            <span>{{ timeLabel }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main class="dashboard-main" (click)="$event.stopPropagation()">
     <router-outlet />
   </main>
-
 </div>
+

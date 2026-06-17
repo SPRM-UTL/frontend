@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs';
 import { Luz, Bocina, Ventilador, Categoria } from './control.model';
 
 // Define una constante con la ruta base de la API para no tener que escribir '/api/control' en cada petición.
-const BASE_URL = 'http://localhost:5295/api/aparatos/control';
+const BASE_URL = 'https://backend-neao.onrender.com/api/aparatos/control';
 
 export interface ControlResponse {
   luces: Luz[];
