@@ -1,9 +1,10 @@
 // cuenta.ts
 
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CuentaService } from './cuenta.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-cuenta',
@@ -11,9 +12,14 @@ import { CuentaService } from './cuenta.service';
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
 })
-export class Cuenta {
+export class Cuenta implements OnInit {
+
+  ngOnInit(): void {
+    this.cuentaService.loadPerfil();
+  }
 
   private cuentaService = inject(CuentaService);
+  private authService = inject(AuthService);
 
   readonly userName  = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
@@ -33,7 +39,7 @@ export class Cuenta {
     this.editingField = field;
     this.editValue = currentValue;
     setTimeout(() => {
-      document.querySelector<HTMLInputElement>('.field-input')?.focus();
+      document.querySelector<HTMLInputElement>('.info-input')?.focus();
     }, 50);
   }
 
@@ -60,6 +66,10 @@ export class Cuenta {
   cancelEdit(): void {
     this.editingField = null;
     this.editValue = '';
+  }
+
+  onLogout(): void {
+    this.authService.logout();
   }
 
   private showToast(): void {

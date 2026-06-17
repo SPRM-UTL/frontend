@@ -1,63 +1,147 @@
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.menu-open]="menuOpen()" (click)="closePanel(); closeMenu(); datePanelOpen.set(false)">
 
+  <!-- Overlay para cerrar el menú al tocar fuera en móvil -->
+  <div class="sidebar-overlay" *ngIf="menuOpen()" (click)="closeMenu()"></div>
 
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar">
+  <aside class="sidebar" (click)="$event.stopPropagation()">
     <div class="sidebar-logo">
-        <img src="icons/logo.svg" class="logo-icon" alt="Logo">
-      <div class="logo-text">
-        <span class="logo-name">Manordomo</span>
-        <!-- <span class="logo-sub">Smart Home</span> -->
-      </div>
+      <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
+      <div class="logo-text"><span class="logo-name">Manordomo</span></div>
+      <button class="mobile-close-btn" (click)="closeMenu()">
+        <span class="icon-mask" style="mask-image: url('/icons/x.svg'); -webkit-mask-image: url('/icons/x.svg');"></span>
+      </button>
     </div>
 
-   <nav class="sidebar-nav">
-  <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active">
-    <img src="icons/layout-dashboard.svg" class="nav-icon-img" alt="Dashboard">
-    <span class="nav-text">Dashboard</span>
-  </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg');"></span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg');"></span>
+        <span class="nav-text">Dispositivos</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
+        <span class="nav-text">Gestos</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+        <span class="nav-text">Historial de actividad</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+        <span class="nav-text">Control</span>
+      </a>
+    </nav>
 
-  <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active">
-    <img src="icons/smartphone.svg" class="nav-icon-img" alt="Dispositivos">
-    <span class="nav-text">Dispositivos</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active">
-    <img src="icons/hand.svg" class="nav-icon-img" alt="Gestos">
-    <span class="nav-text">Gestos</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active">
-    <img src="icons/clock.svg" class="nav-icon-img" alt="Historial de actividad">
-    <span class="nav-text">Historial de actividad</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active">
-    <img src="icons/pencil.svg" class="nav-icon-img" alt="Control">
-    <span class="nav-text">Control</span>
-  </a>
-</nav>
-
-<div class="sidebar-bottom">
-  <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active">
-    <img src="icons/bolt.svg" class="nav-icon-img" alt="Ajustes">
-    <span class="nav-text">Ajustes</span>
-  </a>
-
-  <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active">
-    <img src="icons/user.svg" class="nav-icon-img" alt="Cuenta">
-    <span class="nav-text">Cuenta</span>
-  </a>
-
-  <a class="nav-item signout" (click)="onLogout()" style="cursor: pointer;">
-    <img src="icons/log-out.svg" class="nav-icon-img" alt="Salir">
-    <span class="nav-text">Salir</span>
-  </a>
-</div>
+    <div class="sidebar-bottom">
+      <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
+        <span class="nav-text">Ajustes</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active" (click)="closeMenu()">
+        <span class="nav-icon" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+        <span class="nav-text">Cuenta</span>
+      </a>
+      <a class="nav-item signout" (click)="onLogout(); closeMenu(); $event.stopPropagation();" style="cursor: pointer;">
+        <span class="nav-icon" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
+        <span class="nav-text">Salir</span>
+      </a>
+    </div>
   </aside>
 
-  <main class="dashboard-main">
+  <header class="top-bar">
+    <section class="hero-panel">
+      <!-- Botón de Hamburguesa exclusivo para móvil -->
+      <button class="mobile-menu-btn" (click)="toggleMenu(); $event.stopPropagation()">
+        <span class="icon-mask" style="mask-image: url('/icons/menu.svg'); -webkit-mask-image: url('/icons/menu.svg'); width: 28px; height: 28px;"></span>
+      </button>
+
+      <div class="hero-copy">
+        <p class="eyebrow">Dashboard</p>
+        <h1 class="welcome-text">
+          ¡Buenos días, {{ userName() }}!
+          <span class="wave-icon" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
+        </h1>
+      </div>
+
+      <div class="hero-actions" (click)="$event.stopPropagation()">
+        <button class="notif-button" [class.is-active]="panelOpen()" type="button" aria-label="Notificaciones" (click)="togglePanel()">
+          <span class="icon-mask" style="mask-image: url('/icons/bell.svg'); -webkit-mask-image: url('/icons/bell.svg');"></span>
+          @if (notifCount() > 0) {
+            <span class="notif-badge">{{ notifCount() }}</span>
+          }
+        </button>
+
+        @if (panelOpen()) {
+          <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones" (click)="$event.stopPropagation()">
+            <header class="notif-header">
+              <h3>Notificaciones</h3>
+              <span class="notif-count-label">{{ notifCount() }} nuevas</span>
+            </header>
+
+            @if (panelLoading()) {
+              <div class="notif-empty">
+                <span class="notif-spin">
+                  <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
+                </span>
+                <p>Cargando notificaciones…</p>
+              </div>
+            } @else if (panelError()) {
+              <div class="notif-empty">
+                <p>{{ panelError() }}</p>
+              </div>
+            } @else {
+              <div class="notif-list">
+                @for (a of recentActivities(); track a.id) {
+                  <article class="notif-item">
+                    <span class="notif-icon">
+                      <span class="icon-mask" [style.mask-image]="'url(' + iconPathForActivity(a) + ')'" [style.-webkit-mask-image]="'url(' + iconPathForActivity(a) + ')'"></span>
+                    </span>
+
+                    <div class="notif-content">
+                      <p class="notif-action">{{ a.accion }}</p>
+                      <p class="notif-meta">{{ a.dispositivo }} · {{ a.hora }}</p>
+                    </div>
+
+                    <span class="notif-status" [class.is-error]="a.estado === 'Error'">
+                      {{ a.estado }}
+                    </span>
+                  </article>
+                }
+
+                @if (recentActivities().length === 0) {
+                  <div class="notif-empty">
+                    <p>No hay actividad reciente</p>
+                  </div>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Fecha como botón en móvil, pill en escritorio -->
+        <div class="date-container">
+          <button class="date-pill-btn" (click)="datePanelOpen.set(!datePanelOpen()); $event.stopPropagation()">
+            <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); color: #f4b400; width: 18px; height: 18px;"></span>
+            <div class="date-text-wrapper">
+              <strong>{{ dayLabel }}</strong>
+              <span>{{ timeLabel }}</span>
+            </div>
+          </button>
+
+          <!-- Panel de fecha para móvil -->
+          <div class="mobile-date-panel" *ngIf="datePanelOpen()">
+            <strong>{{ dayLabel }}</strong>
+            <span>{{ timeLabel }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main class="dashboard-main" (click)="$event.stopPropagation()">
     <router-outlet />
   </main>
-
 </div>

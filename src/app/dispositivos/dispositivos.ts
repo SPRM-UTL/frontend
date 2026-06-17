@@ -1,55 +1,34 @@
 import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { DevicesService } from './devices.service';
 import { Device } from './device.model';
-import {
-  LucideLightbulb,
-  LucideTv,
-  LucideSpeaker,
-  LucideCamera,
-  LucideLock,
-  LucideFan,
-  LucideWifi
-} from '@lucide/angular';
 
 @Component({
   selector: 'app-dispositivos',
-  standalone: true, // Asegúrate de tener esto si usas Angular 17+
-  imports: [CommonModule, FormsModule,
-    LucideLightbulb,
-    LucideTv,
-    LucideSpeaker,
-    LucideCamera,
-    LucideLock,
-    LucideFan,
-    LucideWifi],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })
 export class Dispositivos implements OnInit {
 
   private devicesService = inject(DevicesService);
+  private route = inject(ActivatedRoute);
 
   activeNav = 'dispositivos';
   readonly searchQuery = signal('');
 
-  // La señal de dispositivos expuesta directamente para acceso fácil
   readonly devices = this.devicesService.devices;
   readonly mostrarModal = signal(false);
 
   readonly filteredDevices = computed(() => {
     const allDevices = this.devices();
-    
-    // Verificación de seguridad: si es null, undefined o no es un array, retorna vacío
     if (!Array.isArray(allDevices)) return [];
-
     const q = this.searchQuery().toLowerCase().trim();
-
-    // Si no hay búsqueda, retorna todo el array
     if (!q) return allDevices;
-
-    return allDevices.filter(device => 
+    return allDevices.filter(device =>
       device.nombre_aparato?.toLowerCase().includes(q) ||
       device.tipo_aparato?.toLowerCase().includes(q) ||
       device.nombre_bluetooth?.toLowerCase().includes(q)
@@ -61,80 +40,65 @@ export class Dispositivos implements OnInit {
 
   ngOnInit(): void {
     this.devicesService.loadDevices();
+
+    // Abrir modal si viene el parámetro 'add'
+    this.route.queryParams.subscribe(params => {
+      if (params['add'] === 'true') {
+        this.abrirModal();
+      }
+    });
   }
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
   }
-  /**
-   * Modelo del formulario
-   */
-nuevoDispositivo = {
 
-  nombre_aparato: '',
+  nuevoDispositivo = {
+    nombre_aparato: '',
+    tipo_aparato: '',
+    accion_nombre: '',
+    comando_bluetooth: '',
+    icono: '',
+    nombre_bluetooth: '',
+    mac_bluetooth: '',
+    fecha_sincronizacion: null
+  };
 
-  tipo_aparato: '',
-
-  accion_nombre: '',
-
-  comando_bluetooth: '',
-
-  icono: '',
-
-  nombre_bluetooth: '',
-
-  mac_bluetooth: '',
-
-  fecha_sincronizacion: null
-
-};
-  /**
-   * Abre el modal de alta de dispositivos
-   */
   abrirModal(): void {
     this.mostrarModal.set(true);
   }
 
-  /**
-   * Cierra el modal
-   */
- cerrarModal(): void {
+  cerrarModal(): void {
+    this.mostrarModal.set(false);
+  }
 
-  this.mostrarModal.set(false);
-
-  //this.limpiarFormulario();
-
-}
-// private limpiarFormulario(): void {
-
-//   this.nuevoDispositivo = {
-//     nombreAparato: '',
-//     tipoAparato: '',
-//     nombreBluetooth: '',
-//     macBluetooth: ''
-//   };
-// }
-
-guardarDispositivo(): void {
-   console.log('Entró a guardar');
-  this.devicesService
+  guardarDispositivo(): void {
+    this.devicesService
       .createDevice(this.nuevoDispositivo)
       .subscribe({
-
         next: () => {
-
-          alert('Dispositivo registrado correctamente');
           this.cerrarModal();
           this.devicesService.loadDevices();
-
         },
-
         error: (err) => {
           console.error(err);
-          alert('Error al registrar dispositivo');
         }
-
       });
+  }
 
-}
+  getIconPath(icono: string | undefined): string {
+    if (!icono) return '/icons/smartphone.svg';
+    // Mapeo simple de nombres a archivos si es necesario,
+    // o simplemente retornar el path si coinciden los nombres.
+    const iconMap: Record<string, string> = {
+      'lightbulb': 'lightbulb.svg',
+      'tv': 'tv.svg',
+      'speaker': 'speaker.svg',
+      'camera': 'camera.svg',
+      'lock': 'lock.svg',
+      'fan': 'fan.svg',
+      'wifi': 'wifi.svg'
+    };
+    return `/icons/${iconMap[icono] || 'smartphone.svg'}`;
+  }
 }
