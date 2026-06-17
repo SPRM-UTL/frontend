@@ -92,6 +92,6 @@ export class Cuenta implements OnInit {
   }
 
   onLogout(): void {
-    this.authService.logout();
+    this.authService.confirmLogout();
   }
 }

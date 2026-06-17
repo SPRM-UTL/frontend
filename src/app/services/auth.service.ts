@@ -1,4 +1,4 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router'; // Necesario para redirigir al cerrar sesión
@@ -10,9 +10,10 @@ import { ENDPOINTS } from '../core/config/endpoints';
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-  //private apiUrl = 'http://localhost:5295/api/Auth';
-  //private apiUrl = 'https://backend-neao.onrender.com/api/Auth';
   private apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.auth}`;
+  
+  readonly showLogoutModal = signal(false);
+
   // En tu AuthService.ts
   constructor(private http: HttpClient, private router: Router) {
     // Ejecuta la verificación cada 60 segundos automáticamente
@@ -65,7 +66,16 @@ export class AuthService {
     );
   }
 
+  confirmLogout() {
+    this.showLogoutModal.set(true);
+  }
+
+  cancelLogout() {
+    this.showLogoutModal.set(false);
+  }
+
   logout() {
+    this.showLogoutModal.set(false);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('nombre');

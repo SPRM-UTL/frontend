@@ -34,7 +34,7 @@ export class Dashboard {
   readonly currentTitle = signal<string>('Dashboard');
 
   // Servicios inyectados
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private router = inject(Router);
   private historialService = inject(HistorialService);
 
@@ -137,7 +137,7 @@ export class Dashboard {
   }
 
   onLogout() {
-    this.authService.logout();
+    this.authService.confirmLogout();
   }
 
   private updateClock() {
