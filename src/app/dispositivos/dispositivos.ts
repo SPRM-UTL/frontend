@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DevicesService } from './devices.service';
 import { Device } from './device.model';
-import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-dispositivos',
@@ -17,7 +16,6 @@ export class Dispositivos implements OnInit {
 
   private devicesService = inject(DevicesService);
   private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
 
   activeNav = 'dispositivos';
   readonly searchQuery = signal('');
@@ -79,12 +77,10 @@ export class Dispositivos implements OnInit {
       .createDevice(this.nuevoDispositivo)
       .subscribe({
         next: () => {
-          this.toastService.success('Dispositivo agregado correctamente');
           this.cerrarModal();
           this.devicesService.loadDevices();
         },
         error: (err) => {
-          this.toastService.error('Error al agregar el dispositivo');
           console.error(err);
         }
       });

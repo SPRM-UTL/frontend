@@ -1,5 +1,6 @@
 import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import {
+  NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -7,6 +8,7 @@ import {
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { CuentaService } from '../cuenta/cuenta.service';
 import { InicioService } from './inicio/inicio.service';
@@ -27,6 +29,9 @@ import { Actividad } from '../historial/actividad.model';
 })
 export class Dashboard {
   private timerId?: any;
+  private routerSubscription?: Subscription;
+
+  readonly currentTitle = signal<string>('Dashboard');
 
   // Servicios inyectados
   private authService = inject(AuthService);
@@ -73,10 +78,19 @@ export class Dashboard {
   readonly panelError = this.historialService.error;
 
   constructor() {
-
     // Clock
     this.updateClock();
     this.timerId = setInterval(() => this.updateClock(), 1000);
+
+    // Initial title setup
+    this.updateTitle(this.router.url);
+
+    // Listen to routing changes
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.updateTitle(event.urlAfterRedirects || event.url);
+    });
 
     // SSR-safe: cargar historial únicamente en cliente
     afterNextRender(() => {
@@ -99,6 +113,27 @@ export class Dashboard {
 
   ngOnDestroy() {
     if (this.timerId) clearInterval(this.timerId);
+    this.routerSubscription?.unsubscribe();
+  }
+
+  private updateTitle(url: string) {
+    if (url.includes('/dashboard/inicio')) {
+      this.currentTitle.set('Dashboard');
+    } else if (url.includes('/dashboard/dispositivos')) {
+      this.currentTitle.set('Dispositivos');
+    } else if (url.includes('/dashboard/gestos')) {
+      this.currentTitle.set('Gestos');
+    } else if (url.includes('/dashboard/historial')) {
+      this.currentTitle.set('Historial de actividad');
+    } else if (url.includes('/dashboard/control')) {
+      this.currentTitle.set('Control');
+    } else if (url.includes('/dashboard/ajustes')) {
+      this.currentTitle.set('Ajustes');
+    } else if (url.includes('/dashboard/cuenta')) {
+      this.currentTitle.set('Cuenta');
+    } else {
+      this.currentTitle.set('Dashboard');
+    }
   }
 
   onLogout() {

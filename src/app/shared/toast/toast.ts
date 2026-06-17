@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ToastService, Toast } from '../../services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-toast',
@@ -10,67 +10,67 @@ import { ToastService, Toast } from '../../services/toast.service';
   templateUrl: './toast.html',
   styleUrl: './toast.css'
 })
-export class ToastComponent implements OnInit {
+export class ToastComponent implements OnInit, OnDestroy {
 
   visible = false;
-  isClosing = false;
   message = '';
   type: Toast['type'] = 'info';
   icon = '';
-  private timeoutId: any;
-  private closingTimeoutId: any;
 
-  constructor(
-    private toastService: ToastService,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) { }
+  private subscription?: Subscription;
+  private timeoutId?: any;
+  private cdr = inject(ChangeDetectorRef);
+
+  constructor(private toastService: ToastService) { }
 
   ngOnInit(): void {
-
-    this.toastService.toastState$
-      .subscribe((toast) => {
-        this.zone.run(() => {
-          if (this.timeoutId) clearTimeout(this.timeoutId);
-          if (this.closingTimeoutId) clearTimeout(this.closingTimeoutId);
-
-          this.message = toast.message;
-          this.type = toast.type;
-
-          // Asignar icono por defecto si no se provee uno
-          if (toast.icon) {
-            this.icon = toast.icon;
-          } else {
-            switch (this.type) {
-              case 'success': this.icon = '/icons/check.svg'; break;
-              case 'error':   this.icon = '/icons/triangle-alert.svg'; break;
-              case 'warning': this.icon = '/icons/triangle-alert.svg'; break;
-              default:        this.icon = '/icons/sparkles.svg'; break;
-            }
-          }
-
-          this.visible = true;
-          this.isClosing = false;
-          this.cdr.detectChanges();
-
-        this.timeoutId = setTimeout(() => {
-          this.close();
-        }, toast.duration || 3000);
-        });
-      });
+    this.subscription = this.toastService.toastState$.subscribe((toast) => {
+      if (toast) {
+        this.showToast(toast);
+      } else {
+        this.visible = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  close() {
-    if (this.isClosing || !this.visible) return;
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    if (this.timeoutId) clearTimeout(this.timeoutId);
+  }
+
+  private showToast(toast: Toast): void {
     if (this.timeoutId) clearTimeout(this.timeoutId);
 
-    this.isClosing = true;
+    // Reiniciar para que la animación se dispare si ya había uno
+    this.visible = false;
     this.cdr.detectChanges();
 
-    this.closingTimeoutId = setTimeout(() => {
-      this.visible = false;
-      this.isClosing = false;
+    // Pequeño delay para permitir que el navegador procese el cambio y reinicie la transición
+    setTimeout(() => {
+      this.message = toast.message;
+      this.type = toast.type;
+      this.icon = toast.icon || this.getDefaultIcon(toast.type);
+
+      this.visible = true;
       this.cdr.detectChanges();
-    }, 500); // Un poco más de tiempo para asegurar la animación
+
+      if (toast.duration && toast.duration > 0) {
+        this.timeoutId = setTimeout(() => {
+          this.visible = false;
+          this.cdr.detectChanges();
+        }, toast.duration);
+      }
+    }, 10);
+  }
+
+  private getDefaultIcon(type: Toast['type']): string {
+    switch (type) {
+      case 'success': return 'check';
+      case 'error': return 'ban';
+      case 'warning': return 'triangle-alert';
+      case 'loading': return 'clock';
+      default: return 'sparkles';
+    }
   }
 }

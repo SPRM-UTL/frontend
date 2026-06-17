@@ -8,7 +8,7 @@ import { ENDPOINTS } from '../core/config/endpoints';
 
 import { isPlatformBrowser } from '@angular/common';
 
-const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
+const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.cuenta}`;
 
 
 // Interfaz para el perfil del usuario desde /api/usuarios/{id}

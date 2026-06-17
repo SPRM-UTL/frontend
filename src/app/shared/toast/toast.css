@@ -1,87 +1,67 @@
-.toast {
+.toast-container {
   position: fixed;
-  bottom: 40px;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10000; /* Asegurar que esté por encima de todo */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
 
-  min-width: 280px;
-  max-width: 90vw;
-  padding: 14px 24px;
-  border-radius: 16px;
+.toast {
+  background: var(--cafe-dark, #2d3436);
   color: white;
-  font-weight: 500;
-  z-index: 9999;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  padding: 0.8rem 1.8rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  background-color: #31867c; /* El color teal de la imagen */
+  gap: 0.75rem;
+  pointer-events: auto;
+
+  /* Estado inicial (oculto abajo) */
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  white-space: nowrap;
 }
 
+.toast.visible {
+  opacity: 1;
+  transform: translateY(0); /* Sube a su posición */
+}
+
+/* Colores de la interfaz */
+.toast.success, .toast.loading {
+  background-color: var(--cafe-primary, #3aafa9);
+}
+
+.toast.error {
+  background-color: #ef4444;
+}
+
+.toast.warning {
+  background-color: #f59e0b;
+}
+
+.toast.info {
+  background-color: var(--cafe-dark, #1a2e2a);
+}
+
+/* Iconos */
 .toast-icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-}
-
-.toast-icon .icon-mask {
-  width: 20px;
-  height: 20px;
-  background-color: white;
-}
-
-.toast-message {
-  font-size: 0.95rem;
-  letter-spacing: 0.01em;
-}
-
-.slide-in {
-  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.slide-out {
-  animation: slideDownFade 0.4s ease-in forwards;
-}
-
-/* Colores por tipo con el mismo tono base o variaciones */
-.success {
-  background-color: #31867c;
-}
-
-.error {
-  background-color: #b91c1c; /* Un rojo que combine mejor */
-}
-
-.warning {
-  background-color: #d97706; /* Un naranja/ambar */
-}
-
-.info {
-  background-color: #31867c;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translate(-50%, 80px);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideDownFade {
-  from {
-    transform: translate(-50%, 0);
-    opacity: 1;
-  }
-  to {
-    transform: translate(-50%, 40px);
-    opacity: 0;
-  }
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  display: inline-block;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
 }

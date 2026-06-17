@@ -43,17 +43,19 @@
                type="text"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('nombre')"
-               (keydown.escape)="cancelEdit()" />
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()"
+               autoFocus />
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField() !== 'nombre'" (click)="startEdit('nombre', userName())" aria-label="Editar nombre">
+        <button class="edit-pill-btn" *ngIf="editingField() !== 'nombre'" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
         <div class="save-cancel" *ngIf="editingField() === 'nombre'">
-          <button class="btn-save" [disabled]="isSaving()" (mousedown)="$event.preventDefault(); saveField('nombre')">
-            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+          <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
           </button>
-          <button class="btn-cancel" [disabled]="isSaving()" (click)="cancelEdit()">Cancelar</button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -71,17 +73,18 @@
                type="email"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('correo')"
-               (keydown.escape)="cancelEdit()" />
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField() !== 'correo'" (click)="startEdit('correo', userEmail())" aria-label="Editar correo">
+        <button class="edit-pill-btn" *ngIf="editingField() !== 'correo'" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
         <div class="save-cancel" *ngIf="editingField() === 'correo'">
-          <button class="btn-save" [disabled]="isSaving()" (mousedown)="$event.preventDefault(); saveField('correo')">
-            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+          <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
           </button>
-          <button class="btn-cancel" [disabled]="isSaving()" (click)="cancelEdit()">Cancelar</button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -100,17 +103,18 @@
                [(ngModel)]="editValue"
                placeholder="Nueva contraseña"
                (keydown.enter)="saveField('password')"
-               (keydown.escape)="cancelEdit()" />
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
       </div>
       <div class="info-actions">
         <button class="edit-pill-btn" *ngIf="editingField() !== 'password'" (click)="startEdit('password', '')" aria-label="Editar contraseña">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
         <div class="save-cancel" *ngIf="editingField() === 'password'">
-          <button class="btn-save" [disabled]="isSaving()" (mousedown)="$event.preventDefault(); saveField('password')">
-            {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+          <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
           </button>
-          <button class="btn-cancel" [disabled]="isSaving()" (click)="cancelEdit()">Cancelar</button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -132,4 +136,5 @@
       <span class="icon-mask arrow-right"></span>
     </button>
   </div>
+
 </div>

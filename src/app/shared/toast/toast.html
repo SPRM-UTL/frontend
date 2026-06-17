@@ -1,11 +1,13 @@
-<div
-  *ngIf="visible"
-  class="toast"
-  [ngClass]="[type, isClosing ? 'slide-out' : 'slide-in']"
-  (click)="close()"
->
-  <span class="toast-icon">
-    <span class="icon-mask" [style.mask-image]="'url(' + icon + ')'" [style.-webkit-mask-image]="'url(' + icon + ')'"></span>
-  </span>
-  <span class="toast-message">{{ message }}</span>
+<div class="toast-container">
+  <div
+    class="toast"
+    [class.visible]="visible"
+    [ngClass]="type"
+  >
+    <span *ngIf="icon" class="toast-icon"
+          [style.mask-image]="'url(/icons/' + icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/icons/' + icon + '.svg)'">
+    </span>
+    {{ message }}
+  </div>
 </div>

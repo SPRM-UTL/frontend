@@ -1,6 +1,6 @@
 // cuenta.ts
 
-import { Component, OnInit, inject, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CuentaService } from './cuenta.service';
@@ -19,14 +19,13 @@ export class Cuenta implements OnInit {
   private cuentaService = inject(CuentaService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
-  private cdr = inject(ChangeDetectorRef);
 
   readonly userName  = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
 
-  readonly editingField = signal<string | null>(null);
-  readonly isSaving = signal(false);
+  editingField = signal<string | null>(null);
   editValue = '';
+  isSaving = signal(false);
 
   ngOnInit(): void {
     this.cuentaService.loadPerfil();
@@ -49,42 +48,45 @@ export class Cuenta implements OnInit {
     if (!this.editValue.trim() && field !== 'password') return;
 
     this.isSaving.set(true);
+    this.toastService.loading('Guardando cambios...');
 
-    let updateObs;
+    let updateObservable$;
+    const trimmedValue = this.editValue.trim();
+
     switch (field) {
       case 'nombre':
-        updateObs = this.cuentaService.updateNombre(this.editValue.trim());
+        updateObservable$ = this.cuentaService.updateNombre(trimmedValue);
         break;
       case 'correo':
-        updateObs = this.cuentaService.updateEmail(this.editValue.trim());
+        updateObservable$ = this.cuentaService.updateEmail(trimmedValue);
         break;
       case 'password':
-        updateObs = this.cuentaService.updatePassword(this.editValue);
+        updateObservable$ = this.cuentaService.updatePassword(this.editValue);
         break;
     }
 
-    if (updateObs) {
-      updateObs.subscribe({
+    if (updateObservable$) {
+      updateObservable$.subscribe({
         next: () => {
           this.toastService.success('Cambios guardados correctamente');
           this.editingField.set(null);
           this.editValue = '';
           this.isSaving.set(false);
-          this.cdr.detectChanges();
         },
         error: (err) => {
+          console.error('Error saving field', err);
           this.toastService.error('Error al guardar los cambios');
           this.isSaving.set(false);
-          console.error(err);
-          this.cdr.detectChanges();
         }
       });
     } else {
       this.isSaving.set(false);
+      this.toastService.hide();
     }
   }
 
   cancelEdit(): void {
+    if (this.isSaving()) return;
     this.editingField.set(null);
     this.editValue = '';
   }

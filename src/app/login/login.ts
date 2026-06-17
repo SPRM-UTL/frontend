@@ -137,7 +137,7 @@ export class Login {
           localStorage.setItem('userId', String(userId));
         }
 
-        this.toastService.success('¡Bienvenido de nuevo!', 3000, '/icons/hand.svg');
+        this.toastService.success('Bienvenido', 'hand');
 
         this.correo = '';
         this.contrasenia = '';
