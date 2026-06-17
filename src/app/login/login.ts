@@ -137,7 +137,7 @@ export class Login {
           localStorage.setItem('userId', String(userId));
         }
 
-        this.toastService.success('Bienvenido');
+        this.toastService.success('Bienvenido', 'hand');
 
         this.correo = '';
         this.contrasenia = '';

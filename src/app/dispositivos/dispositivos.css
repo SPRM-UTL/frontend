@@ -32,7 +32,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
-  background: #1a4e4a; /* Color verde oscuro como la imagen */
+  background: var(--cafe-dark);
   color: white;
   border: none;
   border-radius: 12px;
@@ -43,7 +43,7 @@
 }
 
 .btn-agregar:hover {
-  background: #133936;
+  background: var(--cafe-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(26, 78, 74, 0.2);
 }

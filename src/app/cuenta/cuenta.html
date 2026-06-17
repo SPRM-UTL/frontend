@@ -1,7 +1,6 @@
 <!-- cuenta.html — interfaz estilo Apple/Moderno -->
 
 <div class="page-header">
-  <h1 class="page-title">Cuenta</h1>
   <p class="page-subtitle">Administra tu cuenta y preferencias</p>
 </div>
 
@@ -31,82 +30,90 @@
 
   <div class="info-list">
     <!-- Nombres -->
-    <div class="info-item" [class.editing]="editingField === 'nombre'">
+    <div class="info-item" [class.editing]="editingField() === 'nombre'">
       <div class="info-icon">
         <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
       </div>
       <div class="info-content">
         <label>Nombres</label>
-        <div class="info-value" *ngIf="editingField !== 'nombre'">{{ userName() }}</div>
-        <input *ngIf="editingField === 'nombre'"
+        <div class="info-value" *ngIf="editingField() !== 'nombre'">{{ userName() }}</div>
+        <input *ngIf="editingField() === 'nombre'"
                class="info-input"
                type="text"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('nombre')"
                (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()"
                autoFocus />
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField !== 'nombre'" (click)="startEdit('nombre', userName())" aria-label="Editar nombre">
+        <button class="edit-pill-btn" *ngIf="editingField() !== 'nombre'" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
-        <div class="save-cancel" *ngIf="editingField === 'nombre'">
-          <button class="btn-save" (click)="saveField('nombre')">Guardar</button>
-          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+        <div class="save-cancel" *ngIf="editingField() === 'nombre'">
+          <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- Correo -->
-    <div class="info-item" [class.editing]="editingField === 'correo'">
+    <div class="info-item" [class.editing]="editingField() === 'correo'">
       <div class="info-icon">
-        <!-- Usamos smartphone como placeholder si no hay mail.svg -->
         <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
       </div>
       <div class="info-content">
         <label>Correo</label>
-        <div class="info-value email" *ngIf="editingField !== 'correo'">{{ userEmail() }}</div>
-        <input *ngIf="editingField === 'correo'"
+        <div class="info-value email" *ngIf="editingField() !== 'correo'">{{ userEmail() }}</div>
+        <input *ngIf="editingField() === 'correo'"
                class="info-input"
                type="email"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('correo')"
-               (keydown.escape)="cancelEdit()" />
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField !== 'correo'" (click)="startEdit('correo', userEmail())" aria-label="Editar correo">
+        <button class="edit-pill-btn" *ngIf="editingField() !== 'correo'" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
-        <div class="save-cancel" *ngIf="editingField === 'correo'">
-          <button class="btn-save" (click)="saveField('correo')">Guardar</button>
-          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+        <div class="save-cancel" *ngIf="editingField() === 'correo'">
+          <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- Contraseña -->
-    <div class="info-item" [class.editing]="editingField === 'password'">
+    <div class="info-item" [class.editing]="editingField() === 'password'">
       <div class="info-icon">
         <span class="icon-mask" style="mask-image: url('/icons/lock.svg'); -webkit-mask-image: url('/icons/lock.svg');"></span>
       </div>
       <div class="info-content">
         <label>Contraseña</label>
-        <div class="info-value dots" *ngIf="editingField !== 'password'">••••••••••••</div>
-        <input *ngIf="editingField === 'password'"
+        <div class="info-value dots" *ngIf="editingField() !== 'password'">••••••••••••</div>
+        <input *ngIf="editingField() === 'password'"
                class="info-input"
                type="password"
                [(ngModel)]="editValue"
                placeholder="Nueva contraseña"
                (keydown.enter)="saveField('password')"
-               (keydown.escape)="cancelEdit()" />
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField !== 'password'" (click)="startEdit('password', '')" aria-label="Editar contraseña">
+        <button class="edit-pill-btn" *ngIf="editingField() !== 'password'" (click)="startEdit('password', '')" aria-label="Editar contraseña">
           <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
         </button>
-        <div class="save-cancel" *ngIf="editingField === 'password'">
-          <button class="btn-save" (click)="saveField('password')">Guardar</button>
-          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+        <div class="save-cancel" *ngIf="editingField() === 'password'">
+          <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -129,9 +136,4 @@
     </button>
   </div>
 
-  <!-- Toast (mantener lógica existente) -->
-  <div class="toast" [class.toast-visible]="toastVisible">
-    <span class="icon-mask" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg'); width: 16px; height: 16px; background-color: #fff;"></span>
-    Cambios guardados correctamente
-  </div>
 </div>

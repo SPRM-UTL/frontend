@@ -11,6 +11,6 @@ export const ENDPOINTS = {
 
   control: '/api/aparatos/control',
 
-  cuenta: '/api/cuenta'
+  cuenta: '/api/usuarios'
 
 };

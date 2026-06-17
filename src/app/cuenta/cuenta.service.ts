@@ -8,7 +8,7 @@ import { ENDPOINTS } from '../core/config/endpoints';
 
 import { isPlatformBrowser } from '@angular/common';
 
-const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
+const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.cuenta}`;
 
 
 // Interfaz para el perfil del usuario desde /api/usuarios/{id}
@@ -54,8 +54,9 @@ export class CuentaService {
     this.http.get<any>(`${BASE_URL}/${userId}`).subscribe({
       next: response => {
         const payload = response?.data ?? response;
-        this.userName.set(payload.nombre);
-        this.userEmail.set(payload.correo);
+        // Manejamos tanto minúsculas como Mayúsculas por si la API cambia
+        this.userName.set(payload.nombre || payload.Nombre || '');
+        this.userEmail.set(payload.correo || payload.Correo || '');
         this.loading.set(false);
       },
       error: err => {
@@ -66,40 +67,46 @@ export class CuentaService {
     });
   }
 
-  // Actualiza el nombre del usuario
-  updateNombre(nombre: string): Observable<void> {
+  // Método unificado para actualizar perfil según documentación (PUT con llaves en Mayúsculas)
+  updatePerfil(datos: { Nombre?: string, Correo?: string, Contrasenia?: string }): Observable<any> {
     const userId = this.getUserId();
     if (!userId) {
-      return new Observable(observer => {
-        observer.error(new Error('No hay ID de usuario'));
-      });
+      return new Observable(observer => observer.error(new Error('No hay ID de usuario')));
     }
-    return this.http.patch<void>(`${BASE_URL}/${userId}`, { nombre }).pipe(
-      tap(() => this.userName.set(nombre))
+
+    const payload = {
+      Nombre: datos.Nombre || this.userName(),
+      Correo: datos.Correo || this.userEmail(),
+      Contrasenia: datos.Contrasenia || ''
+    };
+
+    return this.http.put<any>(`${BASE_URL}/${userId}`, payload).pipe(
+      tap(() => {
+        if (datos.Nombre) {
+          this.userName.set(datos.Nombre);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('nombre', datos.Nombre);
+          }
+        }
+        if (datos.Correo) {
+          this.userEmail.set(datos.Correo);
+        }
+      })
     );
+  }
+
+  // Actualiza el nombre del usuario
+  updateNombre(nombre: string): Observable<void> {
+    return this.updatePerfil({ Nombre: nombre });
   }
 
   // Actualiza el correo del usuario
   updateEmail(email: string): Observable<void> {
-    const userId = this.getUserId();
-    if (!userId) {
-      return new Observable(observer => {
-        observer.error(new Error('No hay ID de usuario'));
-      });
-    }
-    return this.http.patch<void>(`${BASE_URL}/${userId}`, { correo: email }).pipe(
-      tap(() => this.userEmail.set(email))
-    );
+    return this.updatePerfil({ Correo: email });
   }
 
-  // Actualiza la contrase�a
+  // Actualiza la contraseña
   updatePassword(password: string): Observable<void> {
-    const userId = this.getUserId();
-    if (!userId) {
-      return new Observable(observer => {
-        observer.error(new Error('No hay ID de usuario'));
-      });
-    }
-    return this.http.patch<void>(`${BASE_URL}/${userId}`, { contrasenia: password });
+    return this.updatePerfil({ Contrasenia: password });
   }
 }

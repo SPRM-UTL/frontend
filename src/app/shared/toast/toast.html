@@ -1,7 +1,13 @@
-<div
-  *ngIf="visible"
-  class="toast"
-  [ngClass]="type"
->
-  {{ message }}
+<div class="toast-container">
+  <div
+    class="toast"
+    [class.visible]="visible"
+    [ngClass]="type"
+  >
+    <span *ngIf="icon" class="toast-icon"
+          [style.mask-image]="'url(/icons/' + icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/icons/' + icon + '.svg)'">
+    </span>
+    {{ message }}
+  </div>
 </div>

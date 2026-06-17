@@ -59,7 +59,7 @@
       </button>
 
       <div class="hero-copy">
-        <p class="eyebrow">Dashboard</p>
+        <p class="eyebrow">{{ currentTitle() }}</p>
         <h1 class="welcome-text">
           ¡Buenos días, {{ userName() }}!
           <span class="wave-icon" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
@@ -144,4 +144,19 @@
   <main class="dashboard-main" (click)="$event.stopPropagation()">
     <router-outlet />
   </main>
+
+  <!-- Modal de Confirmación de Salida -->
+  <div class="logout-modal-overlay" *ngIf="authService.showLogoutModal()" (click)="authService.cancelLogout()">
+    <div class="logout-modal-card" (click)="$event.stopPropagation()">
+      <div class="logout-modal-icon-container">
+        <span class="logout-modal-icon"></span>
+      </div>
+      <h2 class="logout-modal-title">¿Estás seguro de que deseas salir?</h2>
+      <p class="logout-modal-desc">Tu sesión se cerrará de forma segura en este dispositivo.</p>
+      <div class="logout-modal-buttons">
+        <button class="logout-btn-cancel" (click)="authService.cancelLogout()">Cancelar</button>
+        <button class="logout-btn-confirm" (click)="authService.logout()">Sí, salir</button>
+      </div>
+    </div>
+  </div>
 </div>
