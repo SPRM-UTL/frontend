@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { Gesto } from './gesto.model';
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
 
 interface ApiResponse {
   success: boolean;
@@ -16,7 +18,8 @@ interface ApiResponse {
 export class GestosService {
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'https://backend-neao.onrender.com/api/gestos';
+  //private readonly apiUrl = 'http://localhost:5295/api/gestos';
+  private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.gestos}`;
 
   readonly gestos = signal<Gesto[]>([]);
   readonly loading = signal(false);

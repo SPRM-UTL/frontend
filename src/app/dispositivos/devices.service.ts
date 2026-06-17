@@ -5,15 +5,22 @@ import { map } from 'rxjs/operators'; // <-- Importante para el método del Dash
 
 import { Device } from './device.model';
 
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
+interface ApiResponse {
+  success: boolean;
+  status: number;
+  data: Device[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class DevicesService {
   private http = inject(HttpClient);
 
-  // URL de producción en Render
-  private readonly apiUrl = 'https://backend-neao.onrender.com/api/aparatos';
-
+  //private readonly apiUrl = 'http://localhost:5295/api/aparatos';
+  private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}`;
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);
   public devices = signal<Device[]>([]);

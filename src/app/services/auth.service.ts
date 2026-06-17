@@ -3,14 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router'; // Necesario para redirigir al cerrar sesión
 import { isPlatformBrowser } from '@angular/common';
-
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
   //private apiUrl = 'http://localhost:5295/api/Auth';
-    private apiUrl = 'https://backend-neao.onrender.com/api/Auth';
+  //private apiUrl = 'https://backend-neao.onrender.com/api/Auth';
+  private apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.auth}`;
   // En tu AuthService.ts
   constructor(private http: HttpClient, private router: Router) {
     // Ejecuta la verificación cada 60 segundos automáticamente

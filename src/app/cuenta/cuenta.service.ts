@@ -3,9 +3,13 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { APP_CONFIG } from '../core/config/app-config'; 
+import { ENDPOINTS } from '../core/config/endpoints';
+
 import { isPlatformBrowser } from '@angular/common';
 
-const BASE_URL = 'https://backend-neao.onrender.com/api/usuarios';
+const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
+
 
 // Interfaz para el perfil del usuario desde /api/usuarios/{id}
 export interface UsuarioPerfil {
@@ -29,16 +33,14 @@ export class CuentaService {
 
   constructor(private http: HttpClient) {}
 
-
   // Obtiene el ID del usuario desde localStorage
   private getUserId(): number | null {
     if (!isPlatformBrowser(this.platformId)) return null;
     const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId, 10) : null;
   }
-
-
   // Carga el perfil del usuario desde /api/usuarios/{id}
+
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
