@@ -1,15 +1,9 @@
-// control.ts
-
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ControlService } from './control.service';
 import { Luz, Bocina, Ventilador } from './control.model';
-import {
-  LucideLightbulb,
-  LucideSpeaker,
-  LucideFan
-} from '@lucide/angular'
 
 type CategoriaSeleccionada =
   | 'Luces'
@@ -18,11 +12,8 @@ type CategoriaSeleccionada =
 
 @Component({
   selector: 'app-control',
-  imports: [CommonModule, FormsModule,
-    LucideLightbulb,
-    LucideSpeaker,
-    LucideFan
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './control.html',
   styleUrl: './control.css'
 })
@@ -38,6 +29,26 @@ export class Control implements OnInit {
   readonly error      = this.controlService.error;
 
   categoriaSeleccionada: CategoriaSeleccionada = 'Luces';
+
+  getCurrentDevices(): any[] {
+    if (this.categoriaSeleccionada === 'Luces') return this.luces();
+    if (this.categoriaSeleccionada === 'Bocinas') return this.bocinas();
+    if (this.categoriaSeleccionada === 'Ventiladores') return this.ventiladores();
+    return [];
+  }
+
+  getDeviceIcon(categoria: string): string {
+    if (categoria === 'Luces') return '/icons/lightbulb.svg';
+    if (categoria === 'Bocinas') return '/icons/speaker.svg';
+    if (categoria === 'Ventiladores') return '/icons/fan.svg';
+    return '/icons/smartphone.svg';
+  }
+
+  toggleDevice(device: any): void {
+    if (this.categoriaSeleccionada === 'Luces') this.toggleLuz(device);
+    if (this.categoriaSeleccionada === 'Bocinas') this.toggleBocina(device);
+    if (this.categoriaSeleccionada === 'Ventiladores') this.toggleVentilador(device);
+  }
 
   ngOnInit(): void {
     this.controlService.loadControl();

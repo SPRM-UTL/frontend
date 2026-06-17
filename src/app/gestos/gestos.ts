@@ -1,17 +1,17 @@
-import { Component, computed, OnInit, signal, inject } from '@angular/core';
+import { Component, computed, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GestosService } from './gestos.service';
 import { Gesto } from './gesto.model';
-import { LucideHand, LucideUser,} from '@lucide/angular'
 
 @Component({
   selector: 'app-gestos',
-  imports: [CommonModule, FormsModule, LucideHand, LucideUser],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
 })
-export class Gestos implements OnInit {
+export class Gestos {
 
   private gestosService = inject(GestosService);
 
@@ -19,7 +19,7 @@ export class Gestos implements OnInit {
 
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-     return q
+    return q
     ? this.gestosService.gestos().filter(g =>
         (g.nombre_gesto ?? '').toLowerCase().includes(q) ||
         (g.tipo_disparador_nombre ?? '').toLowerCase().includes(q) ||
@@ -35,19 +35,21 @@ export class Gestos implements OnInit {
   readonly loading = this.gestosService.loading;
   readonly error   = this.gestosService.error;
 
-  ngOnInit(): void {
-    this.gestosService.loadGestos();
+  constructor() {
+    afterNextRender(() => {
+      this.gestosService.loadGestos().subscribe({
+        next: (data) => console.log('Gestos cargados en componente:', data),
+        error: (err) => console.error('Error al activar la petición de gestos:', err)
+      });
+    });
   }
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
   }
 
-  // toggleEstado(gesto: Gesto): void {
-  //   this.gestosService.toggleEstado(gesto);
-  // }
-
-  // eliminarGesto(id: number): void {
-  //   this.gestosService.eliminarGesto(id);
-  // }
+  getIconPath(icono: string | undefined): string {
+    if (icono === 'user') return '/icons/user.svg';
+    return '/icons/hand.svg';
+  }
 }

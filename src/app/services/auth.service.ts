@@ -24,13 +24,32 @@ export class AuthService {
 
     return this.http.post<any>(`${this.apiUrl}/login`, body).pipe(
       tap(response => {
-        //Guardar token y calcular expiración
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
+        const payload = response?.data ?? response;
+        const data = payload?.data ?? payload;
 
-          // Calculamos expiración: 30 minutos desde ahora (según tu middleware)
+        const token = data?.token ?? payload?.token ?? '';
+        const nombre = data?.nombre ?? payload?.nombre ?? data?.name ?? payload?.name
+          ?? data?.usuario?.nombre ?? payload?.usuario?.nombre
+          ?? data?.user?.nombre ?? payload?.user?.nombre
+          ?? data?.user?.name ?? payload?.user?.name
+          ?? '';
+        const userId = data?.id ?? payload?.id ?? data?.userId ?? payload?.userId
+          ?? data?.usuario?.id ?? payload?.usuario?.id
+          ?? data?.user?.id ?? payload?.user?.id
+          ?? data?.user?.userId ?? payload?.user?.userId;
+
+        if (token) {
+          localStorage.setItem('token', token);
           const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
           localStorage.setItem('token_exp', expirationDate.toString());
+        }
+
+        if (nombre) {
+          localStorage.setItem('nombre', nombre);
+        }
+
+        if (userId) {
+          localStorage.setItem('userId', String(userId));
         }
       })
     );
@@ -48,8 +67,10 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('nombre');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('token_exp');
     }
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   // 2. MÉTODO PARA OBTENER FECHA: Decodifica el token (ejemplo simple)

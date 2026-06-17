@@ -1,65 +1,63 @@
-<!-- dispositivos.html -->
-<!-- Solo el contenido de la página. El sidebar y wrapper viven en dashboard.html -->
-
 <div class="page-header">
   <div>
     <h1 class="page-title">Dispositivos</h1>
     <p class="page-subtitle">Maneja y controla todos tus dispositivos conectados</p>
   </div>
   <button class="btn-agregar" (click)="abrirModal()">
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
+    <span class="icon-mask" style="mask-image: url('/icons/circle-plus.svg'); -webkit-mask-image: url('/icons/circle-plus.svg'); width: 18px; height: 18px;"></span>
     Agregar Dispositivo
   </button>
 </div>
 
-<!-- Search bar -->
-<div class="search-wrapper">
-  <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-  <input class="search-input"
-         type="text"
-         placeholder="Search"
-         [value]="searchQuery()"
-         (input)="onSearch($any($event.target).value)" />
+<!-- Search and Filter Bar -->
+<div class="search-filter-row">
+  <div class="search-wrapper">
+    <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
+    <input class="search-input"
+           type="text"
+           placeholder="Buscar dispositivo..."
+           [value]="searchQuery()"
+           (input)="onSearch($any($event.target).value)" />
+  </div>
+
+  <div class="filter-wrapper">
+    <div class="filter-select">
+      <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+      <select>
+        <option value="">Todos los tipos</option>
+        <option value="Bocinas">Bocinas</option>
+        <option value="Luces">Luces</option>
+        <option value="Ventiladores">Ventiladores</option>
+      </select>
+      <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+    </div>
+  </div>
 </div>
 
 <!-- Device table section -->
 <div class="devices-section">
   <div class="section-header">
     <div class="section-title-row">
-      <span class="wifi-dot">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-          <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-          <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3" stroke-linecap="round" />
-        </svg>
-      </span>
+      <div class="wifi-circle">
+        <span class="icon-mask" style="mask-image: url('/icons/wifi.svg'); -webkit-mask-image: url('/icons/wifi.svg');"></span>
+      </div>
       <div>
         <h2 class="section-title">Todos los dispositivos</h2>
         <p class="section-sub">{{ filteredDevices().length }} dispositivos en línea</p>
       </div>
+      <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
     </div>
   </div>
 
   <!-- Estado de carga -->
   <div *ngIf="loading()" class="table-feedback">
-    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="spin">
-      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-    </svg>
+    <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
     Cargando dispositivos…
   </div>
 
   <!-- Estado de error -->
   <div *ngIf="error()" class="table-feedback table-feedback--error">
-    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
+    <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
     {{ error() }}
   </div>
 
@@ -68,240 +66,123 @@
     <table class="devices-table">
       <thead>
         <tr>
-          <th>Dispositivo</th>
-          <th>Tipo</th>
-          <th>Acción</th>
-          <th>Bluetooth</th>
+          <th>DISPOSITIVO</th>
+          <th>TIPO</th>
+          <th>ACCIÓN</th>
+          <th>BLUETOOTH</th>
           <th>MAC</th>
-          <th>Sincronización</th>
+          <th>SINCRONIZACIÓN</th>
+          <th>ACCIONES</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let device of filteredDevices()" class="device-row">
           <!-- Device -->
           <td class="device-cell">
-           <span class="device-avatar">
-            <svg
-              *ngIf="device.icono === 'lightbulb'"
-              lucideLightbulb
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'tv'"
-              lucideTv
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'speaker'"
-              lucideSpeaker
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'camera'"
-              lucideCamera
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'lock'"
-              lucideLock
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'fan'"
-              lucideFan
-              [size]="18">
-            </svg>
-
-            <svg
-              *ngIf="device.icono === 'wifi'"
-              lucideWifi
-              [size]="18">
-            </svg>
-
-          </span>
-            <span class="device-name">{{ device.nombre_aparato  }}</span>
+           <div class="device-avatar">
+             <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'"></span>
+           </div>
+           <div class="device-info">
+             <span class="device-name">{{ device.nombre_aparato }}</span>
+             <span class="status-online">
+               <span class="dot"></span>
+               En línea
+             </span>
+           </div>
           </td>
 
-          <!-- Room -->
-          <td class="room-cell">{{ device.tipo_aparato  }}</td>
+          <!-- Type -->
+          <td class="type-cell">{{ device.tipo_aparato }}</td>
 
-          <!-- Status -->
-          <!-- <td>
-            <span class="status-badge" [ngClass]="device.statusClass">{{ device.status }}</span>
-          </td> -->
-
-          <!-- Power -->
+          <!-- Power / Action -->
           <td class="power-cell">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
-            {{ device.accion_nombre }}
+            <div class="action-badge">
+              <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg'); width: 12px; height: 12px;"></span>
+              Encendido
+            </div>
           </td>
 
-          <td>{{ device.nombre_bluetooth }}</td>
+          <!-- Bluetooth Name -->
+          <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
 
-          <td>{{ device.mac_bluetooth }}</td>
-          <!-- Last active -->
-          <td class="last-active-cell">{{ device.fecha_sincronizacion }}</td>
+          <!-- MAC -->
+          <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
+
+          <!-- Sync -->
+          <td class="sync-cell">{{ device.fecha_sincronizacion || '2026-06-17 08:00:00' }}</td>
 
           <!-- Actions -->
           <td class="actions-cell">
-            <!-- <button class="action-btn" [class.active-power]="device.powered" (click)="(device)" title="Power"> -->
-            <button class="action-btn" (click)="$event.preventDefault()" title="Power">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-                <line x1="12" y1="2" x2="12" y2="12" />
-              </svg>
-            </button>
-            <button class="action-btn" title="Settings">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-              </svg>
-            </button>
-            <button class="action-btn" title="More">
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="5" r="1.5" />
-                <circle cx="12" cy="12" r="1.5" />
-                <circle cx="12" cy="19" r="1.5" />
-              </svg>
-            </button>
+            <div class="action-buttons-group">
+              <button class="row-action-btn" title="Cerrar sesión">
+                <span class="icon-mask" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
+              </button>
+              <button class="row-action-btn" title="Ajustes">
+                <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
+              </button>
+              <button class="row-action-btn" title="Más opciones">
+                <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+              </button>
+            </div>
           </td>
         </tr>
 
         <!-- Empty state -->
         <tr *ngIf="filteredDevices().length === 0 && !loading()">
-          <td colspan="6" class="empty-state">
-            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <span>No se encontraron dispositivos</span>
+          <td colspan="7" class="empty-state">
+            <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
+            <p>No se encontraron dispositivos</p>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination -->
+  <footer class="table-footer">
+    <p class="results-count">Mostrando 1 a {{ filteredDevices().length }} de {{ filteredDevices().length }} dispositivos</p>
+    <div class="pagination">
+      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
+    </div>
+  </footer>
 </div>
-<!-- =====================================================
-     MODAL AGREGAR DISPOSITIVO
-===================================================== -->
 
-<div
-  *ngIf="mostrarModal()"
-  class="modal-backdrop"
-  (click)="cerrarModal()">
-
-  <div
-    class="modal-container"
-    (click)="$event.stopPropagation()">
-
-    <!-- Header -->
+<!-- MODAL AGREGAR DISPOSITIVO -->
+<div *ngIf="mostrarModal()" class="modal-backdrop" (click)="cerrarModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-
       <h2>Agregar dispositivo</h2>
-
-      <button
-        class="btn-close"
-        (click)="cerrarModal()">
-
-        ✕
-      </button>
-
+      <button class="btn-close" (click)="cerrarModal()">✕</button>
     </div>
-
-    <!-- Body -->
     <div class="modal-body">
-
       <div class="form-group">
-
-        <label>Nombre</label>
-
-        <input
-          type="text"
-          [(ngModel)]="nuevoDispositivo.nombre_aparato"
-          placeholder="Ej. Luz Sala" />
-
+        <label>Nombre del aparato</label>
+        <input type="text" [(ngModel)]="nuevoDispositivo.nombre_aparato" placeholder="Ej. Bocina Sala" />
       </div>
-
       <div class="form-group">
-
-        <label>Tipo</label>
-
-        <select
-          [(ngModel)]="nuevoDispositivo.tipo_aparato">
-
-          <option value="">
-            Selecciona un tipo
-          </option>
-
-          <option value="Sensor">
-            Sensor
-          </option>
-
-          <option value="Televisión">
-            Televisión
-          </option>
-
-          <option value="Ventilador">
-            Ventilador
-          </option>
-
-          <option value="Cámara">
-            Cámara
-          </option>
-
+        <label>Tipo de dispositivo</label>
+        <select [(ngModel)]="nuevoDispositivo.tipo_aparato">
+          <option value="">Selecciona un tipo</option>
+          <option value="Bocinas">Bocinas</option>
+          <option value="Luces">Luces</option>
+          <option value="Ventiladores">Ventiladores</option>
+          <option value="Cámara">Cámara</option>
         </select>
-
       </div>
-
       <div class="form-group">
-
-        <label>Bluetooth</label>
-
-        <input
-          type="text"
-          [(ngModel)]="nuevoDispositivo.nombre_bluetooth"
-          placeholder="ESP32-BT" />
-
+        <label>Nombre Bluetooth</label>
+        <input type="text" [(ngModel)]="nuevoDispositivo.nombre_bluetooth" placeholder="ESP32-DEVICE" />
       </div>
-
       <div class="form-group">
-
-        <label>MAC</label>
-
-        <input
-          type="text"
-          [(ngModel)]="nuevoDispositivo.mac_bluetooth"
-          placeholder="AA:BB:CC:DD:EE:FF" />
-
+        <label>Dirección MAC</label>
+        <input type="text" [(ngModel)]="nuevoDispositivo.mac_bluetooth" placeholder="44:46:8E:B4:67:21" />
       </div>
-
     </div>
-
-    <!-- Footer -->
     <div class="modal-footer">
-
-      <button
-        class="btn-secondary"
-        (click)="cerrarModal()">
-
-        Cancelar
-      </button>
-
-      <button
-        class="btn-primary" (click)="guardarDispositivo()">
-
-        Guardar dispositivo
-      </button>
-
+      <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" (click)="guardarDispositivo()">Guardar dispositivo</button>
     </div>
-
   </div>
-
 </div>
