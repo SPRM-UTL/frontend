@@ -1,107 +1,137 @@
-<!-- cuenta.html — solo contenido, sin sidebar ni dashboard-wrapper -->
+<!-- cuenta.html — interfaz estilo Apple/Moderno -->
 
 <div class="page-header">
   <h1 class="page-title">Cuenta</h1>
-  <p class="page-subtitle">Administra tu cuenta</p>
+  <p class="page-subtitle">Administra tu cuenta y preferencias</p>
 </div>
 
-<div class="cuenta-container">
-
-  <!-- Avatar -->
-  <div class="avatar-section">
-    <div class="avatar-wrapper">
-      <div class="avatar-circle">
-        <img src="/icons/user.svg" width="52" alt="Avatar" style="filter: brightness(0) invert(1);">
+<div class="cuenta-wrapper">
+  <!-- Perfil Principal Card -->
+  <div class="profile-card">
+    <div class="profile-main">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+        </div>
+        <button class="avatar-edit-btn" (click)="onEditAvatar()" aria-label="Editar avatar">
+          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+        </button>
       </div>
-      <button class="avatar-edit-btn" (click)="onEditAvatar()">
-        <img src="/icons/pencil.svg" width="14" alt="Editar">
-      </button>
+      <div class="profile-info">
+        <h2>{{ userName() }}</h2>
+        <p>Usuario • Smart Home</p>
+      </div>
     </div>
-    <div class="avatar-info">
-      <span class="avatar-name">{{ userName() }}</span>
-      <span class="avatar-role">Usuario · Smart Home</span>
+    <div class="profile-arrow">
+      <span class="icon-mask chevron-right"></span>
     </div>
   </div>
 
-  <!-- Fields -->
-  <div class="fields-section">
+  <h3 class="section-title">Información de la cuenta</h3>
 
-    <!-- Nombre -->
-    <div class="field-card" [class.editing]="editingField === 'nombre'">
-      <div class="field-label">Nombres</div>
-      <div class="field-body">
-        <div class="field-value" *ngIf="editingField !== 'nombre'">{{ userName() }}</div>
+  <div class="info-list">
+    <!-- Nombres -->
+    <div class="info-item" [class.editing]="editingField === 'nombre'">
+      <div class="info-icon">
+        <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+      </div>
+      <div class="info-content">
+        <label>Nombres</label>
+        <div class="info-value" *ngIf="editingField !== 'nombre'">{{ userName() }}</div>
         <input *ngIf="editingField === 'nombre'"
-               class="field-input"
+               class="info-input"
                type="text"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('nombre')"
-               (keydown.escape)="cancelEdit()" />
-        <div class="field-actions">
-          <button class="field-btn-icon" *ngIf="editingField !== 'nombre'" (click)="startEdit('nombre', userName())">
-            <img src="/icons/pencil.svg" width="16" alt="Editar">
-          </button>
-          <div class="save-cancel" *ngIf="editingField === 'nombre'">
-            <button class="btn-save" (click)="saveField('nombre')">Guardar</button>
-            <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
-          </div>
+               (keydown.escape)="cancelEdit()"
+               autoFocus />
+      </div>
+      <div class="info-actions">
+        <button class="edit-pill-btn" *ngIf="editingField !== 'nombre'" (click)="startEdit('nombre', userName())" aria-label="Editar nombre">
+          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+        </button>
+        <div class="save-cancel" *ngIf="editingField === 'nombre'">
+          <button class="btn-save" (click)="saveField('nombre')">Guardar</button>
+          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- Correo -->
-    <div class="field-card" [class.editing]="editingField === 'correo'">
-      <div class="field-label">Correo</div>
-      <div class="field-body">
-        <div class="field-value email-value" *ngIf="editingField !== 'correo'">{{ userEmail() }}</div>
+    <div class="info-item" [class.editing]="editingField === 'correo'">
+      <div class="info-icon">
+        <!-- Usamos smartphone como placeholder si no hay mail.svg -->
+        <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+      </div>
+      <div class="info-content">
+        <label>Correo</label>
+        <div class="info-value email" *ngIf="editingField !== 'correo'">{{ userEmail() }}</div>
         <input *ngIf="editingField === 'correo'"
-               class="field-input"
+               class="info-input"
                type="email"
                [(ngModel)]="editValue"
                (keydown.enter)="saveField('correo')"
                (keydown.escape)="cancelEdit()" />
-        <div class="field-actions">
-          <button class="field-btn-icon" *ngIf="editingField !== 'correo'" (click)="startEdit('correo', userEmail())">
-            <img src="/icons/pencil.svg" width="16" alt="Editar">
-          </button>
-          <div class="save-cancel" *ngIf="editingField === 'correo'">
-            <button class="btn-save" (click)="saveField('correo')">Guardar</button>
-            <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
-          </div>
+      </div>
+      <div class="info-actions">
+        <button class="edit-pill-btn" *ngIf="editingField !== 'correo'" (click)="startEdit('correo', userEmail())" aria-label="Editar correo">
+          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+        </button>
+        <div class="save-cancel" *ngIf="editingField === 'correo'">
+          <button class="btn-save" (click)="saveField('correo')">Guardar</button>
+          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- Contraseña -->
-    <div class="field-card" [class.editing]="editingField === 'password'">
-      <div class="field-label">Contraseña</div>
-      <div class="field-body">
-        <div class="field-value password-dots" *ngIf="editingField !== 'password'">●●●●●●●●●●●●●●●●</div>
+    <div class="info-item" [class.editing]="editingField === 'password'">
+      <div class="info-icon">
+        <span class="icon-mask" style="mask-image: url('/icons/lock.svg'); -webkit-mask-image: url('/icons/lock.svg');"></span>
+      </div>
+      <div class="info-content">
+        <label>Contraseña</label>
+        <div class="info-value dots" *ngIf="editingField !== 'password'">••••••••••••</div>
         <input *ngIf="editingField === 'password'"
-               class="field-input"
+               class="info-input"
                type="password"
                [(ngModel)]="editValue"
                placeholder="Nueva contraseña"
                (keydown.enter)="saveField('password')"
                (keydown.escape)="cancelEdit()" />
-        <div class="field-actions">
-          <button class="field-btn-icon" *ngIf="editingField !== 'password'" (click)="startEdit('password', '')">
-            <img src="/icons/pencil.svg" width="16" alt="Editar">
-          </button>
-          <div class="save-cancel" *ngIf="editingField === 'password'">
-            <button class="btn-save" (click)="saveField('password')">Guardar</button>
-            <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
-          </div>
+      </div>
+      <div class="info-actions">
+        <button class="edit-pill-btn" *ngIf="editingField !== 'password'" (click)="startEdit('password', '')" aria-label="Editar contraseña">
+          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+        </button>
+        <div class="save-cancel" *ngIf="editingField === 'password'">
+          <button class="btn-save" (click)="saveField('password')">Guardar</button>
+          <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Toast -->
+  <!-- Logout Banner -->
+  <div class="privacy-banner logout-banner">
+    <div class="banner-left">
+      <div class="banner-icon logout-icon">
+        <span class="icon-mask" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
+      </div>
+      <div class="banner-text">
+        <h4>¿Deseas salir de tu cuenta?</h4>
+        <p>Tu sesión se cerrará de forma segura en este dispositivo.</p>
+      </div>
+    </div>
+    <button class="banner-btn logout-btn" (click)="onLogout()">
+      Cerrar sesión
+      <span class="icon-mask arrow-right"></span>
+    </button>
+  </div>
+
+  <!-- Toast (mantener lógica existente) -->
   <div class="toast" [class.toast-visible]="toastVisible">
-    <img src="/icons/check.svg" width="16" alt="Guardado" style="filter: brightness(0) invert(1);">
+    <span class="icon-mask" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg'); width: 16px; height: 16px; background-color: #fff;"></span>
     Cambios guardados correctamente
   </div>
-
 </div>

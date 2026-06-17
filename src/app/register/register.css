@@ -12,7 +12,7 @@
 .register-wrapper {
   display: flex;
   height: 100vh;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-body);
   background: #ffffff;
 }
 
@@ -55,7 +55,7 @@ label {
   color: var(--cafe-dark);
   margin-bottom: 0.5rem;
   letter-spacing: 0.03em;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-heading);
 }
 
 input {
@@ -68,7 +68,7 @@ input {
   background: #ffffff;
   outline: none;
   transition: border-color 0.2s;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
   input:focus {
@@ -87,7 +87,7 @@ input {
   cursor: pointer;
   margin-top: 0.625rem;
   transition: background 0.2s;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
   .btn-primary:hover {
@@ -99,7 +99,7 @@ input {
   font-size: 1rem;
   color: var(--cafe-dark);
   margin-top: 1.56rem;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
   .login-link a {
@@ -115,7 +115,7 @@ input {
   margin: 1.56rem 0;
   color: var(--cafe-light);
   font-size: 1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
   .divider::before,
@@ -140,7 +140,7 @@ input {
   justify-content: center;
   gap: 0.75rem;
   transition: border-color 0.2s, background 0.2s;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
   .btn-google:hover {
@@ -155,7 +155,7 @@ footer {
   transform: translateX(-50%);
   font-size: 1rem;
   color: var(--cafe-dark);
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-body);
 }
 
 .register-right {

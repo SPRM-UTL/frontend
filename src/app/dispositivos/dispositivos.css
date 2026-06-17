@@ -277,7 +277,7 @@
 }
 
 .bt-cell, .mac-cell, .sync-cell {
-  font-family: monospace;
+  font-family: var(--font-data);
   font-size: 0.85rem;
   color: #475569;
 }
