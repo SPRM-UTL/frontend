@@ -1,9 +1,10 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { Gesto } from './gesto.model';
-import { APP_CONFIG } from '../core/config/app-config'; 
+import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
 
 interface ApiResponse {
@@ -16,6 +17,7 @@ interface ApiResponse {
   providedIn: 'root'
 })
 export class GestosService {
+  private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
 
   //private readonly apiUrl = 'http://localhost:5295/api/gestos';
@@ -30,8 +32,8 @@ export class GestosService {
    */
   private getHeaders(token?: string): HttpHeaders {
     let authToken = token ?? '';
-    
-    if (!authToken && typeof window !== 'undefined' && window.localStorage) {
+
+    if (!authToken && isPlatformBrowser(this.platformId)) {
       authToken = localStorage.getItem('token') ?? '';
     }
 
@@ -60,6 +62,19 @@ export class GestosService {
         return throwError(() => err);
       }),
       finalize(() => this.loading.set(false))
+    );
+  }
+
+  /**
+   * Obtiene el detalle de un gesto específico por su ID
+   */
+  getGestoDetalle(id: number): Observable<Gesto> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
+      map(response => response?.data ?? response),
+      catchError(err => {
+        console.error(`Error cargando detalle del gesto ${id}:`, err);
+        return throwError(() => err);
+      })
     );
   }
 }

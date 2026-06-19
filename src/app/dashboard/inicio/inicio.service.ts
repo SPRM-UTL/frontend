@@ -1,4 +1,5 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { Device } from '../../dispositivos/device.model';
 import { Gesto } from '../../gestos/gesto.model';
@@ -12,6 +13,7 @@ import { DashboardStats, UltimoGesto, AparatoUtilizado } from './inicio.model';
 
 @Injectable({ providedIn: 'root' })
 export class InicioService {
+  private platformId = inject(PLATFORM_ID);
   private devicesService = inject(DevicesService);
   private gestosService = inject(GestosService);
   private historialService = inject(HistorialService);
@@ -25,7 +27,8 @@ export class InicioService {
     this.loading.set(true);
     this.error.set(null);
 
-    const fallbackName = typeof localStorage !== 'undefined'
+    const isBrowser = isPlatformBrowser(this.platformId);
+    const fallbackName = isBrowser
       ? localStorage.getItem('nombre') ?? 'Usuario'
       : 'Usuario';
 
@@ -58,7 +61,7 @@ export class InicioService {
         const gestosData = Array.isArray(gestos) ? gestos : [];
         const actividades = Array.isArray(historial) ? historial : [];
 
-        const userName = typeof localStorage !== 'undefined'
+        const userName = isBrowser
           ? localStorage.getItem('nombre') ?? fallbackName
           : fallbackName;
         const estadoConexion = dispositivosData.length > 0 ? 'En línea' : 'Desconectado';

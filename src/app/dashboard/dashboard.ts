@@ -1,4 +1,4 @@
-import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
+import { afterNextRender, Component, computed, inject, signal , PLATFORM_ID} from '@angular/core';
 import {
   NavigationEnd,
   Router,
@@ -6,7 +6,7 @@ import {
   RouterLinkActive,
   RouterOutlet
 } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
@@ -31,6 +31,9 @@ export class Dashboard {
   private timerId?: any;
   private routerSubscription?: Subscription;
 
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId)
+
   readonly currentTitle = signal<string>('Dashboard');
 
   // Servicios inyectados
@@ -43,11 +46,7 @@ export class Dashboard {
   public inicioService = inject(InicioService);
 
   readonly userName = computed(() => {
-    const storedName = typeof localStorage !== 'undefined'
-      ? localStorage.getItem('nombre')
-      : null;
-
-    return this.cuentaService.userName() || storedName || 'Usuario';
+    return this.cuentaService.userName() || 'Usuario';
   });
 
   // Variables para las etiquetas de fecha y hora
@@ -80,7 +79,10 @@ export class Dashboard {
   constructor() {
     // Clock
     this.updateClock();
-    this.timerId = setInterval(() => this.updateClock(), 1000);
+
+    if (this.isBrowser) {
+      this.timerId = setInterval(() => this.updateClock(), 1000);
+    }
 
     // Initial title setup
     this.updateTitle(this.router.url);
@@ -94,7 +96,7 @@ export class Dashboard {
 
     // SSR-safe: cargar historial únicamente en cliente
     afterNextRender(() => {
-      if (typeof window === 'undefined') {
+      if (!this.isBrowser) {
         return;
       }
 

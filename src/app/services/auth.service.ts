@@ -16,10 +16,12 @@ export class AuthService {
 
   // En tu AuthService.ts
   constructor(private http: HttpClient, private router: Router) {
-    // Ejecuta la verificación cada 60 segundos automáticamente
-    setInterval(() => {
-      this.checkTokenExpiration();
-    }, 60000);
+    // Ejecuta la verificación cada 60 segundos automáticamente en el cliente
+    if (isPlatformBrowser(this.platformId)) {
+      setInterval(() => {
+        this.checkTokenExpiration();
+      }, 60000);
+    }
   }
   // En tu AuthService.ts
   login(correo: string, contrasenia: string): Observable<any> {
@@ -41,18 +43,20 @@ export class AuthService {
           ?? data?.user?.id ?? payload?.user?.id
           ?? data?.user?.userId ?? payload?.user?.userId;
 
-        if (token) {
-          localStorage.setItem('token', token);
-          const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
-          localStorage.setItem('token_exp', expirationDate.toString());
-        }
+        if (isPlatformBrowser(this.platformId)) {
+          if (token) {
+            localStorage.setItem('token', token);
+            const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
+            localStorage.setItem('token_exp', expirationDate.toString());
+          }
 
-        if (nombre) {
-          localStorage.setItem('nombre', nombre);
-        }
+          if (nombre) {
+            localStorage.setItem('nombre', nombre);
+          }
 
-        if (userId) {
-          localStorage.setItem('userId', String(userId));
+          if (userId) {
+            localStorage.setItem('userId', String(userId));
+          }
         }
       })
     );

@@ -1,4 +1,5 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; // <-- Importante para el método del Dashboard
@@ -17,6 +18,7 @@ interface ApiResponse {
   providedIn: 'root'
 })
 export class DevicesService {
+  private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
 
   //private readonly apiUrl = 'http://localhost:5295/api/aparatos';
@@ -30,7 +32,7 @@ export class DevicesService {
    */
   private getHeaders(): HttpHeaders {
     let token = '';
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (isPlatformBrowser(this.platformId)) {
       token = localStorage.getItem('token') ?? '';
     }
 

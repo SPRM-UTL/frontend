@@ -1,5 +1,5 @@
-import { Component, afterNextRender, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, afterNextRender, inject, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
@@ -13,6 +13,7 @@ import { DevicesService } from '../../dispositivos/devices.service';
   styleUrl: './inicio.css'
 })
 export class Inicio {
+  private platformId = inject(PLATFORM_ID);
   public readonly inicioService = inject(InicioService);
   public readonly devicesService = inject(DevicesService);
 
@@ -62,12 +63,9 @@ export class Inicio {
 
   constructor() {
     afterNextRender(() => {
-      const token = typeof localStorage !== 'undefined'
-        ? localStorage.getItem('token') ?? ''
-        : '';
-      const userId = Number(typeof localStorage !== 'undefined'
-        ? localStorage.getItem('userId') ?? '1'
-        : '1');
+      const isBrowser = isPlatformBrowser(this.platformId);
+      const token = isBrowser ? (localStorage.getItem('token') ?? '') : '';
+      const userId = Number(isBrowser ? (localStorage.getItem('userId') ?? '1') : '1');
 
       if (userId > 0 && token) {
         this.inicioService.loadInicio(userId, token);

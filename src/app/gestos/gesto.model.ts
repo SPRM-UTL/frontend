@@ -8,8 +8,26 @@ export interface Gesto {
   sk_aparato_id: number | null;
 
   estado?: 'Activo' | 'Pausado';
+  activo?: boolean;
   icono?: string;
   dispositivoIconColor?: string;
   dispositivoIconEmoji?: string;
   tiempo?: string;
+  descripcion?: string;
+  observaciones?: string;
+
+  // Nuevos campos según guía
+  duracion_segundos?: number;
+  iluminacion_requerida?: string;
+  distancia_minima_m?: number;
+  distancia_maxima_m?: number;
+  precision_ia?: string;
+  recomendaciones?: string[];
+  fotos?: string[];
+  videos?: string[];
+  multimedia?: {
+    fotos: string[];
+    video_url?: string;
+    video_duracion?: string;
+  };
 }
