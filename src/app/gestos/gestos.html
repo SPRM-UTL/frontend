@@ -66,8 +66,8 @@
           <p class="info-value">Aparato #{{ gesto.sk_aparato_id }}</p>
         </div>
         <div class="info-group">
-          <p class="info-label">ACCIÓN</p>
-          <p class="info-value">{{ gesto.tipo_disparador_nombre }}</p>
+          <p class="info-label">ACTIVO</p>
+          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Ensendido' : 'Apagado') }}</p>
         </div>
         <div class="gesto-card-footer">
           <span class="icon-mask footer-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg'); width: 14px; height: 14px;"></span>

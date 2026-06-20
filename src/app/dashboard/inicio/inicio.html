@@ -13,10 +13,10 @@
 
     <article class="stat-card stat-card--blue">
       <span class="stat-ico">
-        <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+        <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
       </span>
       <div class="stat-copy">
-        <p class="stat-label">Automatizaciones</p>
+        <p class="stat-label">Gestos</p>
         <p class="stat-number">{{ inicioService.stats()?.activeAutomations ?? 0 }}</p>
         <p class="stat-sub">{{ inicioService.stats()?.automatizaciones ?? 0 }} activas</p>
       </div>
@@ -114,18 +114,10 @@
             <span>{{ device.tipo_aparato }}</span>
             <div class="status-pill-on">
               <span class="dot"></span>
-              ON
+              {{device.accion_nombre}}
             </div>
           </div>
         }
-
-        <a class="device-chip-new device-chip--green add-device-chip" [routerLink]="['/dashboard/dispositivos']" [queryParams]="{ add: 'true' }">
-          <div class="chip-ico-circle">
-            <span class="icon-mask" style="mask-image: url('/icons/circle-plus.svg'); -webkit-mask-image: url('/icons/circle-plus.svg'); width: 30px; height: 30px;"></span>
-          </div>
-          <strong>Agregar dispositivo</strong>
-          <p>Vincula un nuevo dispositivo a tu sistema</p>
-        </a>
 
         @if (displayedDevices().length === 0) {
           <div class="notif-empty" style="grid-column: span 3;">
@@ -138,8 +130,8 @@
     <article class="panel-card">
       <div class="panel-head">
         <div>
-          <h3 class="panel-title">Automatizaciones activas</h3>
-          <p class="panel-subtitle">Rutinas que están funcionando</p>
+          <h3 class="panel-title">Gestos</h3>
+          <p class="panel-subtitle">Gestos de funcionamiento</p>
         </div>
       </div>
 

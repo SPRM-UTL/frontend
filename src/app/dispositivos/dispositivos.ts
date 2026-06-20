@@ -72,33 +72,20 @@ export class Dispositivos implements OnInit {
     this.mostrarModal.set(false);
   }
 
-  guardarDispositivo(): void {
-    this.devicesService
-      .createDevice(this.nuevoDispositivo)
-      .subscribe({
-        next: () => {
-          this.cerrarModal();
-          this.devicesService.loadDevices();
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
-  }
 
-  getIconPath(icono: string | undefined): string {
-    if (!icono) return '/icons/smartphone.svg';
-    // Mapeo simple de nombres a archivos si es necesario,
-    // o simplemente retornar el path si coinciden los nombres.
-    const iconMap: Record<string, string> = {
-      'lightbulb': 'lightbulb.svg',
-      'tv': 'tv.svg',
-      'speaker': 'speaker.svg',
-      'camera': 'camera.svg',
-      'lock': 'lock.svg',
-      'fan': 'fan.svg',
-      'wifi': 'wifi.svg'
-    };
-    return `/icons/${iconMap[icono] || 'smartphone.svg'}`;
-  }
+getIconPath(tipo: string | undefined): string {
+  if (!tipo) return '/icons/smartphone.svg';
+
+  const iconMap: Record<string, string> = {
+    'Bocinas': 'speaker.svg',
+    'Audífonos': 'earphones.svg',
+    'Luces': 'lightbulb.svg',
+    'Ventiladores': 'ventiladores.svg',
+    'Cámara': 'camera.svg',
+    'TV': 'tv.svg',
+    'Cerradura': 'lock.svg'
+  };
+
+  return `/icons/${iconMap[tipo] || 'smartphone.svg'}`;
+}
 }

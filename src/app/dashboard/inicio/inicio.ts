@@ -23,7 +23,7 @@ export class Inicio {
   readonly error = this.inicioService.error;
 
   readonly displayedDevices = computed(() => {
-    return this.devicesService.devices().slice(0, 3);
+    return this.devicesService.devices().slice(0, 4);
   });
 
   getChipClass(tipo: string, index: number = 0): string {
@@ -37,19 +37,21 @@ export class Inicio {
     return colorClasses[index % colorClasses.length];
   }
 
-  getIconPath(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('bocina') || t.includes('altavoz') || t.includes('audio')) return '/icons/speaker.svg';
-    if (t.includes('luz') || t.includes('foco') || t.includes('ilumin')) return '/icons/lightbulb.svg';
-    if (t.includes('tv') || t.includes('tele')) return '/icons/tv.svg';
-    if (t.includes('cam') || t.includes('segurid')) return '/icons/camera.svg';
-    if (t.includes('lock') || t.includes('cerradura') || t.includes('bloqueo')) return '/icons/lock.svg';
-    if (t.includes('fan') || t.includes('ventilador') || t.includes('aire')) return '/icons/fan.svg';
-    if (t.includes('wifi') || t.includes('red')) return '/icons/wifi.svg';
-    if (t.includes('bolt') || t.includes('energ')) return '/icons/bolt.svg';
+getIconPath(tipo: string | undefined): string {
+  if (!tipo) return '/icons/smartphone.svg';
 
-    return '/icons/smartphone.svg'; // Fallback solicitado
-  }
+  const iconMap: Record<string, string> = {
+    'Bocinas': 'speaker.svg',
+    'Audífonos': 'earphones.svg',
+    'Luces': 'lightbulb.svg',
+    'Ventiladores': 'ventiladores.svg',
+    'Cámara': 'camera.svg',
+    'TV': 'tv.svg',
+    'Cerradura': 'lock.svg'
+  };
+
+  return `/icons/${iconMap[tipo] || 'smartphone.svg'}`;
+}
 
   actividadSeries = [{
     name: 'Automatizaciones',
