@@ -211,80 +211,40 @@ body {
   display: none;
 }
 
-/* MÓVIL */
-@media (max-width: 768px) {
-  .dashboard-wrapper {
-    grid-template-columns: 0 1fr;
+/* MÓVIL Y TABLET (Ajustes de cabecera) */
+@media (max-width: 1250px) {
+  .hero-panel {
+    gap: 0.5rem;
   }
 
-  .mobile-menu-btn {
+  .welcome-text {
+    font-size: clamp(1rem, 2.5vw, 1.3rem) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Fecha como botón compacto */
+  .date-pill-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: var(--cafe-dark);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    z-index: 30;
-    flex-shrink: 0;
-  }
-
-  /* Ajuste para que el texto de bienvenida sea completo */
-  .hero-copy {
-    flex: 1;
-    min-width: 0;
-    padding-left: 0.5rem;
-  }
-
-  .welcome-text {
-    font-size: 1.1rem !important;
-    white-space: normal !important; /* Permite que el texto se vea completo */
-    overflow: visible !important;
-    text-overflow: clip !important;
-    line-height: 1.2;
-    margin-right: 0.5rem;
-  }
-
-  .hero-panel {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 0.25rem;
-    padding: 0.5rem 0;
-  }
-
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* Fecha como botón pequeño */
-  .date-container {
-    position: relative;
-  }
-
-  .date-pill-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
     background: white;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 12px;
     cursor: pointer;
     padding: 0;
+    pointer-events: auto !important;
   }
 
   .date-text-wrapper {
-    display: none; /* Oculto por defecto en el botón móvil */
+    display: none;
   }
 
   .mobile-date-panel {
+    display: block !important;
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
@@ -310,6 +270,28 @@ body {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-top: 4px;
+  }
+}
+
+/* ESPECÍFICO MÓVIL (Sidebar y otros ajustes) */
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    grid-template-columns: 0 1fr;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--cafe-dark);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 30;
+    flex-shrink: 0;
   }
 
   .sidebar {
@@ -355,8 +337,8 @@ body {
   }
 }
 
-/* Escritorio */
-@media (min-width: 769px) {
+/* Escritorio grande */
+@media (min-width: 1251px) {
   .dashboard-wrapper:has(.sidebar:hover) {
     grid-template-columns: 260px 1fr;
   }
@@ -375,7 +357,7 @@ body {
   }
 
   .mobile-date-panel {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -400,12 +382,14 @@ body {
   animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.hero-panel { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.hero-panel { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: nowrap; }
+.hero-copy { flex: 1; min-width: 0; }
 .hero-actions {
   position: relative;
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
   animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   opacity: 0;
 }
