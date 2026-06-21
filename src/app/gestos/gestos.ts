@@ -51,11 +51,11 @@ export class Gestos {
   constructor() {
     afterNextRender(() => {
       this.dispositivosService.loadDevices();
+
       this.gestosService.loadGestos().subscribe({
         next: (data) => {
-
-          data
           console.log('Gestos cargados en componente:', data);
+          this.toastService.success(`Gestos cargados correctamente (${data.length})`);
         },
         error: (err) => {
           console.error('Error al activar la petición de gestos:', err);
@@ -79,9 +79,11 @@ export class Gestos {
     return '/icons/hand.svg';
   }
 
-obtenerNombreDispositivo(id: number | null): string {
-  return this.dispositivosService.devices().find(d=>d.sk_aparato_id ===id)?.nombre_aparato ?? 'Sin Dispositivo';
-}
+  obtenerNombreDispositivo(id: number | null): string {
+    return this.dispositivosService.devices().find(
+      d => d.sk_aparato_id === id
+    )?.nombre_aparato ?? 'Sin Dispositivo';
+  }
 
   verDetalle(gesto: Gesto): void {
     this.gestosService.getGestoDetalle(gesto.sk_gesto_id).subscribe({
@@ -116,10 +118,7 @@ obtenerNombreDispositivo(id: number | null): string {
       },
 
       error: (err) => {
-        console.error(
-          'Error al cargar detalle real, usando fallback:',
-          err
-        );
+        console.error('Error al cargar detalle real, usando fallback:', err);
 
         this.toastService.error(
           err?.error?.data || 'Error al cargar el detalle del gesto'
