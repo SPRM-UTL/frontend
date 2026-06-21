@@ -70,13 +70,15 @@ export class InicioService {
         const dispositivosActivos = this.contarDispositivosActivos(actividades);
         const accionesHoy = this.contarAccionesHoy(actividades);
 
+        const gestosActivos = gestosData.filter(g => g.estado === 'Activo' || g.activo === true).length;
+
         const stats: DashboardStats = {
           gestosGuardados: gestosData.length,
-          automatizaciones: 0,
+          automatizaciones: gestosActivos,
           dispositivosVinculados: dispositivosData.length,
           accionesHoy,
           devicesOnline: dispositivosData.length,
-          activeAutomations: 0,
+          activeAutomations: gestosData.length,
           userName,
           dispositivosActivos,
           estadoConexion,

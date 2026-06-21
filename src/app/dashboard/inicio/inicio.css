@@ -7,6 +7,17 @@
   min-width: 0;
 }
 
+@keyframes slideUpFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -16,6 +27,7 @@
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
+  animation: slideUpFromBottom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .icon-mask {
@@ -373,8 +385,15 @@ app-dynamic-chart {
 }
 
 .chip-ico-circle .icon-mask {
+  width: 32px;
+  height: 32px;
+  background-color: currentColor !important;
+}
+
+.dashboard-device-img {
   width: 30px;
   height: 30px;
+  object-fit: contain;
 }
 
 .device-chip-new strong {
@@ -410,21 +429,21 @@ app-dynamic-chart {
   border-radius: 50%;
 }
 
-/* Colores de las tarjetas */
+/* Colores de las tarjetas y sus iconos sincronizados */
 .device-chip--orange { background: linear-gradient(180deg, rgba(249, 115, 22, 0.05) 0%, #ffffff 100%); }
-.device-chip--orange .chip-ico-circle { color: #f97316; }
+.device-chip--orange .icon-mask { background-color: #f97316 !important; }
 
 .device-chip--blue { background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, #ffffff 100%); }
-.device-chip--blue .chip-ico-circle { color: #3b82f6; }
+.device-chip--blue .icon-mask { background-color: #3b82f6 !important; }
 
 .device-chip--violet { background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, #ffffff 100%); }
-.device-chip--violet .chip-ico-circle { color: #8b5cf6; }
+.device-chip--violet .icon-mask { background-color: #8b5cf6 !important; }
 
 .device-chip--teal { background: linear-gradient(180deg, rgba(43, 191, 170, 0.05) 0%, #ffffff 100%); }
-.device-chip--teal .chip-ico-circle { color: #2bbfaa; }
+.device-chip--teal .icon-mask { background-color: #2bbfaa !important; }
 
 .device-chip--green { background: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, #ffffff 100%); }
-.device-chip--green .chip-ico-circle { color: #22c55e; }
+.device-chip--green .icon-mask { background-color: #22c55e !important; }
 
 /* Tarjeta de Agregar */
 .add-device-chip {

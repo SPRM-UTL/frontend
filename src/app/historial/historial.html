@@ -1,138 +1,140 @@
-<div class="page-header">
-  <div>
-    <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
-  </div>
-</div>
-
-<!-- Search and Filter Bar -->
-<div class="search-filter-row">
-  <div class="search-wrapper">
-    <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
-    <input class="search-input"
-           type="text"
-           placeholder="Buscar en el historial..."
-           [value]="searchQuery()"
-           (input)="onSearch($any($event.target).value)" />
-  </div>
-
-  <div class="filter-wrapper">
-    <div class="filter-select">
-      <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
-      <select>
-        <option value="">Todos los estados</option>
-        <option value="Ejecutado">Ejecutado</option>
-        <option value="Error">Error</option>
-      </select>
-      <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+<div class="historial-container">
+  <div class="page-header">
+    <div>
+      <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
     </div>
   </div>
-</div>
 
-<!-- History Section -->
-<div class="history-section">
-  <div class="section-header">
-    <div class="section-title-row">
-      <div class="clock-circle">
-        <span class="icon-mask" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+  <!-- Search and Filter Bar -->
+  <div class="search-filter-row">
+    <div class="search-wrapper">
+      <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
+      <input class="search-input"
+             type="text"
+             placeholder="Buscar en el historial..."
+             [value]="searchQuery()"
+             (input)="onSearch($any($event.target).value)" />
+    </div>
+
+    <div class="filter-wrapper">
+      <div class="filter-select">
+        <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+        <select>
+          <option value="">Todos los estados</option>
+          <option value="Ejecutado">Ejecutado</option>
+          <option value="Error">Error</option>
+        </select>
+        <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
       </div>
-      <div>
-        <h2 class="section-title">Actividad Reciente</h2>
-        <p class="section-sub">Registros de las últimas 24 horas</p>
+    </div>
+  </div>
+
+  <!-- History Section -->
+  <div class="history-section">
+    <div class="section-header">
+      <div class="section-title-row">
+        <div class="clock-circle">
+          <span class="icon-mask" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+        </div>
+        <div>
+          <h2 class="section-title">Actividad Reciente</h2>
+          <p class="section-sub">Registros de las últimas 24 horas</p>
+        </div>
+        <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
       </div>
-      <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
     </div>
-  </div>
 
-  <!-- Estado de carga -->
-  <div *ngIf="loading()" class="table-feedback">
-    <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
-    Cargando historial…
-  </div>
-
-  <!-- Estado de error -->
-  <div *ngIf="error()" class="table-feedback table-feedback--error">
-    <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
-    {{ error() }}
-  </div>
-
-  <!-- Table -->
-  <div class="table-wrapper" *ngIf="!loading()">
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th>EVENTO / ACCIÓN</th>
-          <th>DISPOSITIVO</th>
-          <th>ESTADO</th>
-          <th>MÉTODO</th>
-          <th>HORA</th>
-          <th>ACCIONES</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let a of actividadesFiltradas()" class="history-row">
-          <!-- Action / Event -->
-          <td class="action-cell">
-            <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
-              <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(a.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(a.icono) + ')'"></span>
-            </div>
-            <span class="action-text">{{ a.accion }}</span>
-          </td>
-
-          <!-- Device -->
-          <td class="device-cell">
-            <div class="device-tag">
-              <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 14px; height: 14px;"></span>
-              {{ a.dispositivo }}
-            </div>
-          </td>
-
-          <!-- Status -->
-          <td class="status-cell">
-            <div class="status-badge" [ngClass]="a.estado === 'Ejecutado' ? 'status--success' : 'status--error'">
-              <span class="dot"></span>
-              {{ a.estado }}
-            </div>
-          </td>
-
-          <!-- Method -->
-          <td class="method-cell">
-            <div class="method-tag">
-              <span class="icon-mask" [style.mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" [style.-webkit-mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" style="width: 14px; height: 14px;"></span>
-              {{ a.metodo }}
-            </div>
-          </td>
-
-          <!-- Time -->
-          <td class="time-cell">
-            <span class="time-text">{{ a.hora }}</span>
-          </td>
-
-          <!-- Actions -->
-          <td class="actions-cell">
-            <button class="row-action-btn" title="Ver detalles">
-              <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
-            </button>
-          </td>
-        </tr>
-
-        <!-- Empty state -->
-        <tr *ngIf="actividadesFiltradas().length === 0 && !loading()">
-          <td colspan="6" class="empty-state">
-            <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
-            <p>No se encontraron registros en el historial</p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <footer class="table-footer">
-    <p class="results-count">Mostrando 1 a {{ actividadesFiltradas().length }} de {{ actividadesFiltradas().length }} registros</p>
-    <div class="pagination">
-      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
+    <!-- Estado de carga -->
+    <div *ngIf="loading()" class="table-feedback">
+      <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
+      Cargando historial…
     </div>
-  </footer>
+
+    <!-- Estado de error -->
+    <div *ngIf="error()" class="table-feedback table-feedback--error">
+      <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
+      {{ error() }}
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper" *ngIf="!loading()">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>EVENTO / ACCIÓN</th>
+            <th>DISPOSITIVO</th>
+            <th>ESTADO</th>
+            <th>MÉTODO</th>
+            <th>HORA</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of actividadesFiltradas()" class="history-row">
+            <!-- Action / Event -->
+            <td class="action-cell">
+              <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
+                <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(a.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(a.icono) + ')'"></span>
+              </div>
+              <span class="action-text">{{ a.accion }}</span>
+            </td>
+
+            <!-- Device -->
+            <td class="device-cell">
+              <div class="device-tag">
+                <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 14px; height: 14px;"></span>
+                {{ a.dispositivo }}
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td class="status-cell">
+              <div class="status-badge" [ngClass]="a.estado === 'Ejecutado' ? 'status--success' : 'status--error'">
+                <span class="dot"></span>
+                {{ a.estado }}
+              </div>
+            </td>
+
+            <!-- Method -->
+            <td class="method-cell">
+              <div class="method-tag">
+                <span class="icon-mask" [style.mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" [style.-webkit-mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" style="width: 14px; height: 14px;"></span>
+                {{ a.metodo }}
+              </div>
+            </td>
+
+            <!-- Time -->
+            <td class="time-cell">
+              <span class="time-text">{{ a.hora }}</span>
+            </td>
+
+            <!-- Actions -->
+            <td class="actions-cell">
+              <button class="row-action-btn" title="Ver detalles">
+                <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty state -->
+          <tr *ngIf="actividadesFiltradas().length === 0 && !loading()">
+            <td colspan="6" class="empty-state">
+              <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
+              <p>No se encontraron registros en el historial</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <footer class="table-footer">
+      <p class="results-count">Mostrando 1 a {{ actividadesFiltradas().length }} de {{ actividadesFiltradas().length }} registros</p>
+      <div class="pagination">
+        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
+      </div>
+    </footer>
+  </div>
 </div>

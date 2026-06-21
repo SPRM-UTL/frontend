@@ -385,8 +385,30 @@ body {
 /* ═══════════════════════════════════════
    8. COMPONENTES (Hero, Notif, etc.)
    ═══════════════════════════════════════ */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-copy {
+  animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .hero-panel { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
-.hero-actions { position: relative; display: flex; align-items: center; gap: 1rem; }
+.hero-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  opacity: 0;
+}
 .eyebrow { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem; }
 .hero-copy h1 { font-size: clamp(1.65rem, 2vw, 2.2rem); font-weight: 800; color: var(--cafe-dark); }
 .hero-subtitle { margin-top: 0.45rem; color: var(--text-muted); font-size: 0.92rem; }

@@ -18,7 +18,7 @@
       <div class="stat-copy">
         <p class="stat-label">Gestos</p>
         <p class="stat-number">{{ inicioService.stats()?.activeAutomations ?? 0 }}</p>
-        <p class="stat-sub">{{ inicioService.stats()?.automatizaciones ?? 0 }} activas</p>
+        <p class="stat-sub">{{ inicioService.stats()?.automatizaciones ?? 0 }} activos</p>
       </div>
     </article>
 
@@ -108,7 +108,7 @@
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
           <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)" >
             <div class="chip-ico-circle">
-              <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'"></span>
+              <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'"></span>
             </div>
             <strong>{{ device.nombre_aparato }}</strong>
             <span>{{ device.tipo_aparato }}</span>
@@ -129,44 +129,33 @@
 
     <article class="panel-card">
       <div class="panel-head">
-        <div>
-          <h3 class="panel-title">Gestos</h3>
-          <p class="panel-subtitle">Gestos de funcionamiento</p>
+        <div class="panel-head-left">
+          <span class="panel-icon-main">
+            <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
+          </span>
+          <div>
+            <h3 class="panel-title">Gestos</h3>
+            <p class="panel-subtitle">Gestos vinculados a tu sistema</p>
+          </div>
         </div>
+        <button class="text-link-box" type="button" routerLink="/dashboard/gestos">
+          <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg'); width: 14px; height: 14px;"></span>
+          Ver todos
+        </button>
       </div>
 
       <div class="automation-list">
+        @for(gesto of displayedGestos(); track gesto.sk_gesto_id; let i = $index){
         <div class="automation-row">
           <span class="automation-icon automation-icon--moon">
-            <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
+            <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
           </span>
           <div class="automation-copy">
-            <strong>Modo noche</strong>
-            <span>Todos los días a las 10:00 PM</span>
-          </div>
-          <span class="toggle toggle--on"></span>
-        </div>
-
-        <div class="automation-row">
-          <span class="automation-icon automation-icon--home">
-            <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg'); transform: rotate(180deg);"></span>
-          </span>
-          <div class="automation-copy">
-            <strong>Llegada a casa</strong>
-            <span>Cuando llega a casa</span>
-          </div>
-          <span class="toggle toggle--on"></span>
-        </div>
-
-        <div class="automation-row">
-          <span class="automation-icon automation-icon--sun">
-            <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
-          </span>
-          <div class="automation-copy">
-            <strong>Buenos días</strong>
-            <span>Todos los días a las 7:00 AM</span>
+            <strong>{{gesto.nombre_gesto}}</strong>
+            <span>{{ gesto.estado || (gesto.activo ? 'Activo' : 'Inactivo') }}</span>
           </div>
         </div>
+        }
       </div>
     </article>
   </section>

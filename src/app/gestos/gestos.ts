@@ -23,25 +23,47 @@ export class Gestos {
   private dispositivosService = inject(DispositivosService);
   private gestosService = inject(GestosService);
   private toastService = inject(ToastService);
+  public gestos = signal<Gesto[]>([]);
 
   readonly searchQuery = signal('');
+  readonly statusFilter = signal('');
+  readonly selectedFilterLabel = signal('Todos los gestos');
+  readonly isFilterOpen = signal(false);
+
   readonly selectedGesto = signal<Gesto | null>(null);
 
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
+    const status = this.statusFilter();
 
-    return q
-      ? this.gestosService.gestos().filter(g =>
-          (g.nombre_gesto ?? '').toLowerCase().includes(q) ||
-          (g.tipo_disparador_nombre ?? '').toLowerCase().includes(q) ||
-          String(g.sk_gesto_id).includes(q)
-        )
-      : this.gestosService.gestos();
+    let filtered = this.gestos();
+
+    if (q) {
+      filtered = filtered.filter(g =>
+        (g.nombre_gesto ?? '').toLowerCase().includes(q) ||
+        (g.tipo_disparador_nombre ?? '').toLowerCase().includes(q) ||
+        String(g.sk_gesto_id).includes(q)
+      );
+    }
+
+    if (status) {
+      filtered = filtered.filter(g => {
+        const isActive = g.estado === 'Activo' || g.activo === true || (g.activo as any) == 1;
+        if (status === 'Activo') {
+          return isActive;
+        } else if (status === 'Pausado') {
+          return !isActive;
+        }
+        return true;
+      });
+    }
+
+    return filtered;
   });
 
   readonly totalActivos = computed(() =>
-    this.gestosService.gestos().filter(
-      g => g.estado === 'Activo' || g.activo === true
+    this.gestos().filter(
+      g => g.estado === 'Activo' || g.activo === true || (g.activo as any) == 1
     ).length
   );
 
@@ -55,7 +77,7 @@ export class Gestos {
       this.gestosService.loadGestos().subscribe({
         next: (data) => {
           console.log('Gestos cargados en componente:', data);
-          this.toastService.success(`Gestos cargados correctamente (${data.length})`);
+          this.gestos.set(data);
         },
         error: (err) => {
           console.error('Error al activar la petición de gestos:', err);
@@ -72,10 +94,18 @@ export class Gestos {
     this.searchQuery.set(value);
   }
 
+  onFilterStatus(value: string, label: string): void {
+    this.statusFilter.set(value);
+    this.selectedFilterLabel.set(label);
+    this.isFilterOpen.set(false);
+  }
+
+  toggleFilter(): void {
+    this.isFilterOpen.update(v => !v);
+  }
+
   getIconPath(icono: string | undefined): string {
-    if (icono === 'user') {
-      return '/icons/user.svg';
-    }
+    // Por ahora forzamos la mano para todos los gestos según petición
     return '/icons/hand.svg';
   }
 

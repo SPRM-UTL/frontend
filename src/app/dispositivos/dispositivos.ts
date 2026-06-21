@@ -20,19 +20,56 @@ export class Dispositivos implements OnInit {
   activeNav = 'dispositivos';
   readonly searchQuery = signal('');
 
+  // Dropdown Filter State
+  readonly isFilterOpen = signal(false);
+  readonly selectedFilter = signal('');
+  readonly selectedFilterLabel = signal('Todos los tipos');
+
+  // Mapeo de tipos de aparatos de la base de datos a nombres de archivos SVG reales en la carpeta /icons/
+  readonly categoryIconMap: Record<string, string> = {
+    'Audífonos': 'headphones',
+    'Bocinas': 'speaker',
+    'Focos': 'lightbulb',
+    'Luces': 'lamp_floor',
+    'Ventilador': 'wind',
+    'Televisión': 'tv_minimal',
+    'Sockets': 'plug',
+    'Asistente': 'ic_input_add',
+    'Predeterminado': 'ic_default'
+  };
+
   readonly devices = this.devicesService.devices;
   readonly mostrarModal = signal(false);
+  readonly selectedDevice = signal<Dispositivo | null>(null);
 
   readonly filteredDevices = computed(() => {
-    const allDevices = this.devices();
-    if (!Array.isArray(allDevices)) return [];
+    let filtered = this.devices();
+    if (!Array.isArray(filtered)) return [];
+
     const q = this.searchQuery().toLowerCase().trim();
-    if (!q) return allDevices;
-    return allDevices.filter(device =>
-      device.nombre_aparato?.toLowerCase().includes(q) ||
-      device.tipo_aparato?.toLowerCase().includes(q) ||
-      device.nombre_bluetooth?.toLowerCase().includes(q)
-    );
+    const type = this.selectedFilter();
+
+    // Filtro por búsqueda
+    if (q) {
+      filtered = filtered.filter(device =>
+        device.nombre_aparato?.toLowerCase().includes(q) ||
+        device.tipo_aparato?.toLowerCase().includes(q) ||
+        device.nombre_bluetooth?.toLowerCase().includes(q)
+      );
+    }
+
+    // Filtro por tipo (Categoría)
+    if (type) {
+      filtered = filtered.filter(device => {
+        const devIcon = (device.icono || '').toLowerCase().trim();
+        const devType = (device.tipo_aparato || '').toLowerCase().trim();
+        return devIcon === type ||
+               devType === type.toLowerCase() ||
+               this.categoryIconMap[devType] === type;
+      });
+    }
+
+    return filtered;
   });
 
   readonly loading = this.devicesService.loading;
@@ -51,6 +88,21 @@ export class Dispositivos implements OnInit {
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
+  }
+
+  // Dropdown Methods
+  toggleFilter() {
+    this.isFilterOpen.update(v => !v);
+  }
+
+  closeFilter() {
+    this.isFilterOpen.set(false);
+  }
+
+  selectFilter(value: string, label: string) {
+    this.selectedFilter.set(value);
+    this.selectedFilterLabel.set(label);
+    this.isFilterOpen.set(false);
   }
 
   nuevoDispositivo = {
@@ -72,20 +124,18 @@ export class Dispositivos implements OnInit {
     this.mostrarModal.set(false);
   }
 
+  verDetalle(device: Dispositivo): void {
+    this.selectedDevice.set(device);
+  }
 
-getIconPath(tipo: string | undefined): string {
-  if (!tipo) return '/icons/smartphone.svg';
+  cerrarDetalle(): void {
+    this.selectedDevice.set(null);
+  }
 
-  const iconMap: Record<string, string> = {
-    'Bocinas': 'speaker.svg',
-    'Audífonos': 'earphones.svg',
-    'Luces': 'lightbulb.svg',
-    'Ventiladores': 'ventiladores.svg',
-    'Cámara': 'camera.svg',
-    'TV': 'tv.svg',
-    'Cerradura': 'lock.svg'
-  };
 
-  return `/icons/${iconMap[tipo] || 'smartphone.svg'}`;
+getIconPath(tipoOIcono: string | undefined): string {
+  if (!tipoOIcono) return '/icons/ic_default.svg';
+  const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
+  return `/icons/${iconName}.svg`;
 }
 }

@@ -26,14 +26,18 @@
       </div>
 
       <div class="filter-wrapper">
-        <div class="filter-select">
-          <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
-          <select>
-            <option value="">Todos los gestos</option>
-            <option value="Activo">Activos</option>
-            <option value="Pausado">Pausados</option>
-          </select>
-          <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+        <div class="custom-dropdown">
+          <button class="dropdown-trigger" (click)="toggleFilter()">
+            <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+            <span class="trigger-label">{{ selectedFilterLabel() }}</span>
+            <span class="icon-mask arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transition: transform 0.2s;"></span>
+          </button>
+
+          <div class="dropdown-menu" *ngIf="isFilterOpen()">
+            <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
+            <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
+            <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
+          </div>
         </div>
       </div>
     </div>
@@ -53,11 +57,11 @@
     </div>
 
     <!-- Gestos grid -->
-    <div class="gestos-grid" *ngIf="!loading()">
+    <div class="gestos-grid" *ngIf="!loading() && gestosFiltrados().length > 0">
       <div class="gesto-card" *ngFor="let gesto of gestosFiltrados()" (click)="verDetalle(gesto)">
         <div class="gesto-card-header">
           <div class="gesto-icon-circle">
-            <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 24px; height: 24px;"></span>
+            <span class="icon-mask gesto-icon-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 24px; height: 24px;"></span>
           </div>
         </div>
         <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
@@ -66,8 +70,8 @@
           <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
         </div>
         <div class="info-group">
-          <p class="info-label">ACTIVO</p>
-          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Ensendido' : 'Apagado') }}</p>
+          <p class="info-label">ESTADO</p>
+          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
         </div>
         <div class="gesto-card-footer">
           <span class="icon-mask footer-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg'); width: 14px; height: 14px;"></span>
@@ -80,6 +84,11 @@
     </div>
 
     <!-- Empty/Loading/Error states -->
+    <div *ngIf="!loading() && !error() && gestosFiltrados().length === 0" class="empty-state">
+      <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 48px; height: 48px; opacity: 0.3;"></span>
+      <p>No se encontraron gestos que coincidan con los filtros.</p>
+    </div>
+
     <div *ngIf="loading()" class="empty-state">
       <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 24px; height: 24px;"></span>
       <p>Cargando gestos…</p>
@@ -114,7 +123,7 @@
             <section class="card hero-info-card">
               <div class="hero-header">
                 <div class="hero-icon-box">
-                  <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px; background-color: var(--cafe-primary);"></span>
+                  <span class="icon-mask gesto-hero-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
                 </div>
                 <div class="hero-titles">
                   <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
@@ -147,10 +156,10 @@
                 <div class="media-thumb foto-box" *ngFor="let foto of gesto.multimedia.fotos">
                   <div class="thumb-content">
                     <img *ngIf="foto && foto.startsWith('http')" [src]="foto" alt="Gesto" style="width: 100%; height: 100%; object-fit: cover;">
-                    <span *ngIf="!foto || !foto.startsWith('http')" class="icon-mask" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px; background-color: var(--cafe-primary);"></span>
+                    <span class="icon-mask gesto-thumb-fallback-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
                   </div>
                   <span class="thumb-icon-overlay">
-                    <span class="icon-mask" style="mask-image: url('/icons/camera.svg'); -webkit-mask-image: url('/icons/camera.svg'); width: 14px; height: 14px; background-color: #6b7280;"></span>
+                    <span class="icon-mask" style="mask-image: url('/icons/camera.svg'); -webkit-mask-image: url('/icons/camera.svg'); width: 14px; height: 14px; background-color: var(--cafe-primary);"></span>
                   </span>
                 </div>
 
@@ -174,7 +183,7 @@
                     <span class="icon-mask info-icon" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg');"></span>
                     <span>Estado</span>
                   </div>
-                  <span class="info-row-val status-text-green">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Inactivo') }}</span>
+                  <span class="info-row-val status-text-green">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</span>
                 </div>
                 <div class="info-row">
                   <div class="info-row-left">
@@ -197,6 +206,15 @@
                   </div>
                   <span class="info-row-val">{{ gesto.distancia_minima_m || 0.5 }} - {{ gesto.distancia_maxima_m || 1.5 }} m</span>
                 </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg');"></span>
+                    <span>Dispositivo</span>
+                  </div>
+                  <span class="info-row-val">
+                {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}
+                </span>
+                </div>
               </div>
             </div>
           </aside>
@@ -206,7 +224,7 @@
       <!-- Footer Actions -->
       <footer class="modal-footer-actions">
         <button class="btn-action-outline-gray">
-          <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 18px; height: 18px; background-color: #4b5563;"></span>
+          <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 18px; height: 18px; background-color: var(--cafe-primary);"></span>
           Descargar guía
         </button>
         <button class="btn-action-solid-teal">

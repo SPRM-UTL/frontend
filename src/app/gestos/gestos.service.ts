@@ -52,8 +52,8 @@ export class GestosService {
 
     return this.http.get<ApiResponse>(this.apiUrl, { headers: this.getHeaders(token) }).pipe(
       map(response => {
-        if (Array.isArray(response)) return response;
-        return response?.data ?? [];
+        const data = response?.data ?? response;
+        return Array.isArray(data) ? data : [];
       }),
       tap(data => this.gestos.set(data)),
       catchError(err => {
