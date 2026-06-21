@@ -18,18 +18,34 @@ export class Historial implements OnInit {
 
   readonly searchQuery = signal('');
 
+  // Dropdown Filter State
+  readonly isFilterOpen = signal(false);
+  readonly selectedFilter = signal('');
+  readonly selectedFilterLabel = signal('Todos los estados');
+
   readonly actividadesFiltradas = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-    const lista = this.historialService.actividades();
-    if (!Array.isArray(lista)) return [];
-    if (!q) return lista;
+    const status = this.selectedFilter();
+    let lista = this.historialService.actividades();
 
-    return lista.filter(a =>
-      (a.accion ?? '').toLowerCase().includes(q)      ||
-      (a.dispositivo ?? '').toLowerCase().includes(q) ||
-      (a.metodo ?? '').toLowerCase().includes(q)      ||
-      (a.estado ?? '').toLowerCase().includes(q)
-    );
+    if (!Array.isArray(lista)) return [];
+
+    // Filtro por búsqueda
+    if (q) {
+      lista = lista.filter(a =>
+        (a.accion ?? '').toLowerCase().includes(q)      ||
+        (a.dispositivo ?? '').toLowerCase().includes(q) ||
+        (a.metodo ?? '').toLowerCase().includes(q)      ||
+        (a.estado ?? '').toLowerCase().includes(q)
+      );
+    }
+
+    // Filtro por estado
+    if (status) {
+      lista = lista.filter(a => (a.estado ?? '') === status);
+    }
+
+    return lista;
   });
 
   readonly loading = this.historialService.loading;
@@ -41,6 +57,17 @@ export class Historial implements OnInit {
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
+  }
+
+  // Dropdown Methods
+  toggleFilter() {
+    this.isFilterOpen.update(v => !v);
+  }
+
+  selectFilter(value: string, label: string) {
+    this.selectedFilter.set(value);
+    this.selectedFilterLabel.set(label);
+    this.isFilterOpen.set(false);
   }
 
   getIconPath(icono: string | undefined): string {

@@ -1,6 +1,7 @@
 <div class="historial-container">
   <div class="page-header">
     <div>
+      <h1 class="page-title">Historial</h1>
       <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
     </div>
   </div>
@@ -17,14 +18,18 @@
     </div>
 
     <div class="filter-wrapper">
-      <div class="filter-select">
-        <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
-        <select>
-          <option value="">Todos los estados</option>
-          <option value="Ejecutado">Ejecutado</option>
-          <option value="Error">Error</option>
-        </select>
-        <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+      <div class="custom-dropdown">
+        <button class="dropdown-trigger" (click)="toggleFilter()">
+          <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+          <span class="trigger-label">{{ selectedFilterLabel() }}</span>
+          <span class="icon-mask arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transition: transform 0.2s;"></span>
+        </button>
+
+        <div class="dropdown-menu" *ngIf="isFilterOpen()">
+          <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los estados')">Todos los estados</div>
+          <div class="dropdown-option" [class.active]="selectedFilter() === 'Ejecutado'" (click)="selectFilter('Ejecutado', 'Ejecutados')">Ejecutados</div>
+          <div class="dropdown-option" [class.active]="selectedFilter() === 'Error'" (click)="selectFilter('Error', 'Errores')">Errores</div>
+        </div>
       </div>
     </div>
   </div>
@@ -38,7 +43,7 @@
         </div>
         <div>
           <h2 class="section-title">Actividad Reciente</h2>
-          <p class="section-sub">Registros de las últimas 24 horas</p>
+          <p class="section-sub">{{ actividadesFiltradas().length }} registros encontrados</p>
         </div>
         <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
       </div>
@@ -133,7 +138,7 @@
       <div class="pagination">
         <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
         <button class="page-btn active">1</button>
-        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
+        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
       </div>
     </footer>
   </div>

@@ -63,9 +63,14 @@ export class Dispositivos implements OnInit {
       filtered = filtered.filter(device => {
         const devIcon = (device.icono || '').toLowerCase().trim();
         const devType = (device.tipo_aparato || '').toLowerCase().trim();
+        const mappedIcon = this.categoryIconMap[device.tipo_aparato || ''] || '';
+
         return devIcon === type ||
                devType === type.toLowerCase() ||
-               this.categoryIconMap[devType] === type;
+               mappedIcon === type ||
+               (type === 'lamp_floor' && devType === 'luces') ||
+               (type === 'ic_input_add' && devType === 'asistente') ||
+               (type === 'ic_default' && devType === 'predeterminado');
       });
     }
 
