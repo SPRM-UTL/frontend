@@ -1,10 +1,10 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
-import { Device } from '../../dispositivos/device.model';
+import { Dispositivo } from '../../dispositivos/dispositivos.model';
 import { Gesto } from '../../gestos/gesto.model';
 import { Actividad } from '../../historial/actividad.model';
-import { DevicesService } from '../../dispositivos/devices.service';
+import { DispositivosService } from '../../dispositivos/dispositivos.service';
 import { GestosService } from '../../gestos/gestos.service';
 import { HistorialService } from '../../historial/historial.service';
 
@@ -14,7 +14,7 @@ import { DashboardStats, UltimoGesto, AparatoUtilizado } from './inicio.model';
 @Injectable({ providedIn: 'root' })
 export class InicioService {
   private platformId = inject(PLATFORM_ID);
-  private devicesService = inject(DevicesService);
+  private devicesService = inject(DispositivosService);
   private gestosService = inject(GestosService);
   private historialService = inject(HistorialService);
 
@@ -118,8 +118,8 @@ export class InicioService {
     };
   }
 
-  private obtenerAparatosUtilizados(dispositivos: Device[], actividades: Actividad[]): AparatoUtilizado[] {
-    const contadores: Record<string, { dispositivo: Device; count: number }> = {};
+  private obtenerAparatosUtilizados(dispositivos: Dispositivo[], actividades: Actividad[]): AparatoUtilizado[] {
+    const contadores: Record<string, { dispositivo: Dispositivo; count: number }> = {};
 
     actividades.forEach(actividad => {
       const dispositivo = dispositivos.find(d =>

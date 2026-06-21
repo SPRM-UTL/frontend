@@ -63,7 +63,7 @@
         <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
         <div class="info-group">
           <p class="info-label">DISPOSITIVO</p>
-          <p class="info-value">Aparato #{{ gesto.sk_aparato_id }}</p>
+          <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
         </div>
         <div class="info-group">
           <p class="info-label">ACTIVO</p>
@@ -196,13 +196,6 @@
                     <span>Distancia recomendada</span>
                   </div>
                   <span class="info-row-val">{{ gesto.distancia_minima_m || 0.5 }} - {{ gesto.distancia_maxima_m || 1.5 }} m</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/sparkles.svg'); -webkit-mask-image: url('/icons/sparkles.svg');"></span>
-                    <span>Precisión IA</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.precision_ia || 'Alta' }}</span>
                 </div>
               </div>
             </div>

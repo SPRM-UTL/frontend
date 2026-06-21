@@ -106,7 +106,7 @@
 
       <div class="devices-strip">
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
-          <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)">
+          <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)" >
             <div class="chip-ico-circle">
               <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato) + ')'"></span>
             </div>

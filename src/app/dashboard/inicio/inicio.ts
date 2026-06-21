@@ -3,7 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
-import { DevicesService } from '../../dispositivos/devices.service';
+import { DispositivosService } from '../../dispositivos/dispositivos.service';
 
 @Component({
   selector: 'app-inicio',
@@ -15,7 +15,7 @@ import { DevicesService } from '../../dispositivos/devices.service';
 export class Inicio {
   private platformId = inject(PLATFORM_ID);
   public readonly inicioService = inject(InicioService);
-  public readonly devicesService = inject(DevicesService);
+  public readonly devicesService = inject(DispositivosService);
 
   readonly stats = this.inicioService.stats;
   readonly acciones = this.inicioService.acciones;

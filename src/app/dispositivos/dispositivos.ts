@@ -2,8 +2,8 @@ import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { DevicesService } from './devices.service';
-import { Device } from './device.model';
+import { DispositivosService } from './dispositivos.service';
+import { Dispositivo } from './dispositivos.model';
 
 @Component({
   selector: 'app-dispositivos',
@@ -14,7 +14,7 @@ import { Device } from './device.model';
 })
 export class Dispositivos implements OnInit {
 
-  private devicesService = inject(DevicesService);
+  private devicesService = inject(DispositivosService);
   private route = inject(ActivatedRoute);
 
   activeNav = 'dispositivos';
