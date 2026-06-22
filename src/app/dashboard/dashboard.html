@@ -94,22 +94,24 @@
               </div>
             } @else {
               <div class="notif-list">
-                @for (a of recentActivities(); track a.id) {
-                  <article class="notif-item">
+                @for (n of recentActivities(); track n.id) {
+                  <article class="notif-item" [class]="'severity-' + n.severity">
                     <span class="notif-icon">
-                      <span class="icon-mask" [style.mask-image]="'url(' + iconPathForActivity(a) + ')'" [style.-webkit-mask-image]="'url(' + iconPathForActivity(a) + ')'"></span>
+                      <span class="icon-mask" [style.mask-image]="'url(' + n.icon + ')'" [style.-webkit-mask-image]="'url(' + n.icon + ')'"></span>
                     </span>
 
                     <div class="notif-content">
-                      <p class="notif-action">{{ a.accion }}</p>
-                      <p class="notif-meta">{{ a.dispositivo }} · {{ a.hora }}</p>
+                      <p class="notif-action">{{ n.title }}</p>
+                      <p class="notif-meta">{{ n.subtitle }} · {{ n.timeLabel }}</p>
                     </div>
 
-                    <span class="notif-status" [class.is-error]="a.estado === 'Error'">
-                      {{ a.estado }}
-                    </span>
+                    @if (n.statusText) {
+                      <span class="notif-status" [class.is-error]="n.severity === 'error'">
+                        {{ n.statusText }}
+                      </span>
+                    }
 
-                    <button class="notif-close-btn" type="button" aria-label="Cerrar notificación" (click)="dismissNotification(a.id); $event.stopPropagation()">
+                    <button class="notif-close-btn" type="button" aria-label="Cerrar notificación" (click)="dismissNotification(n); $event.stopPropagation()">
                       <span class="icon-mask" style="mask-image: url('/icons/x.svg'); -webkit-mask-image: url('/icons/x.svg');"></span>
                     </button>
                   </article>

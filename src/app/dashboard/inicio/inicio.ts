@@ -29,7 +29,7 @@ export class Inicio {
   });
 
   readonly displayedGestos = computed(() => {
-    return this.gestosService.gestos().slice(0, 4);
+    return this.gestosService.gestos().slice(0, 3);
   });
 
 

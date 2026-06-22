@@ -16,6 +16,19 @@ import { HistorialService } from '../historial/historial.service';
 import { Actividad } from '../historial/actividad.model';
 import { GestosService } from '../gestos/gestos.service';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
+import { AlertNotificationService, AlertNotification } from '../services/alert-notification.service';
+
+interface UnifiedNotification {
+  id: string | number;
+  type: 'activity' | 'alert';
+  severity: 'success' | 'error' | 'warning' | 'info' | 'default';
+  title: string;
+  subtitle: string;
+  timeLabel: string;
+  icon: string;
+  statusText?: string;
+  originalId: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -44,6 +57,7 @@ export class Dashboard {
   private historialService = inject(HistorialService);
   public gestosService = inject(GestosService);
   public dispositivosService = inject(DispositivosService);
+  public alertService = inject(AlertNotificationService);
 
   // Inyectamos ambos de forma pública para usarlos correctamente en el HTML
   public cuentaService = inject(CuentaService);
@@ -84,17 +98,57 @@ export class Dashboard {
   };
 
   readonly recentActivities = computed(() => {
-    const all = this.historialService.actividades();
-    if (!Array.isArray(all)) return [];
-
-    // Filtramos las descartadas
+    const allActivities = this.historialService.actividades();
+    const liveAlerts = this.alertService.alerts();
     const dismissed = this.dismissedNotifIds();
-    return all
-      .filter(a => !dismissed.includes(a.id))
-      .slice(0, 5);
+
+    const unified: UnifiedNotification[] = [];
+
+    // Map Live Alerts
+    liveAlerts.filter(a => !a.dismissed).forEach(a => {
+      unified.push({
+        id: `alert-${a.id}`,
+        type: 'alert',
+        severity: a.type,
+        title: a.message,
+        subtitle: 'Sistema',
+        timeLabel: this.formatTime(a.timestamp),
+        icon: a.icon || '/icons/bell.svg',
+        originalId: a.id
+      });
+    });
+
+    // Map Historical Activities
+    if (Array.isArray(allActivities)) {
+      allActivities
+        .filter(a => !dismissed.includes(a.id))
+        .forEach(a => {
+          unified.push({
+            id: `act-${a.id}`,
+            type: 'activity',
+            severity: a.estado === 'Error' ? 'error' : 'default',
+            title: a.accion,
+            subtitle: `${a.dispositivo}`,
+            timeLabel: a.hora,
+            icon: this.iconPathForActivity(a),
+            statusText: a.estado,
+            originalId: a.id
+          });
+        });
+    }
+
+    return unified.slice(0, 10); // Show up to 10 unified notifications
   });
 
   readonly notifCount = computed(() => this.recentActivities().length);
+
+  private formatTime(date: Date): string {
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }).replace(/\./g, '').toUpperCase();
+  }
 
   readonly panelLoading = this.historialService.loading;
   readonly panelError = this.historialService.error;
@@ -132,6 +186,16 @@ export class Dashboard {
       const token = localStorage.getItem('token') ?? '';
       if (token) {
         this.historialService.loadHistorial();
+      }
+
+      // Cargar notificaciones borradas de localStorage
+      const storedDismissed = localStorage.getItem('dismissed_notifications');
+      if (storedDismissed) {
+        try {
+          this.dismissedNotifIds.set(JSON.parse(storedDismissed));
+        } catch (e) {
+          console.error('Error al cargar notificaciones borradas', e);
+        }
       }
     });
   }
@@ -240,8 +304,18 @@ export class Dashboard {
     this.datePanelOpen.set(false);
   }
 
-  dismissNotification(id: number): void {
-    this.dismissedNotifIds.update(ids => [...ids, id]);
+  dismissNotification(item: UnifiedNotification): void {
+    if (item.type === 'alert') {
+      this.alertService.dismiss(item.originalId);
+    } else {
+      this.dismissedNotifIds.update(ids => {
+        const newIds = [...ids, item.originalId];
+        if (this.isBrowser) {
+          localStorage.setItem('dismissed_notifications', JSON.stringify(newIds));
+        }
+        return newIds;
+      });
+    }
   }
 
   toggleSidebar(): void {
