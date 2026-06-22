@@ -1,14 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ControlService } from './control.service';
-import { Luz, Bocina, Ventilador } from './control.model';
-
-type CategoriaSeleccionada =
-  | 'Luces'
-  | 'Bocinas'
-  | 'Ventiladores';
+import { DispositivoControl, AparatoTipo } from './control.model';
 
 @Component({
   selector: 'app-control',
@@ -21,132 +16,80 @@ export class Control implements OnInit {
 
   private controlService = inject(ControlService);
 
-  readonly categorias = this.controlService.categorias;
-  readonly luces      = this.controlService.luces;
-  readonly bocinas        = this.controlService.bocinas;
-  readonly ventiladores        = this.controlService.ventiladores;
-  readonly loading    = this.controlService.loading;
-  readonly error      = this.controlService.error;
+  readonly tipos        = this.controlService.tiposDispositivos;
+  readonly dispositivos = this.controlService.todosLosDispositivos;
+  readonly loading      = this.controlService.loading;
+  readonly error        = this.controlService.error;
 
-  categoriaSeleccionada: CategoriaSeleccionada = 'Luces';
+  tipoSeleccionado = signal<string>('Todos los tipos');
 
-  getCurrentDevices(): any[] {
-    if (this.categoriaSeleccionada === 'Luces') return this.luces();
-    if (this.categoriaSeleccionada === 'Bocinas') return this.bocinas();
-    if (this.categoriaSeleccionada === 'Ventiladores') return this.ventiladores();
-    return [];
-  }
+  // Filtrar tipos que tienen al menos un dispositivo
+  tiposConDispositivos = computed(() => {
+    const allDevices = this.dispositivos();
+    const allTypes = this.tipos();
 
-  getDeviceIcon(categoria: string): string {
-    if (categoria === 'Luces') return '/icons/lightbulb.svg';
-    if (categoria === 'Bocinas') return '/icons/speaker.svg';
-    if (categoria === 'Ventiladores') return '/icons/fan.svg';
-    return '/icons/smartphone.svg';
-  }
+    return allTypes.filter(t =>
+      allDevices.some(d => (d.tipo_aparato || '').toLowerCase() === t.nombre_tipo.toLowerCase())
+    );
+  });
 
-  toggleDevice(device: any): void {
-    if (this.categoriaSeleccionada === 'Luces') this.toggleLuz(device);
-    if (this.categoriaSeleccionada === 'Bocinas') this.toggleBocina(device);
-    if (this.categoriaSeleccionada === 'Ventiladores') this.toggleVentilador(device);
-  }
+  dispositivosFiltrados = computed(() => {
+    const seleccion = this.tipoSeleccionado();
+    const all = this.dispositivos();
+    if (seleccion === 'Todos los tipos') return all;
+    return all.filter(d => (d.tipo_aparato || '').toLowerCase() === seleccion.toLowerCase());
+  });
 
   ngOnInit(): void {
     this.controlService.loadControl();
   }
 
-  // ── Luces ──
-  toggleLuz(luz: Luz): void { this.controlService.toggleLuz(luz.id); }
-  setTono(luz: Luz, tono: 'warm' | 'cool'): void {
-    this.controlService.updateLuz({ ...luz, tono });
-  }
-  onBrilloChange(luz: Luz, value: number): void {
-    this.controlService.updateLuz({ ...luz, brillo: value });
+  selectTipo(tipo: string): void {
+    this.tipoSeleccionado.set(tipo);
   }
 
-// ── Bocinas ──
-
-// Encender / apagar
-toggleBocina(bocina: Bocina): void {
-  this.controlService.toggleBocina(bocina.id);
-}
-
-// Subir volumen
-incrementVolumen(bocina: Bocina): void {
-
-  // Evita pasar de 100
-  if (bocina.volumen < 100) {
-
-    this.controlService.updateBocina({
-      ...bocina,
-      volumen: bocina.volumen + 5
-    });
-
+  /**
+   * Obtiene el icono correcto basado en el nombre del tipo de dispositivo.
+   */
+  getIconPath(tipo: string): string {
+    const t = this.tipos().find(x => x.nombre_tipo.toLowerCase() === tipo.toLowerCase());
+    const iconName = t?.icono || 'ic_default';
+    return `/icons/${iconName}.svg`;
   }
-}
 
-// Bajar volumen
-decrementVolumen(bocina: Bocina): void {
-
-  // Evita valores negativos
-  if (bocina.volumen > 0) {
-
-    this.controlService.updateBocina({
-      ...bocina,
-      volumen: bocina.volumen - 5
-    });
-
+  getDeviceCount(tipo: string): number {
+    return this.dispositivos().filter(d => (d.tipo_aparato || '').toLowerCase() === tipo.toLowerCase()).length;
   }
-}
 
-// Cambio desde slider
-onVolumenChange(
-  bocina: Bocina,
-  value: number
-): void {
-
-  this.controlService.updateBocina({
-    ...bocina,
-    volumen: value
-  });
-
-}
-
-  // ── Ventiladors ──
-  toggleVentilador(Ventilador: Ventilador): void { this.controlService.toggleVentilador(Ventilador.id); }
-  setModo(Ventilador: Ventilador): void {
-    this.controlService.updateVentilador({ ...Ventilador });
+  toggleDevice(device: DispositivoControl): void {
+    this.controlService.toggleDevice(device.id);
   }
-incrementVelocidad(
-  ventilador: Ventilador
-): void {
 
-  if (ventilador.velocidad < 5) {
-
-    this.controlService
-        .updateVentilador({
-
-      ...ventilador,
-
-      velocidad:
-        ventilador.velocidad + 1
-    });
-
+  onBrilloChange(device: DispositivoControl, value: number): void {
+    this.controlService.updateDevice({ ...device, brillo: value });
   }
-}
-decrementVelocidad(
-  ventilador: Ventilador
-): void {
 
-  if (
-    ventilador.encendido &&
-    ventilador.velocidad > 1
-  ) {
-
-    this.controlService.updateVentilador({
-      ...ventilador,
-      velocidad: ventilador.velocidad - 1
-    });
-
+  incrementVolumen(device: DispositivoControl): void {
+    if ((device.volumen || 0) < 100) {
+      this.controlService.updateDevice({ ...device, volumen: (device.volumen || 0) + 5 });
+    }
   }
-}
+
+  decrementVolumen(device: DispositivoControl): void {
+    if ((device.volumen || 0) > 0) {
+      this.controlService.updateDevice({ ...device, volumen: (device.volumen || 0) - 5 });
+    }
+  }
+
+  incrementVelocidad(device: DispositivoControl): void {
+    if ((device.velocidad || 0) < 5) {
+      this.controlService.updateDevice({ ...device, velocidad: (device.velocidad || 0) + 1 });
+    }
+  }
+
+  decrementVelocidad(device: DispositivoControl): void {
+    if ((device.velocidad || 0) > 1) {
+      this.controlService.updateDevice({ ...device, velocidad: (device.velocidad || 0) - 1 });
+    }
+  }
 }

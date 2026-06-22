@@ -1,5 +1,5 @@
 import { Component, computed, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DispositivosService } from './dispositivos.service';
@@ -8,7 +8,7 @@ import { Dispositivo } from './dispositivos.model';
 @Component({
   selector: 'app-dispositivos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })
@@ -19,6 +19,7 @@ export class Dispositivos implements OnInit {
 
   activeNav = 'dispositivos';
   readonly searchQuery = signal('');
+  readonly showActions = signal(false);
 
   // Dropdown Filter State
   readonly isFilterOpen = signal(false);
@@ -39,8 +40,6 @@ export class Dispositivos implements OnInit {
   };
 
   readonly devices = this.devicesService.devices;
-  readonly mostrarModal = signal(false);
-  readonly selectedDevice = signal<Dispositivo | null>(null);
 
   readonly filteredDevices = computed(() => {
     let filtered = this.devices();
@@ -82,13 +81,6 @@ export class Dispositivos implements OnInit {
 
   ngOnInit(): void {
     this.devicesService.loadDevices();
-
-    // Abrir modal si viene el parámetro 'add'
-    this.route.queryParams.subscribe(params => {
-      if (params['add'] === 'true') {
-        this.abrirModal();
-      }
-    });
   }
 
   onSearch(value: string): void {
@@ -110,37 +102,17 @@ export class Dispositivos implements OnInit {
     this.isFilterOpen.set(false);
   }
 
-  nuevoDispositivo = {
-    nombre_aparato: '',
-    tipo_aparato: '',
-    accion_nombre: '',
-    comando_bluetooth: '',
-    icono: '',
-    nombre_bluetooth: '',
-    mac_bluetooth: '',
-    fecha_sincronizacion: null
-  };
-
-  abrirModal(): void {
-    this.mostrarModal.set(true);
-  }
-
-  cerrarModal(): void {
-    this.mostrarModal.set(false);
-  }
-
   verDetalle(device: Dispositivo): void {
-    this.selectedDevice.set(device);
+    this.devicesService.selectedDevice.set(device);
   }
 
   cerrarDetalle(): void {
-    this.selectedDevice.set(null);
+    this.devicesService.cerrarDetalle();
   }
 
-
-getIconPath(tipoOIcono: string | undefined): string {
-  if (!tipoOIcono) return '/icons/ic_default.svg';
-  const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-  return `/icons/${iconName}.svg`;
-}
+  getIconPath(tipoOIcono: string | undefined): string {
+    if (!tipoOIcono) return '/icons/ic_default.svg';
+    const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
+    return `/icons/${iconName}.svg`;
+  }
 }

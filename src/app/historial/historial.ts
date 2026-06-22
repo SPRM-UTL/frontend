@@ -17,6 +17,7 @@ export class Historial implements OnInit {
   private historialService = inject(HistorialService);
 
   readonly searchQuery = signal('');
+  readonly showActions = signal(false);
 
   // Dropdown Filter State
   readonly isFilterOpen = signal(false);
@@ -93,5 +94,16 @@ export class Historial implements OnInit {
     if (m.includes('auto')) return '/icons/bolt.svg';
     if (m.includes('voz')) return '/icons/mic.svg';
     return '/icons/sparkles.svg';
+  }
+
+  formatHora(hora: any): string {
+    const h = parseInt(hora, 10);
+    if (isNaN(h)) return hora || '0';
+
+    if (h === 0) return '12:00 AM';
+    if (h < 12) return `${h}:00 AM`;
+    if (h === 12) return '12:00 PM';
+
+    return `${h - 12}:00 PM`;
   }
 }

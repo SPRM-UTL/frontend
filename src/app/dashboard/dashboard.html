@@ -75,7 +75,7 @@
         </button>
 
         @if (panelOpen()) {
-          <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones" (click)="$event.stopPropagation()">
+          <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones" (click)="$event.stopPropagation()" (mouseleave)="closePanel()">
             <header class="notif-header">
               <h3>Notificaciones</h3>
               <span class="notif-count-label">{{ notifCount() }} nuevas</span>
@@ -108,6 +108,10 @@
                     <span class="notif-status" [class.is-error]="a.estado === 'Error'">
                       {{ a.estado }}
                     </span>
+
+                    <button class="notif-close-btn" type="button" aria-label="Cerrar notificación" (click)="dismissNotification(a.id); $event.stopPropagation()">
+                      <span class="icon-mask" style="mask-image: url('/icons/x.svg'); -webkit-mask-image: url('/icons/x.svg');"></span>
+                    </button>
                   </article>
                 }
 
@@ -123,7 +127,7 @@
 
         <!-- Fecha como botón en móvil, pill en escritorio -->
         <div class="date-container">
-          <button class="date-pill-btn" (click)="datePanelOpen.set(!datePanelOpen()); $event.stopPropagation()">
+          <button class="date-pill-btn" (click)="toggleDatePanel(); $event.stopPropagation()">
             <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); color: #f4b400; width: 18px; height: 18px;"></span>
             <div class="date-text-wrapper">
               <strong>{{ dayLabel }}</strong>
@@ -132,7 +136,7 @@
           </button>
 
           <!-- Panel de fecha para móvil -->
-          <div class="mobile-date-panel" *ngIf="datePanelOpen()">
+          <div class="mobile-date-panel" *ngIf="datePanelOpen()" (mouseleave)="closeDatePanel()">
             <strong>{{ dayLabel }}</strong>
             <span>{{ timeLabel }}</span>
           </div>
@@ -157,6 +161,236 @@
         <button class="logout-btn-cancel" (click)="authService.cancelLogout()">Cancelar</button>
         <button class="logout-btn-confirm" (click)="authService.logout()">Sí, salir</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALLE DE GESTOS (GLOBAL) -->
+  <div class="modal-backdrop" *ngIf="gestosService.selectedGesto() as gesto" (click)="gestosService.cerrarDetalle()">
+    <div class="modal-detail-container" (click)="$event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <header class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-main-title">Detalle del Gesto</h2>
+          <p class="modal-main-subtitle">Información técnica, recomendaciones y material multimedia.</p>
+        </div>
+        <button class="btn-close-modal" (click)="gestosService.cerrarDetalle()">✕</button>
+      </header>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="detail-layout">
+
+          <!-- Main Content Area -->
+          <div class="detail-main">
+
+            <!-- Card Info Principal -->
+            <section class="card hero-info-card">
+              <div class="hero-header">
+                <div class="hero-icon-box">
+                  <span class="icon-mask gesto-hero-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
+                </div>
+                <div class="hero-titles">
+                  <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
+                  <span class="status-indicator">
+                    <span class="dot"></span> {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
+                  </span>
+                  <p class="hero-desc">{{ gesto.descripcion }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Recomendaciones -->
+            <section class="section-container">
+              <h3 class="section-title">Recomendaciones</h3>
+              <div class="rec-grid">
+                <div class="rec-pill" *ngFor="let rec of gesto.recomendaciones">
+                  <div class="rec-check-circle">
+                    <span class="icon-mask check-icon" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg'); width: 12px; height: 12px; background-color: white;"></span>
+                  </div>
+                  <p>{{ rec }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Multimedia -->
+            <section class="section-container media-container" *ngIf="gesto.multimedia">
+              <h3 class="media-title">Fotos y videos</h3>
+              <p class="media-subtitle">Material de referencia para este gesto.</p>
+              <div class="media-row">
+                <div class="media-thumb foto-box" *ngFor="let foto of gesto.multimedia.fotos">
+                  <div class="thumb-content">
+                    <img *ngIf="foto && foto.startsWith('http')" [src]="foto" alt="Gesto" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span class="icon-mask gesto-thumb-fallback-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
+                  </div>
+                  <span class="thumb-icon-overlay">
+                    <span class="icon-mask" style="mask-image: url('/icons/camera.svg'); -webkit-mask-image: url('/icons/camera.svg'); width: 14px; height: 14px; background-color: var(--cafe-primary);"></span>
+                  </span>
+                </div>
+
+                <div class="media-thumb video-box" *ngIf="gesto.multimedia.video_url">
+                  <div class="video-preview-mask">
+                    <span class="icon-mask" style="mask-image: url('/icons/play.svg'); -webkit-mask-image: url('/icons/play.svg'); width: 28px; height: 28px; background-color: white;"></span>
+                  </div>
+                  <span class="video-duration">{{ gesto.multimedia.video_duracion || '0:05' }}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Sidebar (Right) -->
+          <aside class="detail-sidebar">
+            <div class="sidebar-info-card">
+              <h3 class="sidebar-card-title">Información rápida</h3>
+              <div class="info-rows">
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg');"></span>
+                    <span>Estado</span>
+                  </div>
+                  <span class="info-row-val status-text-green">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+                    <span>Duración</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.duracion_segundos || 1 }} seg.</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
+                    <span>Iluminación</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.iluminacion_requerida || 'Alta' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg');"></span>
+                    <span>Distancia recomendada</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.distancia_minima_m || 0.5 }} - {{ gesto.distancia_maxima_m || 1.5 }} m</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg');"></span>
+                    <span>Dispositivo</span>
+                  </div>
+                  <span class="info-row-val">
+                {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}
+                </span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <footer class="modal-footer-actions">
+        <button class="btn-action-outline-gray">
+          <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 18px; height: 18px; background-color: var(--cafe-primary);"></span>
+          Descargar guía
+        </button>
+        <button class="btn-action-solid-teal">
+          <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 18px; height: 18px; background-color: white;"></span>
+          Probar gesto
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALLE DE DISPOSITIVO (GLOBAL) -->
+  <div class="modal-backdrop" *ngIf="dispositivosService.selectedDevice() as device" (click)="dispositivosService.cerrarDetalle()">
+    <div class="modal-detail-container" (click)="$event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <header class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-main-title">Detalle del Dispositivo</h2>
+          <p class="modal-main-subtitle">Información técnica y configuración actual.</p>
+        </div>
+        <button class="btn-close-modal" (click)="dispositivosService.cerrarDetalle()">✕</button>
+      </header>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="detail-layout">
+
+          <!-- Main Content Area -->
+          <div class="detail-main">
+
+            <!-- Card Info Principal -->
+            <section class="card hero-info-card">
+              <div class="hero-header">
+                <div class="hero-icon-box">
+                  <span class="icon-mask" [style.mask-image]="'url(' + getDeviceIconPath(device.tipo_aparato || device.icono) + ')'" [style.-webkit-mask-image]="'url(' + getDeviceIconPath(device.tipo_aparato || device.icono) + ')'" style="width: 44px; height: 44px; background-color: var(--cafe-primary);"></span>
+                </div>
+                <div class="hero-titles">
+                  <h2 class="hero-name">{{ device.nombre_aparato }}</h2>
+                  <span class="status-indicator">
+                    <span class="dot"></span> En línea
+                  </span>
+                  <p class="hero-desc">{{ device.tipo_aparato }} - Control inteligente vía Bluetooth</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Detalles Técnicos -->
+            <section class="section-container">
+              <h3 class="section-title">Información del Sistema</h3>
+              <div class="tech-grid">
+                <div class="tech-item">
+                  <p class="tech-label">FECHA DE ALTA</p>
+                  <p class="tech-value">{{ device.fecha_sincronizacion || '2026-06-17' }}</p>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Sidebar (Right) -->
+          <aside class="detail-sidebar">
+            <div class="sidebar-info-card">
+              <h3 class="sidebar-card-title">Estado Bluetooth</h3>
+              <div class="info-rows">
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/bluetooth.svg'); -webkit-mask-image: url('/icons/bluetooth.svg');"></span>
+                    <span>Nombre</span>
+                  </div>
+                  <span class="info-row-val">{{ device.nombre_bluetooth || 'Sin nombre' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/hash.svg'); -webkit-mask-image: url('/icons/hash.svg');"></span>
+                    <span>MAC</span>
+                  </div>
+                  <span class="info-row-val">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <span class="icon-mask info-icon" style="mask-image: url('/icons/zap.svg'); -webkit-mask-image: url('/icons/zap.svg');"></span>
+                    <span>Acción</span>
+                  </div>
+                  <span class="info-row-val status-text-green">{{ device.accion_nombre }}</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <footer class="modal-footer-actions">
+        <button class="btn-action-outline-gray" (click)="dispositivosService.cerrarDetalle()">
+          Cerrar
+        </button>
+        <button class="btn-action-solid-teal">
+          <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg'); width: 18px; height: 18px; background-color: white;"></span>
+          Ejecutar prueba
+        </button>
+      </footer>
     </div>
   </div>
 </div>

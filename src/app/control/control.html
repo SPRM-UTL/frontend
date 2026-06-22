@@ -1,11 +1,13 @@
 <div class="control-page-wrapper">
+
+  <!-- ESTADOS DE CARGA Y ERROR -->
   <div *ngIf="loading()" class="empty-state">
     <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 24px; height: 24px; color: var(--cafe-primary);"></span>
     <p>Cargando dispositivos…</p>
   </div>
 
   <div *ngIf="error()" class="empty-state">
-    <span class="icon-mask style" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width: 24px; height: 24px; color: var(--red);"></span>
+    <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width: 24px; height: 24px; color: var(--red);"></span>
     <p>{{ error() }}</p>
   </div>
 
@@ -16,41 +18,38 @@
         <p class="section-subtitle-main">Dispositivos vinculados a gestos y automatizaciones</p>
       </div>
 
+      <!-- ROW DE CATEGORÍAS (Solo visibles si tienen dispositivos) -->
       <div class="categories-row">
-        <div class="category-card" [class.is-active]="categoriaSeleccionada === 'Luces'" (click)="categoriaSeleccionada = 'Luces'">
-          <div class="category-icon-circle">
-            <span class="icon-mask" style="mask-image: url('/icons/lightbulb.svg'); -webkit-mask-image: url('/icons/lightbulb.svg');"></span>
+        <!-- Tarjeta para Ver Todo -->
+        <div class="category-card"
+             [class.is-active]="tipoSeleccionado() === 'Todos los tipos'"
+             (click)="selectTipo('Todos los tipos')">
+          <div class="category-icon-circle all">
+            <span class="icon-mask" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg'); background-color: currentColor;"></span>
           </div>
           <div class="category-info">
-            <h3>Luces</h3>
-            <p>{{ luces().length }} dispositivos</p>
+            <h3>Ver Todo</h3>
+            <p>{{ dispositivos().length }} dispositivos</p>
           </div>
           <button class="category-arrow-btn">
             <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
           </button>
         </div>
 
-        <div class="category-card" [class.is-active]="categoriaSeleccionada === 'Bocinas'" (click)="categoriaSeleccionada = 'Bocinas'">
-          <div class="category-icon-circle">
-            <span class="icon-mask" style="mask-image: url('/icons/speaker.svg'); -webkit-mask-image: url('/icons/speaker.svg');"></span>
-          </div>
-          <div class="category-info">
-            <h3>Bocinas</h3>
-            <p>{{ bocinas().length }} dispositivos</p>
-          </div>
-          <button class="category-arrow-btn">
-            <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
-          </button>
-        </div>
+        <div *ngFor="let t of tiposConDispositivos()"
+             class="category-card"
+             [class.is-active]="tipoSeleccionado() === t.nombre_tipo"
+             (click)="selectTipo(t.nombre_tipo)">
 
-        <div class="category-card" [class.is-active]="categoriaSeleccionada === 'Ventiladores'" (click)="categoriaSeleccionada = 'Ventiladores'">
-          <div class="category-icon-circle">
-            <span class="icon-mask" style="mask-image: url('/icons/fan.svg'); -webkit-mask-image: url('/icons/fan.svg');"></span>
+          <div class="category-icon-circle" [class]="t.nombre_tipo.toLowerCase().replace(' ', '-')">
+            <span class="icon-mask" [style.mask-image]="'url(/icons/' + t.icono + '.svg)'" [style.-webkit-mask-image]="'url(/icons/' + t.icono + '.svg)'" style="background-color: currentColor;"></span>
           </div>
+
           <div class="category-info">
-            <h3>Ventiladores</h3>
-            <p>{{ ventiladores().length }} dispositivos</p>
+            <h3>{{ t.nombre_tipo }}</h3>
+            <p>{{ getDeviceCount(t.nombre_tipo) }} dispositivos</p>
           </div>
+
           <button class="category-arrow-btn">
             <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
           </button>
@@ -58,14 +57,16 @@
       </div>
     </section>
 
-    <!-- SECCION DETALLADA -->
+    <!-- PANEL DE DETALLE -->
     <section class="detail-panel">
       <header class="detail-header">
         <div class="detail-label-group">
-          <span class="status-dot" [style.background]="categoriaSeleccionada === 'Luces' ? '#f97316' : (categoriaSeleccionada === 'Bocinas' ? '#8b5cf6' : '#3b82f6')"></span>
+          <span class="status-dot" [class]="tipoSeleccionado().toLowerCase().replace(' ', '-')"></span>
           <div>
-            <h3 class="detail-title">{{ categoriaSeleccionada === 'Luces' ? 'Iluminación' : (categoriaSeleccionada === 'Bocinas' ? 'Audio' : 'Climatización') }}</h3>
-            <p class="detail-subtitle">{{ categoriaSeleccionada === 'Luces' ? 'Luces y Lámparas' : (categoriaSeleccionada === 'Bocinas' ? 'Bocinas y Sistemas de Sonido' : 'Ventiladores y Aire') }}</p>
+            <h3 class="detail-title">
+              {{ tipoSeleccionado() === 'Todos los tipos' ? 'Todos los Dispositivos' : tipoSeleccionado() }}
+            </h3>
+            <p class="detail-subtitle">Gestiona tus equipos vinculados</p>
           </div>
         </div>
         <a class="ver-todo-link" [routerLink]="['/dashboard/dispositivos']">
@@ -75,46 +76,61 @@
       </header>
 
       <div class="detail-content">
-        <!-- Caso: Hay dispositivos -->
-        <div class="devices-grid" *ngIf="getCurrentDevices().length > 0">
-          <div class="device-control-card" *ngFor="let d of getCurrentDevices()" [class.is-on]="d.encendido">
+        <!-- GRID DE DISPOSITIVOS -->
+        <div class="devices-grid" *ngIf="dispositivosFiltrados().length > 0">
+          <div class="device-control-card" *ngFor="let d of dispositivosFiltrados()" [class.is-on]="d.encendido">
             <div class="device-card-head">
-              <span class="device-type-icon">
-                <span class="icon-mask" [style.mask-image]="'url(' + getDeviceIcon(categoriaSeleccionada) + ')'" [style.-webkit-mask-image]="'url(' + getDeviceIcon(categoriaSeleccionada) + ')'"></span>
+              <span class="device-type-icon" [class.on]="d.encendido">
+                <!-- Icono dinámico según el tipo -->
+                <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(d.tipo_aparato) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(d.tipo_aparato) + ')'" style="background-color: currentColor;"></span>
               </span>
-              <button class="toggle-switch" [class.active]="d.encendido" (click)="toggleDevice(d)">
-                 <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg'); width: 14px; height: 14px;"></span>
+
+              <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
+                 <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
               </button>
             </div>
+
             <div class="device-card-body">
               <strong>{{ d.nombre_aparato }}</strong>
-              <p>{{ d.ubicacion || 'Sala' }}</p>
+              <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
 
-              <!-- CONTROLES EXTRA SEGÚN CATEGORÍA -->
-              <div class="device-extra-controls" *ngIf="d.encendido">
-                <!-- Brillo para Luces -->
-                <div *ngIf="categoriaSeleccionada === 'Luces'" class="control-group">
-                  <input type="range" min="0" max="100" [ngModel]="d.brillo" (ngModelChange)="onBrilloChange(d, $event)" class="slider-brillo">
-                  <span>{{ d.brillo }}%</span>
+              <!-- CONTROLES EXTRA (Solo si está encendido) -->
+              <div class="device-extra-controls" [class.visible]="d.encendido">
+
+                <!-- Brillo para Luces/Focos -->
+                <div *ngIf="d.brillo !== undefined" class="control-stepper">
+                  <div class="slider-container">
+                    <span class="icon-mask mini" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
+                    <input type="range" min="0" max="100" [ngModel]="d.brillo" (ngModelChange)="onBrilloChange(d, $event)" class="modern-slider">
+                    <span class="val-text">{{ d.brillo }}%</span>
+                  </div>
                 </div>
 
-                <!-- Volumen para Bocinas -->
-                <div *ngIf="categoriaSeleccionada === 'Bocinas'" class="control-group buttons">
-                  <button (click)="decrementVolumen(d)" class="btn-small">-</button>
-                  <span class="vol-val">{{ d.volumen }}%</span>
-                  <button (click)="incrementVolumen(d)" class="btn-small">+</button>
+                <!-- Volumen para Audio (CON BARRITA PROGRESIVA) -->
+                <div *ngIf="d.volumen !== undefined" class="audio-control-wrapper">
+                  <div class="audio-buttons-row">
+                    <button (click)="decrementVolumen(d)" class="step-btn">-</button>
+                    <div class="progress-container">
+                      <div class="progress-bar" [style.width]="d.volumen + '%'"></div>
+                      <span class="progress-text">{{ d.volumen }}%</span>
+                    </div>
+                    <button (click)="incrementVolumen(d)" class="step-btn">+</button>
+                  </div>
                 </div>
 
                 <!-- Velocidad para Ventiladores -->
-                <div *ngIf="categoriaSeleccionada === 'Ventiladores'" class="control-group buttons">
-                  <button (click)="decrementVelocidad(d)" class="btn-small">-</button>
-                  <span class="speed-val">Nivel {{ d.velocidad }}</span>
-                  <button (click)="incrementVelocidad(d)" class="btn-small">+</button>
+                <div *ngIf="d.velocidad !== undefined" class="control-stepper speed">
+                  <button (click)="decrementVelocidad(d)" class="step-btn">-</button>
+                  <div class="speed-indicator">
+                    <span *ngFor="let i of [1,2,3,4,5]" class="dot" [class.active]="d.velocidad >= i"></span>
+                  </div>
+                  <button (click)="incrementVelocidad(d)" class="step-btn">+</button>
                 </div>
               </div>
             </div>
+
             <div class="device-card-footer">
-               <div class="status-badge" [class.on]="d.encendido">
+               <div class="status-pill" [class.on]="d.encendido">
                  <span class="dot"></span>
                  {{ d.encendido ? 'ON' : 'OFF' }}
                </div>
@@ -122,23 +138,16 @@
           </div>
         </div>
 
-        <!-- Caso: NO hay dispositivos (Estado de la imagen) -->
-        <div class="empty-detail-state" *ngIf="getCurrentDevices().length === 0">
+        <!-- ESTADO VACÍO -->
+        <div class="empty-detail-state" *ngIf="dispositivosFiltrados().length === 0">
           <div class="empty-illustration">
             <div class="lamp-graphic">
-               <span class="icon-mask" [style.mask-image]="'url(' + getDeviceIcon(categoriaSeleccionada) + ')'" [style.-webkit-mask-image]="'url(' + getDeviceIcon(categoriaSeleccionada) + ')'" style="width: 60px; height: 60px; color: var(--cafe-primary); opacity: 0.8;"></span>
+               <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(tipoSeleccionado()) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(tipoSeleccionado()) + ')'" style="width: 60px; height: 60px; color: var(--cafe-primary); opacity: 0.8; background-color: currentColor;"></span>
             </div>
-            <div class="bg-decor"></div>
           </div>
-
           <div class="empty-text-group">
-            <h3>Aún no tienes {{ categoriaSeleccionada.toLowerCase() }} vinculadas</h3>
-            <p>Vincula tus {{ categoriaSeleccionada.toLowerCase() }} para controlarlas con gestos y automatizaciones.</p>
-
-          </div>
-
-          <div class="room-decor-img">
-             <img src="/icons/logo.svg" alt="" style="opacity: 0.05; width: 150px; position: absolute; right: 2rem; bottom: 2rem;">
+            <h3>Aún no tienes {{ tipoSeleccionado().toLowerCase() }} vinculadas</h3>
+            <p>Vincula tus equipos para controlarlos con gestos y automatizaciones.</p>
           </div>
         </div>
       </div>

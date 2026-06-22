@@ -7,4 +7,6 @@ export interface Actividad {
   color: string;
   estado: 'Ejecutado' | 'Error';
   metodo: string;
+  sk_aparato_id?: string;
+  hora_periodo?: string | number;
 }

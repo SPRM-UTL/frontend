@@ -1,89 +1,43 @@
-// ============================================
-// Categorías mostradas en la parte superior
-// ============================================
-export interface Categoria {
+export interface AparatoTipo {
+  sk_aparato_tipo_id: number;
+  nombre_tipo: string;
+  icono: string;
+  es_asistente: boolean;
+  soporta_bluetooth: boolean;
+  soporta_wifi: boolean;
+  palabras_clave_busqueda: string | null;
+}
 
-  // Nombre mostrado al usuario
+export interface DispositivoControl {
+  id: number;
+  sk_aparato_id: number;
   nombre_aparato: string;
+  tipo_aparato: string;
+  icono: string;
+  encendido: boolean;
+  ubicacion: string;
+  mac_bluetooth: string;
+  nombre_bluetooth: string;
+  comando_bluetooth?: string;
 
-  // Cantidad de dispositivos
+  // Opcionales según tipo
+  volumen?: number;
+  brillo?: number;
+  velocidad?: number;
+  tono?: 'warm' | 'cool';
+  reproduciendo?: string;
+}
+
+// Mantener los anteriores por compatibilidad si es necesario,
+// pero usaremos DispositivoControl para la lógica genérica.
+export interface Categoria {
+  nombre_aparato: string;
   cantidad: number;
-
-  // Emoji de la categoría
   emoji: string;
-
-  // Color principal
   color: string;
-
-  // Color de fondo
   bg: string;
 }
 
-// ============================================
-// Luces
-// ============================================
-export interface Luz {
-
-  // Id único de la BD
-  id: number;
-
-  // Nombre visible
-  nombre_aparato: string;
-
-  // Ubicación física
-  ubicacion: string;
-
-  // Encendido / apagado
-  encendido: boolean;
-
-  // Brillo 0 - 100
-  brillo: number;
-
-  // Temperatura de color
-  tono: 'warm' | 'cool';
-}
-
-// ============================================
-// Bocinas
-// ============================================
-export interface Bocina {
-
-  // Id único
-  id: number;
-
-  // Nombre
-  nombre_aparato: string;
-
-  // Ubicación
-  ubicacion: string;
-
-  // Estado
-  encendido: boolean;
-
-  // Volumen
-  volumen: number;
-
-  // Música actual
-  reproduciendo: string;
-}
-
-// ============================================
-// Ventiladores
-// ============================================
-export interface Ventilador {
-
-  // Id único
-  id: number;
-
-  // Nombre
-  nombre_aparato: string;
-
-  // Ubicación
-  ubicacion: string;
-
-  // Encendido
-  encendido: boolean;
-
-  // Velocidad 1-5
-  velocidad: number;
-}
+export interface Luz extends DispositivoControl {}
+export interface Bocina extends DispositivoControl {}
+export interface Ventilador extends DispositivoControl {}

@@ -1,5 +1,4 @@
 import { Dispositivo } from './../dispositivos/dispositivos.model';
-import { Subscription } from 'rxjs';
 import { Component, computed, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,8 +28,6 @@ export class Gestos {
   readonly statusFilter = signal('');
   readonly selectedFilterLabel = signal('Todos los gestos');
   readonly isFilterOpen = signal(false);
-
-  readonly selectedGesto = signal<Gesto | null>(null);
 
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
@@ -144,7 +141,7 @@ export class Gestos {
           ];
         }
 
-        this.selectedGesto.set(gestoCompleto);
+        this.gestosService.selectedGesto.set(gestoCompleto);
       },
 
       error: (err) => {
@@ -158,6 +155,6 @@ export class Gestos {
   }
 
   cerrarDetalle(): void {
-    this.selectedGesto.set(null);
+    this.gestosService.cerrarDetalle();
   }
 }

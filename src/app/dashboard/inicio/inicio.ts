@@ -63,7 +63,7 @@ getIconPath(tipoOIcono: string | undefined): string {
 }
 
   actividadSeries = [{
-    name: 'Automatizaciones',
+    name: 'acciones',
     data: [12, 18, 15, 22, 20, 25, 30]
   }];
   actividadCategorias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];

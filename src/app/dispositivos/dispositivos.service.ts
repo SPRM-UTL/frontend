@@ -26,7 +26,8 @@ export class DispositivosService {
   public loading = signal<boolean>(false);
   public error = signal<string | null>(null);
   public devices = signal<Dispositivo[]>([]);
-  public device = signal< |null>(null);
+  public selectedDevice = signal<Dispositivo | null>(null);
+  public device = signal<Dispositivo | null>(null);
 
   /**
    * Obtiene los headers con el token de localStorage de forma segura para SSR
@@ -104,5 +105,7 @@ export class DispositivosService {
     );
   }
 
-
+  cerrarDetalle() {
+    this.selectedDevice.set(null);
+  }
 }

@@ -78,7 +78,7 @@
             <th>BLUETOOTH</th>
             <th>MAC</th>
             <th>SINCRONIZACIÓN</th>
-            <th>ACCIONES</th>
+            <th *ngIf="showActions()">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
@@ -115,10 +115,12 @@
             <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
 
             <!-- Sync -->
-            <td class="sync-cell">{{ device.fecha_sincronizacion || '2026-06-17 08:00:00' }}</td>
+            <td class="sync-cell">
+              {{ (device.fecha_sincronizacion | date:'dd/MM/yyyy HH:mm') || 'Sin sincronizar' }}
+            </td>
 
             <!-- Actions -->
-            <td class="actions-cell">
+            <td class="actions-cell" *ngIf="showActions()">
               <div class="action-buttons-group">
                 <button class="row-action-btn" title="Cerrar sesión">
                   <span class="icon-mask" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
@@ -135,7 +137,7 @@
 
           <!-- Empty state -->
           <tr *ngIf="filteredDevices().length === 0 && !loading()">
-            <td colspan="7" class="empty-state">
+            <td [attr.colspan]="showActions() ? 7 : 6" class="empty-state">
               <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
               <p>No se encontraron dispositivos</p>
             </td>
@@ -155,97 +157,4 @@
     </footer>
   </div>
 
-  <!-- MODAL DE DETALLE DE DISPOSITIVO -->
-  <div class="modal-backdrop" *ngIf="selectedDevice() as device" (click)="cerrarDetalle()">
-    <div class="modal-detail-container" (click)="$event.stopPropagation()">
-
-      <!-- Modal Header -->
-      <header class="modal-header">
-        <div class="header-titles">
-          <h2 class="modal-main-title">Detalle del Dispositivo</h2>
-          <p class="modal-main-subtitle">Información técnica y configuración actual.</p>
-        </div>
-        <button class="btn-close-modal" (click)="cerrarDetalle()">✕</button>
-      </header>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <div class="detail-layout">
-
-          <!-- Main Content Area -->
-          <div class="detail-main">
-
-            <!-- Card Info Principal -->
-            <section class="card hero-info-card">
-              <div class="hero-header">
-                <div class="hero-icon-box">
-                  <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'" style="width: 44px; height: 44px; background-color: var(--cafe-primary);"></span>
-                </div>
-                <div class="hero-titles">
-                  <h2 class="hero-name">{{ device.nombre_aparato }}</h2>
-                  <span class="status-indicator">
-                    <span class="dot"></span> En línea
-                  </span>
-                  <p class="hero-desc">{{ device.tipo_aparato }} - Control inteligente vía Bluetooth</p>
-                </div>
-              </div>
-            </section>
-
-            <!-- Detalles Técnicos -->
-            <section class="section-container">
-              <h3 class="section-title">Información del Sistema</h3>
-              <div class="tech-grid">
-                <div class="tech-item">
-                  <p class="tech-label">FECHA DE ALTA</p>
-                  <p class="tech-value">{{ device.fecha_sincronizacion || '2026-06-17' }}</p>
-                </div>
-              </div>
-            </section>
-
-          </div>
-
-          <!-- Sidebar (Right) -->
-          <aside class="detail-sidebar">
-            <div class="sidebar-info-card">
-              <h3 class="sidebar-card-title">Estado Bluetooth</h3>
-              <div class="info-rows">
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/bluetooth.svg'); -webkit-mask-image: url('/icons/bluetooth.svg');"></span>
-                    <span>Nombre</span>
-                  </div>
-                  <span class="info-row-val">{{ device.nombre_bluetooth || 'Sin nombre' }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/hash.svg'); -webkit-mask-image: url('/icons/hash.svg');"></span>
-                    <span>MAC</span>
-                  </div>
-                  <span class="info-row-val">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/zap.svg'); -webkit-mask-image: url('/icons/zap.svg');"></span>
-                    <span>Acción</span>
-                  </div>
-                  <span class="info-row-val status-text-green">{{ device.accion_nombre }}</span>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </div>
-
-      <!-- Footer Actions -->
-      <footer class="modal-footer-actions">
-        <button class="btn-action-outline-gray" (click)="cerrarDetalle()">
-          Cerrar
-        </button>
-        <button class="btn-action-solid-teal">
-          <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg'); width: 18px; height: 18px; background-color: white;"></span>
-          Ejecutar prueba
-        </button>
-      </footer>
-    </div>
-  </div>
 </div>

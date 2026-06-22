@@ -24,6 +24,7 @@ export class GestosService {
   private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.gestos}`;
 
   readonly gestos = signal<Gesto[]>([]);
+  readonly selectedGesto = signal<Gesto | null>(null);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -76,5 +77,9 @@ export class GestosService {
         return throwError(() => err);
       })
     );
+  }
+
+  cerrarDetalle() {
+    this.selectedGesto.set(null);
   }
 }

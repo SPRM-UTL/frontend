@@ -1,7 +1,6 @@
 <div class="historial-container">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Historial</h1>
       <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
     </div>
   </div>
@@ -71,17 +70,25 @@
             <th>ESTADO</th>
             <th>MÉTODO</th>
             <th>HORA</th>
-            <th>ACCIONES</th>
+            <th *ngIf="showActions()">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let a of actividadesFiltradas()" class="history-row">
             <!-- Action / Event -->
             <td class="action-cell">
-              <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
-                <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(a.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(a.icono) + ')'"></span>
+              <div class="action-content">
+                <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
+                  <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(a.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(a.icono) + ')'"></span>
+                </div>
+                <div class="event-details">
+                  <span class="action-text">{{ a.accion }}</span>
+                  <div class="event-id-tag" *ngIf="$any(a).sk_aparato_id">
+                    <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 12px; height: 12px;"></span>
+                    {{ $any(a).sk_aparato_id }}
+                  </div>
+                </div>
               </div>
-              <span class="action-text">{{ a.accion }}</span>
             </td>
 
             <!-- Device -->
@@ -110,11 +117,11 @@
 
             <!-- Time -->
             <td class="time-cell">
-              <span class="time-text">{{ a.hora }}</span>
+              <span class="time-text">{{ formatHora($any(a).hora_periodo ?? a.hora) }}</span>
             </td>
 
             <!-- Actions -->
-            <td class="actions-cell">
+            <td class="actions-cell" *ngIf="showActions()">
               <button class="row-action-btn" title="Ver detalles">
                 <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
               </button>
@@ -123,7 +130,7 @@
 
           <!-- Empty state -->
           <tr *ngIf="actividadesFiltradas().length === 0 && !loading()">
-            <td colspan="6" class="empty-state">
+            <td [attr.colspan]="showActions() ? 6 : 5" class="empty-state">
               <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
               <p>No se encontraron registros en el historial</p>
             </td>
@@ -138,7 +145,7 @@
       <div class="pagination">
         <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
         <button class="page-btn active">1</button>
-        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
+        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
       </div>
     </footer>
   </div>

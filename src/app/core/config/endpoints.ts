@@ -9,6 +9,8 @@ export const ENDPOINTS = {
 
   dispositivos: '/api/aparatos',
 
+  aparatoTipos: '/api/AparatoTipos',
+
   control: '/api/aparatos/control',
 
   cuenta: '/api/usuarios'

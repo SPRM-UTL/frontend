@@ -14,6 +14,8 @@ import { CuentaService } from '../cuenta/cuenta.service';
 import { InicioService } from './inicio/inicio.service';
 import { HistorialService } from '../historial/historial.service';
 import { Actividad } from '../historial/actividad.model';
+import { GestosService } from '../gestos/gestos.service';
+import { DispositivosService } from '../dispositivos/dispositivos.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,6 +42,8 @@ export class Dashboard {
   public authService = inject(AuthService);
   private router = inject(Router);
   private historialService = inject(HistorialService);
+  public gestosService = inject(GestosService);
+  public dispositivosService = inject(DispositivosService);
 
   // Inyectamos ambos de forma pública para usarlos correctamente en el HTML
   public cuentaService = inject(CuentaService);
@@ -55,6 +59,7 @@ export class Dashboard {
 
   // Panel de notificaciones
   readonly panelOpen = signal(false);
+  readonly dismissedNotifIds = signal<number[]>([]);
 
   // Control del menú móvil (Flotante)
   readonly menuOpen = signal(false);
@@ -65,10 +70,28 @@ export class Dashboard {
   // Control del sidebar (ChatGPT Style)
   readonly sidebarCollapsed = signal(true);
 
+  // Mapeo de tipos de aparatos (Mismo que en dispositivos.ts)
+  readonly categoryIconMap: Record<string, string> = {
+    'Audífonos': 'headphones',
+    'Bocinas': 'speaker',
+    'Focos': 'lightbulb',
+    'Luces': 'lamp_floor',
+    'Ventilador': 'wind',
+    'Televisión': 'tv_minimal',
+    'Sockets': 'plug',
+    'Asistente': 'ic_input_add',
+    'Predeterminado': 'ic_default'
+  };
+
   readonly recentActivities = computed(() => {
     const all = this.historialService.actividades();
     if (!Array.isArray(all)) return [];
-    return all.slice(0, 5);
+
+    // Filtramos las descartadas
+    const dismissed = this.dismissedNotifIds();
+    return all
+      .filter(a => !dismissed.includes(a.id))
+      .slice(0, 5);
   });
 
   readonly notifCount = computed(() => this.recentActivities().length);
@@ -196,11 +219,29 @@ export class Dashboard {
   }
 
   togglePanel(): void {
+    if (!this.panelOpen()) {
+      this.datePanelOpen.set(false);
+    }
     this.panelOpen.set(!this.panelOpen());
+  }
+
+  toggleDatePanel(): void {
+    if (!this.datePanelOpen()) {
+      this.panelOpen.set(false);
+    }
+    this.datePanelOpen.set(!this.datePanelOpen());
   }
 
   closePanel(): void {
     this.panelOpen.set(false);
+  }
+
+  closeDatePanel(): void {
+    this.datePanelOpen.set(false);
+  }
+
+  dismissNotification(id: number): void {
+    this.dismissedNotifIds.update(ids => [...ids, id]);
   }
 
   toggleSidebar(): void {
@@ -213,5 +254,21 @@ export class Dashboard {
 
   closeMenu(): void {
     this.menuOpen.set(false);
+  }
+
+  obtenerNombreDispositivo(id: number | null): string {
+    return this.dispositivosService.devices().find(
+      d => d.sk_aparato_id === id
+    )?.nombre_aparato ?? 'Sin Dispositivo';
+  }
+
+  getIconPath(icono: string | undefined): string {
+    return '/icons/hand.svg';
+  }
+
+  getDeviceIconPath(tipoOIcono: string | undefined): string {
+    if (!tipoOIcono) return '/icons/ic_default.svg';
+    const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
+    return `/icons/${iconName}.svg`;
   }
 }

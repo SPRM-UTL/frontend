@@ -7,10 +7,6 @@
       <div>
         <p class="page-subtitle">Administra tus gestos guardados</p>
       </div>
-      <button class="btn-agregar">
-        <span class="icon-mask" style="mask-image: url('/icons/circle-plus.svg'); -webkit-mask-image: url('/icons/circle-plus.svg'); width: 18px; height: 18px;"></span>
-        Agregar gesto
-      </button>
     </div>
 
     <!-- Search and Filter Bar -->
@@ -74,10 +70,6 @@
         </div>
         <div class="gesto-card-footer">
           <span class="icon-mask footer-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg'); width: 14px; height: 14px;"></span>
-          <div class="footer-actions">
-            <span class="icon-mask footer-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 14px; height: 14px;"></span>
-            <span class="icon-mask footer-icon" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg'); width: 14px; height: 14px;"></span>
-          </div>
         </div>
       </div>
     </div>
@@ -95,142 +87,6 @@
     <div *ngIf="error()" class="empty-state">
       <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width: 24px; height: 24px;"></span>
       <p>{{ error() }}</p>
-    </div>
-  </div>
-
-  <!-- MODAL DE DETALLE (EXACTO A LA IMAGEN) -->
-  <div class="modal-backdrop" *ngIf="selectedGesto() as gesto" (click)="cerrarDetalle()">
-    <div class="modal-detail-container" (click)="$event.stopPropagation()">
-
-      <!-- Modal Header -->
-      <header class="modal-header">
-        <div class="header-titles">
-          <h2 class="modal-main-title">Detalle del Gesto</h2>
-          <p class="modal-main-subtitle">Información técnica, recomendaciones y material multimedia.</p>
-        </div>
-        <button class="btn-close-modal" (click)="cerrarDetalle()">✕</button>
-      </header>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <div class="detail-layout">
-
-          <!-- Main Content Area -->
-          <div class="detail-main">
-
-            <!-- Card Info Principal -->
-            <section class="card hero-info-card">
-              <div class="hero-header">
-                <div class="hero-icon-box">
-                  <span class="icon-mask gesto-hero-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
-                </div>
-                <div class="hero-titles">
-                  <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
-                  <span class="status-indicator">
-                    <span class="dot"></span> {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
-                  </span>
-                  <p class="hero-desc">{{ gesto.descripcion }}</p>
-                </div>
-              </div>
-            </section>
-
-            <!-- Recomendaciones -->
-            <section class="section-container">
-              <h3 class="section-title">Recomendaciones</h3>
-              <div class="rec-grid">
-                <div class="rec-pill" *ngFor="let rec of gesto.recomendaciones">
-                  <div class="rec-check-circle">
-                    <span class="icon-mask check-icon" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg'); width: 12px; height: 12px; background-color: white;"></span>
-                  </div>
-                  <p>{{ rec }}</p>
-                </div>
-              </div>
-            </section>
-
-            <!-- Multimedia -->
-            <section class="section-container media-container" *ngIf="gesto.multimedia">
-              <h3 class="media-title">Fotos y videos</h3>
-              <p class="media-subtitle">Material de referencia para este gesto.</p>
-              <div class="media-row">
-                <div class="media-thumb foto-box" *ngFor="let foto of gesto.multimedia.fotos">
-                  <div class="thumb-content">
-                    <img *ngIf="foto && foto.startsWith('http')" [src]="foto" alt="Gesto" style="width: 100%; height: 100%; object-fit: cover;">
-                    <span class="icon-mask gesto-thumb-fallback-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 44px; height: 44px;"></span>
-                  </div>
-                  <span class="thumb-icon-overlay">
-                    <span class="icon-mask" style="mask-image: url('/icons/camera.svg'); -webkit-mask-image: url('/icons/camera.svg'); width: 14px; height: 14px; background-color: var(--cafe-primary);"></span>
-                  </span>
-                </div>
-
-                <div class="media-thumb video-box" *ngIf="gesto.multimedia.video_url">
-                  <div class="video-preview-mask">
-                    <span class="icon-mask" style="mask-image: url('/icons/play.svg'); -webkit-mask-image: url('/icons/play.svg'); width: 28px; height: 28px; background-color: white;"></span>
-                  </div>
-                  <span class="video-duration">{{ gesto.multimedia.video_duracion || '0:05' }}</span>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <!-- Sidebar (Right) -->
-          <aside class="detail-sidebar">
-            <div class="sidebar-info-card">
-              <h3 class="sidebar-card-title">Información rápida</h3>
-              <div class="info-rows">
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/check.svg'); -webkit-mask-image: url('/icons/check.svg');"></span>
-                    <span>Estado</span>
-                  </div>
-                  <span class="info-row-val status-text-green">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
-                    <span>Duración</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.duracion_segundos || 1 }} seg.</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
-                    <span>Iluminación</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.iluminacion_requerida || 'Alta' }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg');"></span>
-                    <span>Distancia recomendada</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.distancia_minima_m || 0.5 }} - {{ gesto.distancia_maxima_m || 1.5 }} m</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <span class="icon-mask info-icon" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg');"></span>
-                    <span>Dispositivo</span>
-                  </div>
-                  <span class="info-row-val">
-                {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}
-                </span>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </div>
-
-      <!-- Footer Actions -->
-      <footer class="modal-footer-actions">
-        <button class="btn-action-outline-gray">
-          <span class="icon-mask" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 18px; height: 18px; background-color: var(--cafe-primary);"></span>
-          Descargar guía
-        </button>
-        <button class="btn-action-solid-teal">
-          <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 18px; height: 18px; background-color: white;"></span>
-          Probar gesto
-        </button>
-      </footer>
     </div>
   </div>
 

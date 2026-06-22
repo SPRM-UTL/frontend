@@ -1,142 +1,164 @@
-// Importa el decorador para que Angular sepa que esto es un servicio inyectable, y 'signal' para manejar estados reactivos.
-import { Injectable, signal } from '@angular/core';
-// Importa el módulo HTTP de Angular para poder hacer peticiones (GET, POST, PATCH, etc.) a un servidor externo/API.
-import { HttpClient } from '@angular/common/http';
-// Importa las interfaces o tipados (modelos de datos) para asegurar que la información que manejamos tenga la estructura correcta.
-import { Luz, Bocina, Ventilador, Categoria } from './control.model';
-import { APP_CONFIG } from '../core/config/app-config'; 
+import { Injectable, signal, Inject, PLATFORM_ID, WritableSignal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DispositivoControl, AparatoTipo } from './control.model';
+import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
-// Define una constante con la ruta base de la API para no tener que escribir '/api/control' en cada petición.
 
-//const BASE_URL = 'http://localhost:5295/api/aparatos/control';
-const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.control}`;
-
-export interface ControlResponse {
-  luces: Luz[];
-  bocinas: Bocina[];
-  ventiladores: Ventilador[];
-}
 export interface ApiResponse {
   success: boolean;
   status: number;
-  data: ControlResponse;
+  data: any;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ControlService {
 
-  readonly categorias = signal<Categoria[]>([]);
-  readonly luces      = signal<Luz[]>([]);
-  readonly bocinas    = signal<Bocina[]>([]);
-  readonly ventiladores = signal<Ventilador[]>([]);
+  readonly tiposDispositivos = signal<AparatoTipo[]>([]);
+  readonly todosLosDispositivos = signal<DispositivoControl[]>([]);
 
   readonly loading = signal<boolean>(false);
   readonly error   = signal<string | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
-  /**
-   * Mapea un objeto del backend al formato esperado por el frontend
-   * (Ejem: 'nombre' -> 'nombre_aparato', 'estado' -> 'encendido')
-   */
-  private mapDevice(d: any): any {
-    return {
-      ...d,
-      nombre_aparato: d.nombre_aparato || d.nombre || 'Dispositivo sin nombre',
-      encendido: d.encendido !== undefined ? d.encendido : (d.estado !== undefined ? d.estado : false)
-    };
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers = headers.set('Authorization', `Bearer ${token}`);
+      }
+    }
+    return headers;
   }
 
-  // ─────────────────────────────────────────
-  //  GET /api/control  (carga todo de una vez)
-  // ─────────────────────────────────────────
+  private mapDevice(d: any): DispositivoControl {
+    const id = d.sk_aparato_id || d.id;
+    const tipo = (d.tipo_aparato || '').toLowerCase();
+    const esEncendido = d.accion_nombre === 'Encendido' || d.encendido === true;
+
+    const base: DispositivoControl = {
+      id: id,
+      sk_aparato_id: id,
+      nombre_aparato: d.nombre_aparato || d.nombre || 'Dispositivo',
+      tipo_aparato: d.tipo_aparato,
+      icono: d.icono || 'ic_default',
+      encendido: esEncendido,
+      ubicacion: d.ubicacion || 'Sin ubicación',
+      mac_bluetooth: d.mac_bluetooth,
+      nombre_bluetooth: d.nombre_bluetooth,
+      comando_bluetooth: d.comando_bluetooth
+    };
+
+    if (tipo.includes('bocin') || tipo.includes('audio') || tipo.includes('audífon')) {
+      base.volumen = d.volumen !== undefined ? d.volumen : 50;
+      base.reproduciendo = d.reproduciendo || 'Silencio';
+    } else if (tipo.includes('luz') || tipo.includes('foco') || tipo.includes('ilumin')) {
+      base.brillo = d.brillo !== undefined ? d.brillo : 100;
+      base.tono = d.tono || 'warm';
+    } else if (tipo.includes('vent')) {
+      base.velocidad = d.velocidad !== undefined ? d.velocidad : 1;
+    }
+
+    return base;
+  }
+
+  private mapToBackend(d: DispositivoControl, nuevoEstado?: boolean): any {
+    const encendido = nuevoEstado !== undefined ? nuevoEstado : d.encendido;
+
+    const body: any = {
+      sk_aparato_id: d.id,
+      nombre_aparato: d.nombre_aparato,
+      tipo_aparato: d.tipo_aparato,
+      icono: d.icono,
+      accion_nombre: encendido ? 'Encendido' : 'Apagado',
+      mac_bluetooth: d.mac_bluetooth,
+      nombre_bluetooth: d.nombre_bluetooth,
+      comando_bluetooth: d.comando_bluetooth
+    };
+
+    if (d.volumen !== undefined) body.volumen = d.volumen;
+    if (d.brillo !== undefined) body.brillo = d.brillo;
+    if (d.velocidad !== undefined) body.velocidad = d.velocidad;
+    if (d.tono) body.tono = d.tono;
+
+    return body;
+  }
+
   loadControl(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.http.get<ApiResponse>(BASE_URL).subscribe({
+    const urlTipos = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.aparatoTipos}`;
+    const urlDispositivos = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}`;
+
+    // Cargar tipos de dispositivos
+    this.http.get<ApiResponse>(urlTipos, { headers: this.getHeaders() }).subscribe({
       next: response => {
-        if (response && response.data) {
-          this.luces.set((response.data.luces || []).map(l => this.mapDevice(l)));
-          this.bocinas.set((response.data.bocinas || []).map(b => this.mapDevice(b)));
-          this.ventiladores.set((response.data.ventiladores || []).map(v => this.mapDevice(v)));
+        const data = response?.data || response;
+        if (Array.isArray(data)) {
+          this.tiposDispositivos.set(data);
+        }
+      },
+      error: err => console.error('Error loading types:', err)
+    });
+
+    // Cargar dispositivos
+    this.http.get<ApiResponse>(urlDispositivos, { headers: this.getHeaders() }).subscribe({
+      next: response => {
+        const data = response?.data || response;
+        if (Array.isArray(data)) {
+          this.todosLosDispositivos.set(data.map(d => this.mapDevice(d)));
         }
         this.loading.set(false);
       },
       error: err => {
-        this.error.set('No se pudo conectar con el servidor de control.');
+        console.error('Error loading devices:', err);
+        this.error.set('No se pudo conectar con el servidor.');
         this.loading.set(false);
-        console.error('Error al cargar control:', err);
       }
     });
   }
 
-  // ─────────────────────────────────────────
-  //  PATCH /api/control/luces/:id
-  // ─────────────────────────────────────────
-  toggleLuz(id: number): void {
-    this.http.patch(`${BASE_URL}/luces/${id}/toggle`, {}).subscribe({
-      next: (updated: any) => {
-        const mapped = this.mapDevice(updated);
-        this.luces.update(list => list.map(l => l.id === id ? mapped : l));
+  toggleDevice(id: number): void {
+    const device = this.todosLosDispositivos().find(d => d.id === id);
+    if (!device) return;
+
+    const nuevoEstado = !device.encendido;
+    const body = this.mapToBackend(device, nuevoEstado);
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}/${device.id}`;
+
+    this.http.put(url, body, { headers: this.getHeaders() }).subscribe({
+      next: () => {
+        this.todosLosDispositivos.update(list =>
+          list.map(d => d.id === id ? { ...d, encendido: nuevoEstado } : d)
+        );
       },
-      error: err => { this.error.set('No se pudo cambiar el estado de la luz.'); console.error(err); }
+      error: err => {
+        console.error('Error toggling device:', err);
+        this.error.set(`Error al cambiar estado del dispositivo`);
+      }
     });
   }
 
-  updateLuz(updated: Luz): void {
-    this.http.patch<Luz>(`${BASE_URL}/luces/${updated.id}`, updated).subscribe({
-      next: saved => {
-        const mapped = this.mapDevice(saved);
-        this.luces.update(list => list.map(l => l.id === mapped.id ? mapped : l));
-      },
-      error: err => { this.error.set('No se pudo actualizar la luz.'); console.error(err); }
-    });
-  }
+  updateDevice(device: DispositivoControl): void {
+    const body = this.mapToBackend(device);
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}/${device.id}`;
 
-  // ─────────────────────────────────────────
-  //  PATCH /api/control/bocinas/:id
-  // ─────────────────────────────────────────
-  toggleBocina(id: number): void {
-    this.http.patch(`${BASE_URL}/bocinas/${id}/toggle`, {}).subscribe({
-      next: (updated: any) => {
-        const mapped = this.mapDevice(updated);
-        this.bocinas.update(list => list.map(t => t.id === id ? mapped : t));
+    this.http.put(url, body, { headers: this.getHeaders() }).subscribe({
+      next: () => {
+        this.todosLosDispositivos.update(list =>
+          list.map(d => d.id === device.id ? { ...device } : d)
+        );
       },
-      error: err => { this.error.set('No se pudo cambiar el estado de la bocina.'); console.error(err); }
-    });
-  }
-
-  updateBocina(updated: Bocina): void {
-    this.http.patch<Bocina>(`${BASE_URL}/bocinas/${updated.id}`, updated).subscribe({
-      next: saved => {
-        const mapped = this.mapDevice(saved);
-        this.bocinas.update(list => list.map(t => t.id === mapped.id ? mapped : t));
-      },
-      error: err => { this.error.set('No se pudo actualizar la bocina.'); console.error(err); }
-    });
-  }
-
-  // ─────────────────────────────────────────
-  //  PATCH /api/control/ventiladores/:id
-  // ─────────────────────────────────────────
-  toggleVentilador(id: number): void {
-    this.http.patch(`${BASE_URL}/ventiladores/${id}/toggle`, {}).subscribe({
-      next: (updated: any) => {
-        const mapped = this.mapDevice(updated);
-        this.ventiladores.update(list => list.map(a => a.id === id ? mapped : a));
-      },
-      error: err => { this.error.set('No se pudo cambiar el estado del ventilador.'); console.error(err); }
-    });
-  }
-
-  updateVentilador(updated: Ventilador): void {
-    this.http.patch<Ventilador>(`${BASE_URL}/ventiladores/${updated.id}`, updated).subscribe({
-      next: saved => {
-        const mapped = this.mapDevice(saved);
-        this.ventiladores.update(list => list.map(a => a.id === mapped.id ? mapped : a));
-      },
-      error: err => { this.error.set('No se pudo actualizar el ventilador.'); console.error(err); }
+      error: err => {
+        console.error('Error updating device:', err);
+        this.error.set(`Error al actualizar el dispositivo`);
+      }
     });
   }
 }
