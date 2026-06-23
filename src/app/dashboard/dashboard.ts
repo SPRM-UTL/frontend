@@ -30,6 +30,42 @@ interface UnifiedNotification {
   originalId: number;
 }
 
+import {
+  LucideX,
+  LucideLayoutDashboard,
+  LucideSmartphone,
+  LucideHand,
+  LucideClock,
+  LucidePencil,
+  LucideBolt,
+  LucideUser,
+  LucideLogOut,
+  LucideMenu,
+  LucideBell,
+  LucideSun,
+  LucideCheck,
+  LucidePlay,
+  LucideCamera,
+  LucideBluetooth,
+  LucideHash,
+  LucideZap,
+  LucideCloudLightning,
+  LucideTriangleAlert,
+  LucideSparkles,
+  LucideHeadphones,
+  LucideSpeaker,
+  LucideLightbulb,
+  LucideLampFloor,
+  LucideWind,
+  LucideTvMinimal,
+  LucidePlug,
+  LucideCirclePlus,
+  LucideWifi,
+  LucideLock,
+  LucideFan,
+  LucideTv
+} from '@lucide/angular';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -37,7 +73,40 @@ interface UnifiedNotification {
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    CommonModule
+    CommonModule,
+    LucideX,
+    LucideLayoutDashboard,
+    LucideSmartphone,
+    LucideHand,
+    LucideClock,
+    LucidePencil,
+    LucideBolt,
+    LucideUser,
+    LucideLogOut,
+    LucideMenu,
+    LucideBell,
+    LucideSun,
+    LucideCheck,
+    LucidePlay,
+    LucideCamera,
+    LucideBluetooth,
+    LucideHash,
+    LucideZap,
+    LucideCloudLightning,
+    LucideTriangleAlert,
+    LucideSparkles,
+    LucideHeadphones,
+    LucideSpeaker,
+    LucideLightbulb,
+    LucideLampFloor,
+    LucideWind,
+    LucideTvMinimal,
+    LucidePlug,
+    LucideCirclePlus,
+    LucideWifi,
+    LucideLock,
+    LucideFan,
+    LucideTv
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -113,7 +182,7 @@ export class Dashboard {
         title: a.message,
         subtitle: 'Sistema',
         timeLabel: this.formatTime(a.timestamp),
-        icon: a.icon || '/icons/bell.svg',
+        icon: a.icon || 'bell',
         originalId: a.id
       });
     });
@@ -130,7 +199,7 @@ export class Dashboard {
             title: a.accion,
             subtitle: `${a.dispositivo}`,
             timeLabel: a.hora,
-            icon: this.iconPathForActivity(a),
+            icon: this.iconNameForActivity(a),
             statusText: a.estado,
             originalId: a.id
           });
@@ -249,37 +318,37 @@ export class Dashboard {
       .toUpperCase();
   }
 
-  iconPathForActivity(a: Actividad): string {
-    if (a.estado === 'Error') return '/icons/triangle-alert.svg';
+  iconNameForActivity(a: Actividad): string {
+    if (a.estado === 'Error') return 'triangle-alert';
 
     const accion = (a.accion ?? '').toLowerCase();
     const icono = (a.icono ?? '').toLowerCase();
 
     const hayEncendido = accion.includes('encend') || accion.includes('on') || icono.includes('bolt') || icono.includes('zap');
-    if (hayEncendido) return '/icons/cloud-lightning.svg';
+    if (hayEncendido) return 'cloud-lightning';
 
     const hayCamara = icono.includes('camera') || accion.includes('cám') || accion.includes('cam');
-    if (hayCamara) return '/icons/camera.svg';
+    if (hayCamara) return 'camera';
 
     const hayWifi = icono.includes('wifi') || accion.includes('wifi') || accion.includes('red');
-    if (hayWifi) return '/icons/wifi.svg';
+    if (hayWifi) return 'wifi';
 
     const hayLock = icono.includes('lock') || accion.includes('bloq') || accion.includes('segur');
-    if (hayLock) return '/icons/lock.svg';
+    if (hayLock) return 'lock';
 
     const hayFan = icono.includes('fan') || accion.includes('ventil') || accion.includes('aire');
-    if (hayFan) return '/icons/fan.svg';
+    if (hayFan) return 'fan';
 
     const haySpeaker = icono.includes('speaker') || accion.includes('altav') || accion.includes('audio');
-    if (haySpeaker) return '/icons/speaker.svg';
+    if (haySpeaker) return 'speaker';
 
     const hayTv = icono.includes('tv') || accion.includes('tv') || accion.includes('tele');
-    if (hayTv) return '/icons/tv.svg';
+    if (hayTv) return 'tv';
 
     const hayLight = icono.includes('lightbulb') || icono.includes('light') || accion.includes('luz') || accion.includes('ilumin');
-    if (hayLight) return '/icons/lightbulb.svg';
+    if (hayLight) return 'lightbulb';
 
-    return '/icons/sparkles.svg';
+    return 'sparkles';
   }
 
   togglePanel(): void {
@@ -336,13 +405,13 @@ export class Dashboard {
     )?.nombre_aparato ?? 'Sin Dispositivo';
   }
 
-  getIconPath(icono: string | undefined): string {
-    return '/icons/hand.svg';
+  getIconName(icono: string | undefined): string {
+    return 'hand';
   }
 
-  getDeviceIconPath(tipoOIcono: string | undefined): string {
-    if (!tipoOIcono) return '/icons/ic_default.svg';
+  getDeviceIconName(tipoOIcono: string | undefined): string {
+    if (!tipoOIcono) return 'circle-plus';
     const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-    return `/icons/${iconName}.svg`;
+    return iconName;
   }
 }

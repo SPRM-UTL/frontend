@@ -12,7 +12,7 @@
     <!-- Search and Filter Bar -->
     <div class="search-filter-row">
       <div class="search-wrapper">
-        <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
+        <svg lucideSearch class="search-icon"></svg>
         <input class="search-input"
                type="text"
                placeholder="Buscar gesto..."
@@ -23,16 +23,18 @@
       <div class="filter-wrapper">
         <div class="custom-dropdown">
           <button class="dropdown-trigger" (click)="toggleFilter()">
-            <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+            <svg lucideFilter class="filter-icon"></svg>
             <span class="trigger-label">{{ selectedFilterLabel() }}</span>
-            <span class="icon-mask arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transition: transform 0.2s;"></span>
+            <svg lucideChevronDown class="arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
           </button>
 
-          <div class="dropdown-menu" *ngIf="isFilterOpen()">
-            <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
-            <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
-            <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
-          </div>
+          @if (isFilterOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
+              <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
+              <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -41,53 +43,64 @@
     <div class="summary-card">
       <div class="summary-left">
         <div class="summary-icon-wrapper">
-          <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg'); width: 20px; height: 20px;"></span>
+          <svg lucideHand [size]="20"></svg>
         </div>
         <div>
           <p class="summary-title">Todos los gestos</p>
           <p class="summary-subtitle">{{ totalActivos() }} gestos activos en total</p>
         </div>
       </div>
-      <span class="icon-mask chevron-rotate" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); width: 16px; height: 16px;"></span>
+      <svg lucideChevronDown class="chevron-rotate" [size]="16"></svg>
     </div>
 
     <!-- Gestos grid -->
-    <div class="gestos-grid" *ngIf="!loading() && gestosFiltrados().length > 0">
-      <div class="gesto-card" *ngFor="let gesto of gestosFiltrados()" (click)="verDetalle(gesto)">
-        <div class="gesto-card-header">
-          <div class="gesto-icon-circle">
-            <span class="icon-mask gesto-icon-img" [style.mask-image]="'url(' + getIconPath(gesto.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(gesto.icono) + ')'" style="width: 24px; height: 24px;"></span>
+    @if (!loading() && gestosFiltrados().length > 0) {
+      <div class="gestos-grid">
+        @for (gesto of gestosFiltrados(); track gesto.sk_gesto_id) {
+          <div class="gesto-card" (click)="verDetalle(gesto)">
+            <div class="gesto-card-header">
+              <div class="gesto-icon-circle">
+                <svg lucideHand [size]="24" class="gesto-icon-img"></svg>
+              </div>
+            </div>
+            <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
+            <div class="info-group">
+              <p class="info-label">DISPOSITIVO</p>
+              <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
+            </div>
+            <div class="info-group">
+              <p class="info-label">ESTADO</p>
+              <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
+            </div>
+            <div class="gesto-card-footer">
+              <svg lucideClock class="footer-icon" [size]="14"></svg>
+            </div>
           </div>
-        </div>
-        <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
-        <div class="info-group">
-          <p class="info-label">DISPOSITIVO</p>
-          <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
-        </div>
-        <div class="info-group">
-          <p class="info-label">ESTADO</p>
-          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
-        </div>
-        <div class="gesto-card-footer">
-          <span class="icon-mask footer-icon" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg'); width: 14px; height: 14px;"></span>
-        </div>
+        }
       </div>
-    </div>
+    }
 
     <!-- Empty/Loading/Error states -->
-    <div *ngIf="!loading() && !error() && gestosFiltrados().length === 0" class="empty-state">
-      <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 48px; height: 48px; opacity: 0.3;"></span>
-      <p>No se encontraron gestos que coincidan con los filtros.</p>
-    </div>
+    @if (!loading() && !error() && gestosFiltrados().length === 0) {
+      <div class="empty-state">
+        <svg lucideSearch [size]="48" style="opacity: 0.3;"></svg>
+        <p>No se encontraron gestos que coincidan con los filtros.</p>
+      </div>
+    }
 
-    <div *ngIf="loading()" class="empty-state">
-      <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 24px; height: 24px;"></span>
-      <p>Cargando gestos…</p>
-    </div>
-    <div *ngIf="error()" class="empty-state">
-      <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width: 24px; height: 24px;"></span>
-      <p>{{ error() }}</p>
-    </div>
+    @if (loading()) {
+      <div class="empty-state">
+        <svg lucideSun [size]="24" class="spin"></svg>
+        <p>Cargando gestos…</p>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="empty-state">
+        <svg lucideTriangleAlert [size]="24"></svg>
+        <p>{{ error() }}</p>
+      </div>
+    }
   </div>
 
 </div>

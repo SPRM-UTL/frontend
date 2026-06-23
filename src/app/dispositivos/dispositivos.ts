@@ -5,10 +5,56 @@ import { ActivatedRoute } from '@angular/router';
 import { DispositivosService } from './dispositivos.service';
 import { Dispositivo } from './dispositivos.model';
 
+import {
+  LucideSearch,
+  LucideFilter,
+  LucideChevronDown,
+  LucideWifi,
+  LucideSun,
+  LucideTriangleAlert,
+  LucideHeadphones,
+  LucideSpeaker,
+  LucideLightbulb,
+  LucideLampFloor,
+  LucideWind,
+  LucideTvMinimal,
+  LucidePlug,
+  LucideCirclePlus,
+  LucideLogOut,
+  LucideBolt,
+  LucideCamera,
+  LucideLock,
+  LucideFan,
+
+} from '@lucide/angular';
+
 @Component({
   selector: 'app-dispositivos',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DatePipe,
+    LucideSearch,
+    LucideFilter,
+    LucideChevronDown,
+    LucideWifi,
+    LucideSun,
+    LucideTriangleAlert,
+    LucideHeadphones,
+    LucideSpeaker,
+    LucideLightbulb,
+    LucideLampFloor,
+    LucideWind,
+    LucideTvMinimal,
+    LucidePlug,
+    LucideCirclePlus,
+    LucideLogOut,
+    LucideBolt,
+    LucideCamera,
+    LucideLock,
+    LucideFan
+  ],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })
@@ -26,17 +72,17 @@ export class Dispositivos implements OnInit {
   readonly selectedFilter = signal('');
   readonly selectedFilterLabel = signal('Todos los tipos');
 
-  // Mapeo de tipos de aparatos de la base de datos a nombres de archivos SVG reales en la carpeta /icons/
+  // Mapeo de tipos de aparatos de la base de datos a nombres de iconos Lucide
   readonly categoryIconMap: Record<string, string> = {
     'Audífonos': 'headphones',
     'Bocinas': 'speaker',
     'Focos': 'lightbulb',
-    'Luces': 'lamp_floor',
+    'Luces': 'lamp-floor',
     'Ventilador': 'wind',
-    'Televisión': 'tv_minimal',
+    'Televisión': 'tv-minimal',
     'Sockets': 'plug',
-    'Asistente': 'ic_input_add',
-    'Predeterminado': 'ic_default'
+    'Asistente': 'circle-plus',
+    'Predeterminado': 'circle-plus'
   };
 
   readonly devices = this.devicesService.devices;
@@ -67,9 +113,9 @@ export class Dispositivos implements OnInit {
         return devIcon === type ||
                devType === type.toLowerCase() ||
                mappedIcon === type ||
-               (type === 'lamp_floor' && devType === 'luces') ||
-               (type === 'ic_input_add' && devType === 'asistente') ||
-               (type === 'ic_default' && devType === 'predeterminado');
+               (type === 'lamp-floor' && devType === 'luces') ||
+               (type === 'circle-plus' && devType === 'asistente') ||
+               (type === 'circle-plus' && devType === 'predeterminado');
       });
     }
 
@@ -110,9 +156,9 @@ export class Dispositivos implements OnInit {
     this.devicesService.cerrarDetalle();
   }
 
-  getIconPath(tipoOIcono: string | undefined): string {
-    if (!tipoOIcono) return '/icons/ic_default.svg';
+  getIconName(tipoOIcono: string | undefined): string {
+    if (!tipoOIcono) return 'circle-plus';
     const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-    return `/icons/${iconName}.svg`;
+    return iconName;
   }
 }

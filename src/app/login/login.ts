@@ -15,15 +15,26 @@ import { LoaderService } from '../services/loader.service';
 import { finalize } from 'rxjs/operators';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
+import {
+  LucideEye,
+  LucideEyeOff,
+  LucideMail,
+  LucideLock,
+  LucideLogIn
+} from '@lucide/angular';
+
 @Component({
   selector: 'app-login',
-
   standalone: true,
-
   imports: [
     RouterLink,
     FormsModule,
-    CommonModule
+    CommonModule,
+    LucideMail,
+    LucideLock,
+    LucideEye,
+    LucideEyeOff,
+    LucideLogIn
   ],
 
   templateUrl: './login.html',

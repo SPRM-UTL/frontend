@@ -1,12 +1,38 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  LucideRotateCcw,
+  LucideBolt,
+  LucideLayoutDashboard,
+  LucideUser,
+  LucidePencil,
+  LucideClock,
+  LucideLock,
+  LucideBell,
+  LucideSearch,
+  LucideHand,
+  LucideSparkles
+} from '@lucide/angular';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { GestosService } from '../gestos/gestos.service';
 
 @Component({
   selector: 'app-ajustes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    LucideRotateCcw,
+    LucideBolt,
+    LucideLayoutDashboard,
+    LucideUser,
+    LucidePencil,
+    LucideClock,
+    LucideLock,
+    LucideBell,
+    LucideSearch,
+    LucideHand,
+    LucideSparkles
+  ],
   templateUrl: './ajustes.html',
   styleUrl: './ajustes.css',
 })

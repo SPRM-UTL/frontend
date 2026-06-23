@@ -3,7 +3,7 @@
     <p class="page-subtitle">Personaliza y configura tu sistema de forma local</p>
   </div>
   <button class="btn-reset" (click)="resetSettings()">
-    <span class="icon-mask" style="mask-image: url('/icons/rotate-ccw.svg'); -webkit-mask-image: url('/icons/rotate-ccw.svg'); width: 18px; height: 18px;"></span>
+    <svg lucideRotateCcw [size]="18"></svg>
     Restablecer
   </button>
 </div>
@@ -14,7 +14,7 @@
     <header class="config-header">
       <div class="config-header-left">
         <span class="config-icon-main">
-          <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
+          <svg lucideBolt></svg>
         </span>
         <div>
           <h2 class="config-title">Sistema</h2>
@@ -26,7 +26,7 @@
     <div class="config-grid">
       <div class="setting-item clickable" (click)="cycleMode()">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg');"></span>
+          <svg lucideLayoutDashboard></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Modo</p>
@@ -37,7 +37,7 @@
 
       <div class="setting-item clickable">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+          <svg lucideUser></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Zona horaria</p>
@@ -48,7 +48,7 @@
 
       <div class="setting-item clickable" (click)="cycleLanguage()">
         <span class="item-icon">
-          <span class="item-icon-mask icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+          <svg lucidePencil></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Idioma</p>
@@ -59,7 +59,7 @@
 
       <div class="setting-item clickable" (click)="toggleAutoUpdate()">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+          <svg lucideClock></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Actualizaciones</p>
@@ -75,7 +75,7 @@
     <header class="config-header">
       <div class="config-header-left">
         <span class="config-icon-main">
-          <span class="icon-mask" style="mask-image: url('/icons/lock.svg'); -webkit-mask-image: url('/icons/lock.svg');"></span>
+          <svg lucideLock></svg>
         </span>
         <div>
           <h2 class="config-title">Seguridad</h2>
@@ -87,7 +87,7 @@
     <div class="config-grid">
       <div class="setting-item clickable" (click)="toggleTwoStep()">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/lock.svg'); -webkit-mask-image: url('/icons/lock.svg');"></span>
+          <svg lucideLock></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Verificación en 2 pasos</p>
@@ -98,7 +98,7 @@
 
       <div class="setting-item clickable" (click)="toggleNotifications()">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/bell.svg'); -webkit-mask-image: url('/icons/bell.svg');"></span>
+          <svg lucideBell></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Alertas locales</p>
@@ -109,7 +109,7 @@
 
       <div class="setting-item">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+          <svg lucideUser></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Sesión local</p>
@@ -124,7 +124,7 @@
     <header class="config-header">
       <div class="config-header-left">
         <span class="config-icon-main">
-          <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
+          <svg lucideSearch></svg>
         </span>
         <div>
           <h2 class="config-title">Resumen del Ecosistema</h2>
@@ -136,7 +136,7 @@
     <div class="config-grid">
       <div class="setting-item">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/ic_default.svg'); -webkit-mask-image: url('/icons/ic_default.svg');"></span>
+          <svg lucideLayoutDashboard></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Dispositivos</p>
@@ -146,7 +146,7 @@
 
       <div class="setting-item">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/hand.svg'); -webkit-mask-image: url('/icons/hand.svg');"></span>
+          <svg lucideHand></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Gestos</p>
@@ -156,7 +156,7 @@
 
       <div class="setting-item">
         <span class="item-icon">
-          <span class="icon-mask" style="mask-image: url('/icons/sparkles.svg'); -webkit-mask-image: url('/icons/sparkles.svg');"></span>
+          <svg lucideSparkles></svg>
         </span>
         <div class="item-content">
           <p class="item-label">Versión App</p>

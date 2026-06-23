@@ -6,10 +6,47 @@ import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
 import { DispositivosService } from '../../dispositivos/dispositivos.service';
 
+import {
+  LucideSmartphone,
+  LucideHand,
+  LucideBolt,
+  LucideLayoutDashboard,
+  LucideHeadphones,
+  LucideSpeaker,
+  LucideLightbulb,
+  LucideLampFloor,
+  LucideWind,
+  LucideTvMinimal,
+  LucidePlug,
+  LucideCirclePlus,
+  LucideHelpCircle,
+  LucideClock,
+  LucideLogOut
+} from '@lucide/angular';
+
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, DynamicChartComponent, RouterLink],
+  imports: [
+    CommonModule,
+    DynamicChartComponent,
+    RouterLink,
+    LucideSmartphone,
+    LucideHand,
+    LucideBolt,
+    LucideLayoutDashboard,
+    LucideHeadphones,
+    LucideSpeaker,
+    LucideLightbulb,
+    LucideLampFloor,
+    LucideWind,
+    LucideTvMinimal,
+    LucidePlug,
+    LucideCirclePlus,
+    LucideHelpCircle,
+    LucideClock,
+    LucideLogOut
+  ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
 })
@@ -48,18 +85,18 @@ export class Inicio {
     'Audífonos': 'headphones',
     'Bocinas': 'speaker',
     'Focos': 'lightbulb',
-    'Luces': 'lamp_floor',
+    'Luces': 'lamp-floor',
     'Ventilador': 'wind',
-    'Televisión': 'tv_minimal',
+    'Televisión': 'tv-minimal',
     'Sockets': 'plug',
-    'Asistente': 'ic_input_add',
-    'Predeterminado': 'ic_default'
+    'Asistente': 'plus-circle',
+    'Predeterminado': 'help-circle'
   };
 
-getIconPath(tipoOIcono: string | undefined): string {
-  if (!tipoOIcono) return '/icons/ic_default.svg';
+getIconName(tipoOIcono: string | undefined): string {
+  if (!tipoOIcono) return 'help-circle';
   const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-  return `/icons/${iconName}.svg`;
+  return iconName;
 }
 
   actividadSeries = [{

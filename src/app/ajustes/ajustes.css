@@ -60,11 +60,16 @@
 .config-icon-main {
   width: 48px;
   height: 48px;
-  background: rgba(43, 191, 170, 0.08);
+  border: 1px solid rgba(43, 191, 170, 0.2);
   border-radius: 14px;
   display: grid;
   place-items: center;
   color: var(--cafe-primary);
+}
+
+.config-icon-main svg {
+  width: 24px;
+  height: 24px;
 }
 
 .config-title {
@@ -114,11 +119,16 @@
   height: 40px;
   display: grid;
   place-items: center;
-  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   color: #64748b;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
   flex-shrink: 0;
+}
+
+.item-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .clickable:hover .item-icon {
@@ -194,9 +204,17 @@
   transition: all 0.2s;
 }
 
+.btn-reset svg {
+  color: #64748b;
+}
+
 .btn-reset:hover {
   background: #fff1f2;
   border-color: #fda4af;
+  color: #e11d48;
+}
+
+.btn-reset:hover svg {
   color: #e11d48;
 }
 

@@ -8,7 +8,7 @@
   <!-- Search and Filter Bar -->
   <div class="search-filter-row">
     <div class="search-wrapper">
-      <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
+      <svg lucideSearch class="search-icon" [size]="18"></svg>
       <input class="search-input"
              type="text"
              placeholder="Buscar dispositivo..."
@@ -19,23 +19,24 @@
     <div class="filter-wrapper">
       <div class="custom-dropdown">
         <button class="dropdown-trigger" (click)="toggleFilter()">
-          <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
+          <svg lucideFilter class="filter-icon" [size]="16"></svg>
           <span class="trigger-label">{{ selectedFilterLabel() }}</span>
-          <span class="icon-mask arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transition: transform 0.2s;"></span>
+          <svg lucideChevronDown class="arrow-icon" [size]="14" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
         </button>
 
-        <div class="dropdown-menu" *ngIf="isFilterOpen()">
-          <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'headphones'" (click)="selectFilter('headphones', 'Audífonos')">Audífonos</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'speaker'" (click)="selectFilter('speaker', 'Bocinas')">Bocinas</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'lightbulb'" (click)="selectFilter('lightbulb', 'Focos')">Focos</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'lamp_floor'" (click)="selectFilter('lamp_floor', 'Luces')">Luces</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'wind'" (click)="selectFilter('wind', 'Ventilador')">Ventilador</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'tv_minimal'" (click)="selectFilter('tv_minimal', 'Televisión')">Televisión</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'plug'" (click)="selectFilter('plug', 'Sockets')">Sockets</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'ic_input_add'" (click)="selectFilter('ic_input_add', 'Asistente')">Asistente</div>
-          <div class="dropdown-option" [class.active]="selectedFilter() === 'ic_default'" (click)="selectFilter('ic_default', 'Predeterminado')">Predeterminado</div>
-        </div>
+        @if (isFilterOpen()) {
+          <div class="dropdown-menu">
+            <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'headphones'" (click)="selectFilter('headphones', 'Audífonos')">Audífonos</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'speaker'" (click)="selectFilter('speaker', 'Bocinas')">Bocinas</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'lightbulb'" (click)="selectFilter('lightbulb', 'Focos')">Focos</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'lamp-floor'" (click)="selectFilter('lamp-floor', 'Luces')">Luces</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'wind'" (click)="selectFilter('wind', 'Ventilador')">Ventilador</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'tv-minimal'" (click)="selectFilter('tv-minimal', 'Televisión')">Televisión</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'plug'" (click)="selectFilter('plug', 'Sockets')">Sockets</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'circle-plus'" (click)="selectFilter('circle-plus', 'Asistente')">Asistente</div>
+          </div>
+        }
       </div>
     </div>
   </div>
@@ -45,114 +46,142 @@
     <div class="section-header">
       <div class="section-title-row">
         <div class="wifi-circle">
-          <span class="icon-mask" style="mask-image: url('/icons/wifi.svg'); -webkit-mask-image: url('/icons/wifi.svg');"></span>
+          <svg lucideWifi [size]="20"></svg>
         </div>
         <div>
           <h2 class="section-title">Todos los dispositivos</h2>
           <p class="section-sub">{{ filteredDevices().length }} dispositivos en línea</p>
         </div>
-        <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
+        <svg lucideChevronDown class="section-arrow" [size]="20" style="transform: rotate(-90deg);"></svg>
       </div>
     </div>
 
     <!-- Estado de carga -->
-    <div *ngIf="loading()" class="table-feedback">
-      <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
-      Cargando dispositivos…
-    </div>
+    @if (loading()) {
+      <div class="table-feedback">
+        <svg lucideSun [size]="20" class="spin"></svg>
+        Cargando dispositivos…
+      </div>
+    }
 
     <!-- Estado de error -->
-    <div *ngIf="error()" class="table-feedback table-feedback--error">
-      <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
-      {{ error() }}
-    </div>
+    @if (error()) {
+      <div class="table-feedback table-feedback--error">
+        <svg lucideTriangleAlert [size]="18"></svg>
+        {{ error() }}
+      </div>
+    }
 
     <!-- Table -->
-    <div class="table-wrapper" *ngIf="!loading()">
-      <table class="devices-table">
-        <thead>
-          <tr>
-            <th>DISPOSITIVO</th>
-            <th>TIPO</th>
-            <th>ACCIÓN</th>
-            <th>BLUETOOTH</th>
-            <th>MAC</th>
-            <th>SINCRONIZACIÓN</th>
-            <th *ngIf="showActions()">ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let device of filteredDevices()" class="device-row" (click)="verDetalle(device)" style="cursor: pointer;">
-            <!-- Device -->
-            <td class="device-cell">
-             <div class="device-avatar">
-               <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(device.tipo_aparato || device.icono) + ')'"></span>
-             </div>
-             <div class="device-info">
-               <span class="device-name">{{ device.nombre_aparato }}</span>
-               <span class="status-online">
-                 <span class="dot"></span>
-                 En línea
-               </span>
-             </div>
-            </td>
+    @if (!loading()) {
+      <div class="table-wrapper">
+        <table class="devices-table">
+          <thead>
+            <tr>
+              <th>DISPOSITIVO</th>
+              <th>TIPO</th>
+              <th>ACCIÓN</th>
+              <th>BLUETOOTH</th>
+              <th>MAC</th>
+              <th>SINCRONIZACIÓN</th>
+              @if (showActions()) {
+                <th>ACCIONES</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (device of filteredDevices(); track device.sk_aparato_id) {
+              <tr class="device-row" (click)="verDetalle(device)" style="cursor: pointer;">
+                <!-- Device -->
+                <td class="device-cell">
+                 <div class="device-avatar">
+                   @switch (getIconName(device.tipo_aparato || device.icono)) {
+                     @case ('headphones') { <svg lucideHeadphones [size]="20"></svg> }
+                     @case ('speaker') { <svg lucideSpeaker [size]="20"></svg> }
+                     @case ('lightbulb') { <svg lucideLightbulb [size]="20"></svg> }
+                     @case ('lamp-floor') { <svg lucideLampFloor [size]="20"></svg> }
+                     @case ('wind') { <svg lucideWind [size]="20"></svg> }
+                     @case ('tv-minimal') { <svg lucideTvMinimal [size]="20"></svg> }
+                     @case ('tv') { <svg lucideTvMinimal [size]="20"></svg> }
+                     @case ('ac') { <svg lucideTvMinimal [size]="20"></svg> }
+                     @case ('plug') { <svg lucidePlug [size]="20"></svg> }
+                     @case ('camera') { <svg lucideCamera [size]="20"></svg> }
+                     @case ('lock') { <svg lucideLock [size]="20"></svg> }
+                     @case ('fan') { <svg lucideFan [size]="20"></svg> }
+                     @case ('circle-plus') { <svg lucideCirclePlus [size]="20"></svg> }
+                     @default { <svg lucideCirclePlus [size]="20"></svg> }
+                   }
+                 </div>
+                 <div class="device-info">
+                   <span class="device-name">{{ device.nombre_aparato }}</span>
+                   <span class="status-online">
+                     <span class="dot"></span>
+                     En línea
+                   </span>
+                 </div>
+                </td>
 
-            <!-- Type -->
-            <td class="type-cell">{{ device.tipo_aparato }}</td>
+                <!-- Type -->
+                <td class="type-cell">{{ device.tipo_aparato }}</td>
 
-            <!-- Power / Action -->
-            <td class="power-cell">
-              <div class="action-badge">
-                <span class="icon-mask" style="mask-image: url('/icons/circle-small.svg'); -webkit-mask-image: url('/icons/circle-small.svg'); width: 12px; height: 12px;"></span>
-                {{device.accion_nombre}}
-              </div>
-            </td>
+                <!-- Power / Action -->
+                <td class="power-cell">
+                  <div class="action-badge">
+                    <svg lucideBolt [size]="12"></svg>
+                    {{device.accion_nombre}}
+                  </div>
+                </td>
 
-            <!-- Bluetooth Name -->
-            <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
+                <!-- Bluetooth Name -->
+                <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
 
-            <!-- MAC -->
-            <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
+                <!-- MAC -->
+                <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
 
-            <!-- Sync -->
-            <td class="sync-cell">
-              {{ (device.fecha_sincronizacion | date:'dd/MM/yyyy HH:mm') || 'Sin sincronizar' }}
-            </td>
+                <!-- Sync -->
+                <td class="sync-cell">
+                  {{ (device.fecha_sincronizacion | date:'dd/MM/yyyy HH:mm') || 'Sin sincronizar' }}
+                </td>
 
-            <!-- Actions -->
-            <td class="actions-cell" *ngIf="showActions()">
-              <div class="action-buttons-group">
-                <button class="row-action-btn" title="Cerrar sesión">
-                  <span class="icon-mask" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
-                </button>
-                <button class="row-action-btn" title="Ajustes">
-                  <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
-                </button>
-                <button class="row-action-btn" title="Más opciones">
-                  <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
-                </button>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Empty state -->
-          <tr *ngIf="filteredDevices().length === 0 && !loading()">
-            <td [attr.colspan]="showActions() ? 7 : 6" class="empty-state">
-              <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
-              <p>No se encontraron dispositivos</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                <!-- Actions -->
+                @if (showActions()) {
+                  <td class="actions-cell">
+                    <div class="action-buttons-group">
+                      <button class="row-action-btn" title="Cerrar sesión">
+                        <svg lucideLogOut [size]="18"></svg>
+                      </button>
+                      <button class="row-action-btn" title="Ajustes">
+                        <svg lucideBolt [size]="18"></svg>
+                      </button>
+                      <button class="row-action-btn" title="Más opciones">
+                        <svg lucideChevronDown [size]="18"></svg>
+                      </button>
+                    </div>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              @if (!loading()) {
+                <tr>
+                  <td [attr.colspan]="showActions() ? 7 : 6" class="empty-state">
+                    <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                    <p>No se encontraron dispositivos</p>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
 
     <!-- Pagination -->
     <footer class="table-footer">
       <p class="results-count">Mostrando 1 a {{ filteredDevices().length }} de {{ filteredDevices().length }} dispositivos</p>
       <div class="pagination">
-        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
+        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg></button>
         <button class="page-btn active">1</button>
-        <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
+        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(-90deg);"></svg></button>
       </div>
     </footer>
   </div>

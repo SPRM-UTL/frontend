@@ -34,13 +34,6 @@
   display: inline-block;
   width: 1.25rem;
   height: 1.25rem;
-  background-color: currentColor;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
   flex-shrink: 0;
 }
 
@@ -430,20 +423,11 @@ app-dynamic-chart {
 }
 
 /* Colores de las tarjetas y sus iconos sincronizados */
-.device-chip--orange { background: linear-gradient(180deg, rgba(249, 115, 22, 0.05) 0%, #ffffff 100%); }
-.device-chip--orange .icon-mask { background-color: #f97316 !important; }
-
-.device-chip--blue { background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, #ffffff 100%); }
-.device-chip--blue .icon-mask { background-color: #3b82f6 !important; }
-
-.device-chip--violet { background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, #ffffff 100%); }
-.device-chip--violet .icon-mask { background-color: #8b5cf6 !important; }
-
-.device-chip--teal { background: linear-gradient(180deg, rgba(43, 191, 170, 0.05) 0%, #ffffff 100%); }
-.device-chip--teal .icon-mask { background-color: #2bbfaa !important; }
-
-.device-chip--green { background: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, #ffffff 100%); }
-.device-chip--green .icon-mask { background-color: #22c55e !important; }
+.device-chip--orange { background: linear-gradient(180deg, rgba(249, 115, 22, 0.05) 0%, #ffffff 100%); color: #f97316; }
+.device-chip--blue { background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, #ffffff 100%); color: #3b82f6; }
+.device-chip--violet { background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, #ffffff 100%); color: #8b5cf6; }
+.device-chip--teal { background: linear-gradient(180deg, rgba(43, 191, 170, 0.05) 0%, #ffffff 100%); color: #2bbfaa; }
+.device-chip--green { background: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, #ffffff 100%); color: #22c55e; }
 
 /* Tarjeta de Agregar */
 .add-device-chip {

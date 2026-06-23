@@ -232,6 +232,25 @@ footer {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--cafe-light);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.field input {
+  padding-left: 44px;
 }
 
   .password-wrapper input {

@@ -1,17 +1,21 @@
 <div class="control-page-wrapper">
 
   <!-- ESTADOS DE CARGA Y ERROR -->
-  <div *ngIf="loading()" class="empty-state">
-    <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg'); width: 24px; height: 24px; color: var(--cafe-primary);"></span>
-    <p>Cargando dispositivos…</p>
-  </div>
+  @if (loading()) {
+    <div class="empty-state">
+      <svg lucideSun [size]="24" class="spin" style="color: var(--cafe-primary);"></svg>
+      <p>Cargando dispositivos…</p>
+    </div>
+  }
 
-  <div *ngIf="error()" class="empty-state">
-    <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg'); width: 24px; height: 24px; color: var(--red);"></span>
-    <p>{{ error() }}</p>
-  </div>
+  @if (error()) {
+    <div class="empty-state">
+      <svg lucideTriangleAlert [size]="24" style="color: var(--red);"></svg>
+      <p>{{ error() }}</p>
+    </div>
+  }
 
-  <ng-container *ngIf="!loading() && !error()">
+  @if (!loading() && !error()) {
     <section class="asociados-section">
       <div class="asociados-head">
         <h2 class="section-title-main">Dispositivos Asociados</h2>
@@ -25,35 +29,46 @@
              [class.is-active]="tipoSeleccionado() === 'Todos los tipos'"
              (click)="selectTipo('Todos los tipos')">
           <div class="category-icon-circle all">
-            <span class="icon-mask" style="mask-image: url('/icons/layout-dashboard.svg'); -webkit-mask-image: url('/icons/layout-dashboard.svg'); background-color: currentColor;"></span>
+            <svg lucideLayoutDashboard></svg>
           </div>
           <div class="category-info">
             <h3>Ver Todo</h3>
             <p>{{ dispositivos().length }} dispositivos</p>
           </div>
           <button class="category-arrow-btn">
-            <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
+            <svg lucideChevronDown style="transform: rotate(-90deg);"></svg>
           </button>
         </div>
 
-        <div *ngFor="let t of tiposConDispositivos()"
-             class="category-card"
-             [class.is-active]="tipoSeleccionado() === t.nombre_tipo"
-             (click)="selectTipo(t.nombre_tipo)">
+        @for (t of tiposConDispositivos(); track t.sk_aparato_tipo_id) {
+          <div class="category-card"
+               [class.is-active]="tipoSeleccionado() === t.nombre_tipo"
+               (click)="selectTipo(t.nombre_tipo)">
 
-          <div class="category-icon-circle" [class]="t.nombre_tipo.toLowerCase().replace(' ', '-')">
-            <span class="icon-mask" [style.mask-image]="'url(/icons/' + t.icono + '.svg)'" [style.-webkit-mask-image]="'url(/icons/' + t.icono + '.svg)'" style="background-color: currentColor;"></span>
+            <div class="category-icon-circle" [class]="t.nombre_tipo.toLowerCase().replace(' ', '-')">
+              @switch (getIcon(t.nombre_tipo)) {
+                @case ('headphones') { <svg lucideHeadphones></svg> }
+                @case ('speaker') { <svg lucideSpeaker></svg> }
+                @case ('lightbulb') { <svg lucideLightbulb></svg> }
+                @case ('lamp-floor') { <svg lucideLampFloor></svg> }
+                @case ('wind') { <svg lucideWind></svg> }
+                @case ('tv-minimal') { <svg lucideTvMinimal></svg> }
+                @case ('plug') { <svg lucidePlug></svg> }
+                @case ('plus-circle') { <svg lucideCirclePlus></svg> }
+                @default { <svg lucideHelpCircle></svg> }
+              }
+            </div>
+
+            <div class="category-info">
+              <h3>{{ t.nombre_tipo }}</h3>
+              <p>{{ getDeviceCount(t.nombre_tipo) }} dispositivos</p>
+            </div>
+
+            <button class="category-arrow-btn">
+              <svg lucideChevronDown style="transform: rotate(-90deg);"></svg>
+            </button>
           </div>
-
-          <div class="category-info">
-            <h3>{{ t.nombre_tipo }}</h3>
-            <p>{{ getDeviceCount(t.nombre_tipo) }} dispositivos</p>
-          </div>
-
-          <button class="category-arrow-btn">
-            <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
-          </button>
-        </div>
+        }
       </div>
     </section>
 
@@ -71,86 +86,117 @@
         </div>
         <a class="ver-todo-link" [routerLink]="['/dashboard/dispositivos']">
           Ver Todo
-          <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 14px; height: 14px;"></span>
+          <svg lucideChevronDown [size]="14" style="transform: rotate(-90deg);"></svg>
         </a>
       </header>
 
       <div class="detail-content">
         <!-- GRID DE DISPOSITIVOS -->
-        <div class="devices-grid" *ngIf="dispositivosFiltrados().length > 0">
-          <div class="device-control-card" *ngFor="let d of dispositivosFiltrados()" [class.is-on]="d.encendido">
-            <div class="device-card-head">
-              <span class="device-type-icon" [class.on]="d.encendido">
-                <!-- Icono dinámico según el tipo -->
-                <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(d.tipo_aparato) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(d.tipo_aparato) + ')'" style="background-color: currentColor;"></span>
-              </span>
+        @if (dispositivosFiltrados().length > 0) {
+          <div class="devices-grid">
+            @for (d of dispositivosFiltrados(); track d.id) {
+              <div class="device-control-card" [class.is-on]="d.encendido">
+                <div class="device-card-head">
+                  <span class="device-type-icon" [class.on]="d.encendido">
+                    @switch (getIcon(d.tipo_aparato)) {
+                      @case ('headphones') { <svg lucideHeadphones></svg> }
+                      @case ('speaker') { <svg lucideSpeaker></svg> }
+                      @case ('lightbulb') { <svg lucideLightbulb></svg> }
+                      @case ('lamp-floor') { <svg lucideLampFloor></svg> }
+                      @case ('wind') { <svg lucideWind></svg> }
+                      @case ('tv-minimal') { <svg lucideTvMinimal></svg> }
+                      @case ('plug') { <svg lucidePlug></svg> }
+                      @case ('plus-circle') { <svg lucideCirclePlus></svg> }
+                      @default { <svg lucideHelpCircle></svg> }
+                    }
+                  </span>
 
-              <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
-                 <span class="icon-mask" style="mask-image: url('/icons/bolt.svg'); -webkit-mask-image: url('/icons/bolt.svg');"></span>
-              </button>
-            </div>
+                  <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
+                     <svg lucideBolt></svg>
+                  </button>
+                </div>
 
-            <div class="device-card-body">
-              <strong>{{ d.nombre_aparato }}</strong>
-              <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
+                <div class="device-card-body">
+                  <strong>{{ d.nombre_aparato }}</strong>
+                  <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
 
-              <!-- CONTROLES EXTRA (Solo si está encendido) -->
-              <div class="device-extra-controls" [class.visible]="d.encendido">
+                  <!-- CONTROLES EXTRA (Solo si está encendido) -->
+                  <div class="device-extra-controls" [class.visible]="d.encendido">
 
-                <!-- Brillo para Luces/Focos -->
-                <div *ngIf="d.brillo !== undefined" class="control-stepper">
-                  <div class="slider-container">
-                    <span class="icon-mask mini" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
-                    <input type="range" min="0" max="100" [ngModel]="d.brillo" (ngModelChange)="onBrilloChange(d, $event)" class="modern-slider">
-                    <span class="val-text">{{ d.brillo }}%</span>
+                    <!-- Brillo para Luces/Focos -->
+                    @if (d.brillo !== undefined) {
+                      <div class="control-stepper">
+                        <div class="slider-container">
+                          <svg lucideSun [size]="14" class="mini"></svg>
+                          <input type="range" min="0" max="100" [ngModel]="d.brillo" (ngModelChange)="onBrilloChange(d, $event)" class="modern-slider">
+                          <span class="val-text">{{ d.brillo }}%</span>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Volumen para Audio (CON BARRITA PROGRESIVA) -->
+                    @if (d.volumen !== undefined) {
+                      <div class="audio-control-wrapper">
+                        <div class="audio-buttons-row">
+                          <button (click)="decrementVolumen(d)" class="step-btn">-</button>
+                          <div class="progress-container">
+                            <div class="progress-bar" [style.width]="d.volumen + '%'"></div>
+                            <span class="progress-text">{{ d.volumen }}%</span>
+                          </div>
+                          <button (click)="incrementVolumen(d)" class="step-btn">+</button>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Velocidad para Ventiladores -->
+                    @if (d.velocidad !== undefined) {
+                      <div class="control-stepper speed">
+                        <button (click)="decrementVelocidad(d)" class="step-btn">-</button>
+                        <div class="speed-indicator">
+                          @for (i of [1,2,3,4,5]; track i) {
+                            <span class="dot" [class.active]="d.velocidad >= i"></span>
+                          }
+                        </div>
+                        <button (click)="incrementVelocidad(d)" class="step-btn">+</button>
+                      </div>
+                    }
                   </div>
                 </div>
 
-                <!-- Volumen para Audio (CON BARRITA PROGRESIVA) -->
-                <div *ngIf="d.volumen !== undefined" class="audio-control-wrapper">
-                  <div class="audio-buttons-row">
-                    <button (click)="decrementVolumen(d)" class="step-btn">-</button>
-                    <div class="progress-container">
-                      <div class="progress-bar" [style.width]="d.volumen + '%'"></div>
-                      <span class="progress-text">{{ d.volumen }}%</span>
-                    </div>
-                    <button (click)="incrementVolumen(d)" class="step-btn">+</button>
-                  </div>
-                </div>
-
-                <!-- Velocidad para Ventiladores -->
-                <div *ngIf="d.velocidad !== undefined" class="control-stepper speed">
-                  <button (click)="decrementVelocidad(d)" class="step-btn">-</button>
-                  <div class="speed-indicator">
-                    <span *ngFor="let i of [1,2,3,4,5]" class="dot" [class.active]="d.velocidad >= i"></span>
-                  </div>
-                  <button (click)="incrementVelocidad(d)" class="step-btn">+</button>
+                <div class="device-card-footer">
+                   <div class="status-pill" [class.on]="d.encendido">
+                     <span class="dot"></span>
+                     {{ d.encendido ? 'ENCENDIDO' : 'APAGADO' }}
+                   </div>
                 </div>
               </div>
+            }
+          </div>
+        } @else {
+          <!-- ESTADO VACÍO -->
+          <div class="empty-detail-state">
+            <div class="empty-illustration">
+              <div class="lamp-graphic">
+                 @switch (getIcon(tipoSeleccionado())) {
+                   @case ('headphones') { <svg lucideHeadphones [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('speaker') { <svg lucideSpeaker [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('lightbulb') { <svg lucideLightbulb [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('lamp-floor') { <svg lucideLampFloor [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('wind') { <svg lucideWind [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('tv-minimal') { <svg lucideTvMinimal [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('plug') { <svg lucidePlug [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @case ('plus-circle') { <svg lucideCirclePlus [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                   @default { <svg lucideHelpCircle [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
+                 }
+              </div>
             </div>
-
-            <div class="device-card-footer">
-               <div class="status-pill" [class.on]="d.encendido">
-                 <span class="dot"></span>
-                 {{ d.encendido ? 'ENCENDIDO' : 'APAGADO' }}
-               </div>
+            <div class="empty-text-group">
+              <h3>Aún no tienes {{ tipoSeleccionado().toLowerCase() }} vinculadas</h3>
+              <p>Vincula tus equipos para controlarlos con gestos y automatizaciones.</p>
             </div>
           </div>
-        </div>
-
-        <!-- ESTADO VACÍO -->
-        <div class="empty-detail-state" *ngIf="dispositivosFiltrados().length === 0">
-          <div class="empty-illustration">
-            <div class="lamp-graphic">
-               <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(tipoSeleccionado()) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(tipoSeleccionado()) + ')'" style="width: 60px; height: 60px; color: var(--cafe-primary); opacity: 0.8; background-color: currentColor;"></span>
-            </div>
-          </div>
-          <div class="empty-text-group">
-            <h3>Aún no tienes {{ tipoSeleccionado().toLowerCase() }} vinculadas</h3>
-            <p>Vincula tus equipos para controlarlos con gestos y automatizaciones.</p>
-          </div>
-        </div>
+        }
       </div>
     </section>
-  </ng-container>
+  }
 </div>

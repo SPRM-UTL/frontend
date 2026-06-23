@@ -5,58 +5,48 @@
 
       <div class="field">
         <label>Email</label>
-        <input type="email" placeholder="ejemplo@email.com" [(ngModel)]="correo"/>
+        <div class="input-wrapper">
+          <svg lucideMail class="input-icon" style="width: 20px; height: 20px;"></svg>
+          <input type="email" placeholder="ejemplo@email.com" [(ngModel)]="correo"/>
+        </div>
       </div>
 
 <div class="field">
 
   <label>Contraseña</label>
 
-  <div class="password-wrapper">
+  <div class="input-wrapper">
 
-    <input
-      [type]="showPassword() ? 'text' : 'password'"
-      placeholder="Al menos 8 caracteres"
-      [(ngModel)]="contrasenia"
-    />
+    <svg lucideLock class="input-icon" style="width: 20px; height: 20px;"></svg>
 
-    <button
-      type="button"
-      class="toggle-password"
-      (click)="togglePassword()">
+    <div class="password-wrapper">
 
-      <!-- OJO ABIERTO -->
-      <svg
-        *ngIf="!showPassword()"
-        xmlns="http://www.w3.org/2000/svg"
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
+      <input
+        [type]="showPassword() ? 'text' : 'password'"
+        placeholder="Al menos 8 caracteres"
+        [(ngModel)]="contrasenia"
+      />
 
-      <!-- OJO CERRADO -->
-      <svg
-        *ngIf="showPassword()"
-        xmlns="http://www.w3.org/2000/svg"
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2">
+      <button
+        type="button"
+        class="toggle-password"
+        (click)="togglePassword()">
 
-        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a21.77 21.77 0 0 1 5.06-6.94"/>
-        <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-3.17 4.31"/>
-        <path d="M1 1l22 22"/>
+        @if (!showPassword()) {
+          <svg
+            lucideEye
+            style="width: 22px; height: 22px;">
+          </svg>
+        } @else {
+          <svg
+            lucideEyeOff
+            style="width: 22px; height: 22px;">
+          </svg>
+        }
 
-      </svg>
+      </button>
 
-    </button>
+    </div>
 
   </div>
 
@@ -66,7 +56,10 @@
 
 </div>
 
-      <button class="btn-primary" (click)="onLogin()">Ingresar</button>
+      <button class="btn-primary" (click)="onLogin()">
+        <svg lucideLogIn style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;"></svg>
+        Ingresar
+      </button>
 
       <div class="divider"><span>Ó</span></div>
 

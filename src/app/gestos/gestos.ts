@@ -3,6 +3,16 @@ import { Component, computed, signal, inject, afterNextRender } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import {
+  LucideSearch,
+  LucideFilter,
+  LucideChevronDown,
+  LucideHand,
+  LucideClock,
+  LucideSun,
+  LucideTriangleAlert
+} from '@lucide/angular';
+
 import { GestosService } from './gestos.service';
 import { Gesto } from './gesto.model';
 
@@ -13,7 +23,17 @@ import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-gestos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideSearch,
+    LucideFilter,
+    LucideChevronDown,
+    LucideHand,
+    LucideClock,
+    LucideSun,
+    LucideTriangleAlert
+  ],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
 })

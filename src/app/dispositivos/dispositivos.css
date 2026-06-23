@@ -205,9 +205,8 @@
   place-items: center;
 }
 
-.wifi-circle .icon-mask {
-  width: 20px;
-  height: 20px;
+.wifi-circle > * {
+  display: block;
 }
 
 .section-title {
@@ -285,9 +284,8 @@
   flex-shrink: 0;
 }
 
-.device-avatar .icon-mask {
-  width: 20px;
-  height: 20px;
+.device-avatar > * {
+  display: block;
 }
 
 .device-icon-img {
@@ -379,9 +377,8 @@
   transform: translateY(-2px);
 }
 
-.row-action-btn .icon-mask {
-  width: 18px;
-  height: 18px;
+.row-action-btn > * {
+  display: block;
 }
 
 /* Footer & Pagination */
@@ -437,11 +434,10 @@
 }
 
 .spin {
-  animation: spin 2s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 

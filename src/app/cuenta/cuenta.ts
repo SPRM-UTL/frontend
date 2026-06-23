@@ -3,6 +3,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  LucideUser,
+  LucidePencil,
+  LucideChevronRight,
+  LucideLock,
+  LucideLogOut,
+  LucideArrowRight
+} from '@lucide/angular';
 import { CuentaService } from './cuenta.service';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
@@ -10,7 +18,16 @@ import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-cuenta',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideUser,
+    LucidePencil,
+    LucideChevronRight,
+    LucideLock,
+    LucideLogOut,
+    LucideArrowRight
+  ],
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
 })
