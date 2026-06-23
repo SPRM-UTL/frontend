@@ -1,20 +1,60 @@
-import { Component, afterNextRender, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { GestosService } from './../../gestos/gestos.service';
+import { Component, afterNextRender, inject, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
-import { DevicesService } from '../../dispositivos/devices.service';
+import { DispositivosService } from '../../dispositivos/dispositivos.service';
+
+import {
+  LucideSmartphone,
+  LucideHand,
+  LucideBolt,
+  LucideLayoutDashboard,
+  LucideHeadphones,
+  LucideSpeaker,
+  LucideLightbulb,
+  LucideLampFloor,
+  LucideWind,
+  LucideTvMinimal,
+  LucidePlug,
+  LucideCirclePlus,
+  LucideHelpCircle,
+  LucideClock,
+  LucideLogOut
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, DynamicChartComponent, RouterLink],
+  imports: [
+    CommonModule,
+    DynamicChartComponent,
+    RouterLink,
+    LucideSmartphone,
+    LucideHand,
+    LucideBolt,
+    LucideLayoutDashboard,
+    LucideHeadphones,
+    LucideSpeaker,
+    LucideLightbulb,
+    LucideLampFloor,
+    LucideWind,
+    LucideTvMinimal,
+    LucidePlug,
+    LucideCirclePlus,
+    LucideHelpCircle,
+    LucideClock,
+    LucideLogOut
+  ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
 })
 export class Inicio {
+  private platformId = inject(PLATFORM_ID);
+  private gestosService = inject(GestosService)
   public readonly inicioService = inject(InicioService);
-  public readonly devicesService = inject(DevicesService);
+  public readonly devicesService = inject(DispositivosService);
 
   readonly stats = this.inicioService.stats;
   readonly acciones = this.inicioService.acciones;
@@ -22,8 +62,13 @@ export class Inicio {
   readonly error = this.inicioService.error;
 
   readonly displayedDevices = computed(() => {
-    return this.devicesService.devices().slice(0, 3);
+    return this.devicesService.devices().slice(0, 4);
   });
+
+  readonly displayedGestos = computed(() => {
+    return this.gestosService.gestos().slice(0, 3);
+  });
+
 
   getChipClass(tipo: string, index: number = 0): string {
     const colorClasses = [
@@ -36,22 +81,26 @@ export class Inicio {
     return colorClasses[index % colorClasses.length];
   }
 
-  getIconPath(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('bocina') || t.includes('altavoz') || t.includes('audio')) return '/icons/speaker.svg';
-    if (t.includes('luz') || t.includes('foco') || t.includes('ilumin')) return '/icons/lightbulb.svg';
-    if (t.includes('tv') || t.includes('tele')) return '/icons/tv.svg';
-    if (t.includes('cam') || t.includes('segurid')) return '/icons/camera.svg';
-    if (t.includes('lock') || t.includes('cerradura') || t.includes('bloqueo')) return '/icons/lock.svg';
-    if (t.includes('fan') || t.includes('ventilador') || t.includes('aire')) return '/icons/fan.svg';
-    if (t.includes('wifi') || t.includes('red')) return '/icons/wifi.svg';
-    if (t.includes('bolt') || t.includes('energ')) return '/icons/bolt.svg';
+  readonly categoryIconMap: Record<string, string> = {
+    'Audífonos': 'headphones',
+    'Bocinas': 'speaker',
+    'Focos': 'lightbulb',
+    'Luces': 'lamp-floor',
+    'Ventilador': 'wind',
+    'Televisión': 'tv-minimal',
+    'Sockets': 'plug',
+    'Asistente': 'plus-circle',
+    'Predeterminado': 'help-circle'
+  };
 
-    return '/icons/smartphone.svg'; // Fallback solicitado
-  }
+getIconName(tipoOIcono: string | undefined): string {
+  if (!tipoOIcono) return 'help-circle';
+  const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
+  return iconName;
+}
 
   actividadSeries = [{
-    name: 'Automatizaciones',
+    name: 'acciones',
     data: [12, 18, 15, 22, 20, 25, 30]
   }];
   actividadCategorias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -62,12 +111,9 @@ export class Inicio {
 
   constructor() {
     afterNextRender(() => {
-      const token = typeof localStorage !== 'undefined'
-        ? localStorage.getItem('token') ?? ''
-        : '';
-      const userId = Number(typeof localStorage !== 'undefined'
-        ? localStorage.getItem('userId') ?? '1'
-        : '1');
+      const isBrowser = isPlatformBrowser(this.platformId);
+      const token = isBrowser ? (localStorage.getItem('token') ?? '') : '';
+      const userId = Number(isBrowser ? (localStorage.getItem('userId') ?? '1') : '1');
 
       if (userId > 0 && token) {
         this.inicioService.loadInicio(userId, token);

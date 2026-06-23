@@ -1,38 +1,125 @@
 import { Component, computed, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { DevicesService } from './devices.service';
-import { Device } from './device.model';
+import { DispositivosService } from './dispositivos.service';
+import { Dispositivo } from './dispositivos.model';
+
+import {
+  LucideSearch,
+  LucideFilter,
+  LucideChevronDown,
+  LucideWifi,
+  LucideSun,
+  LucideTriangleAlert,
+  LucideHeadphones,
+  LucideSpeaker,
+  LucideLightbulb,
+  LucideLampFloor,
+  LucideWind,
+  LucideTvMinimal,
+  LucidePlug,
+  LucideCirclePlus,
+  LucideLogOut,
+  LucideBolt,
+  LucideCamera,
+  LucideLock,
+  LucideFan,
+
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-dispositivos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DatePipe,
+    LucideSearch,
+    LucideFilter,
+    LucideChevronDown,
+    LucideWifi,
+    LucideSun,
+    LucideTriangleAlert,
+    LucideHeadphones,
+    LucideSpeaker,
+    LucideLightbulb,
+    LucideLampFloor,
+    LucideWind,
+    LucideTvMinimal,
+    LucidePlug,
+    LucideCirclePlus,
+    LucideLogOut,
+    LucideBolt,
+    LucideCamera,
+    LucideLock,
+    LucideFan
+  ],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })
 export class Dispositivos implements OnInit {
 
-  private devicesService = inject(DevicesService);
+  private devicesService = inject(DispositivosService);
   private route = inject(ActivatedRoute);
 
   activeNav = 'dispositivos';
   readonly searchQuery = signal('');
+  readonly showActions = signal(false);
+
+  // Dropdown Filter State
+  readonly isFilterOpen = signal(false);
+  readonly selectedFilter = signal('');
+  readonly selectedFilterLabel = signal('Todos los tipos');
+
+  // Mapeo de tipos de aparatos de la base de datos a nombres de iconos Lucide
+  readonly categoryIconMap: Record<string, string> = {
+    'Audífonos': 'headphones',
+    'Bocinas': 'speaker',
+    'Focos': 'lightbulb',
+    'Luces': 'lamp-floor',
+    'Ventilador': 'wind',
+    'Televisión': 'tv-minimal',
+    'Sockets': 'plug',
+    'Asistente': 'circle-plus',
+    'Predeterminado': 'circle-plus'
+  };
 
   readonly devices = this.devicesService.devices;
-  readonly mostrarModal = signal(false);
 
   readonly filteredDevices = computed(() => {
-    const allDevices = this.devices();
-    if (!Array.isArray(allDevices)) return [];
+    let filtered = this.devices();
+    if (!Array.isArray(filtered)) return [];
+
     const q = this.searchQuery().toLowerCase().trim();
-    if (!q) return allDevices;
-    return allDevices.filter(device =>
-      device.nombre_aparato?.toLowerCase().includes(q) ||
-      device.tipo_aparato?.toLowerCase().includes(q) ||
-      device.nombre_bluetooth?.toLowerCase().includes(q)
-    );
+    const type = this.selectedFilter();
+
+    // Filtro por búsqueda
+    if (q) {
+      filtered = filtered.filter(device =>
+        device.nombre_aparato?.toLowerCase().includes(q) ||
+        device.tipo_aparato?.toLowerCase().includes(q) ||
+        device.nombre_bluetooth?.toLowerCase().includes(q)
+      );
+    }
+
+    // Filtro por tipo (Categoría)
+    if (type) {
+      filtered = filtered.filter(device => {
+        const devIcon = (device.icono || '').toLowerCase().trim();
+        const devType = (device.tipo_aparato || '').toLowerCase().trim();
+        const mappedIcon = this.categoryIconMap[device.tipo_aparato || ''] || '';
+
+        return devIcon === type ||
+               devType === type.toLowerCase() ||
+               mappedIcon === type ||
+               (type === 'lamp-floor' && devType === 'luces') ||
+               (type === 'circle-plus' && devType === 'asistente') ||
+               (type === 'circle-plus' && devType === 'predeterminado');
+      });
+    }
+
+    return filtered;
   });
 
   readonly loading = this.devicesService.loading;
@@ -40,65 +127,38 @@ export class Dispositivos implements OnInit {
 
   ngOnInit(): void {
     this.devicesService.loadDevices();
-
-    // Abrir modal si viene el parámetro 'add'
-    this.route.queryParams.subscribe(params => {
-      if (params['add'] === 'true') {
-        this.abrirModal();
-      }
-    });
   }
 
   onSearch(value: string): void {
     this.searchQuery.set(value);
   }
 
-  nuevoDispositivo = {
-    nombre_aparato: '',
-    tipo_aparato: '',
-    accion_nombre: '',
-    comando_bluetooth: '',
-    icono: '',
-    nombre_bluetooth: '',
-    mac_bluetooth: '',
-    fecha_sincronizacion: null
-  };
-
-  abrirModal(): void {
-    this.mostrarModal.set(true);
+  // Dropdown Methods
+  toggleFilter() {
+    this.isFilterOpen.update(v => !v);
   }
 
-  cerrarModal(): void {
-    this.mostrarModal.set(false);
+  closeFilter() {
+    this.isFilterOpen.set(false);
   }
 
-  guardarDispositivo(): void {
-    this.devicesService
-      .createDevice(this.nuevoDispositivo)
-      .subscribe({
-        next: () => {
-          this.cerrarModal();
-          this.devicesService.loadDevices();
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
+  selectFilter(value: string, label: string) {
+    this.selectedFilter.set(value);
+    this.selectedFilterLabel.set(label);
+    this.isFilterOpen.set(false);
   }
 
-  getIconPath(icono: string | undefined): string {
-    if (!icono) return '/icons/smartphone.svg';
-    // Mapeo simple de nombres a archivos si es necesario,
-    // o simplemente retornar el path si coinciden los nombres.
-    const iconMap: Record<string, string> = {
-      'lightbulb': 'lightbulb.svg',
-      'tv': 'tv.svg',
-      'speaker': 'speaker.svg',
-      'camera': 'camera.svg',
-      'lock': 'lock.svg',
-      'fan': 'fan.svg',
-      'wifi': 'wifi.svg'
-    };
-    return `/icons/${iconMap[icono] || 'smartphone.svg'}`;
+  verDetalle(device: Dispositivo): void {
+    this.devicesService.selectedDevice.set(device);
+  }
+
+  cerrarDetalle(): void {
+    this.devicesService.cerrarDetalle();
+  }
+
+  getIconName(tipoOIcono: string | undefined): string {
+    if (!tipoOIcono) return 'circle-plus';
+    const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
+    return iconName;
   }
 }

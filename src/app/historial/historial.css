@@ -1,13 +1,29 @@
-/* historial.css — Estilos modernos tipo tabla para el historial */
-
 :host {
   display: block;
+}
+
+@keyframes slideUpFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.historial-container {
+  animation: slideUpFromBottom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ══════════════════════════════
    PAGE HEADER
 ══════════════════════════════ */
 .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 2rem;
 }
 
@@ -66,42 +82,93 @@
 }
 
 .filter-wrapper {
-  min-width: 200px;
+  min-width: 220px;
 }
 
-.filter-select {
+.custom-dropdown {
   position: relative;
+  width: 100%;
+}
+
+.dropdown-trigger {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 0 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.dropdown-trigger:hover, .dropdown-trigger:focus {
+  background: white;
+  border-color: #2bbfaa;
+  box-shadow: 0 4px 12px rgba(43, 191, 170, 0.08);
+}
+
+.trigger-label {
+  flex: 1;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #1e293b;
+  font-weight: 600;
+  margin-left: 0.75rem;
 }
 
 .filter-icon {
   width: 16px;
   height: 16px;
   color: #94a3b8;
-  margin-right: 0.5rem;
-}
-
-.filter-select select {
-  width: 100%;
-  padding: 0.85rem 0.5rem;
-  background: transparent;
-  border: none;
-  font-size: 0.9rem;
-  color: #1e293b;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
 }
 
 .arrow-icon {
   width: 14px;
   height: 14px;
   color: #94a3b8;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 50;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-option {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.dropdown-option:hover {
+  background: #f1f5f9;
+  color: #1a4e4a;
+}
+
+.dropdown-option.active {
+  background: #e6f7f5;
+  color: #2bbfaa;
+  font-weight: 700;
 }
 
 /* ══════════════════════════════
@@ -201,9 +268,34 @@
 
 /* Action Cell */
 .action-cell {
+  vertical-align: middle;
+}
+
+.action-content {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.event-id-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+  text-transform: uppercase;
+  border: 1px solid #e2e8f0;
 }
 
 .event-avatar {

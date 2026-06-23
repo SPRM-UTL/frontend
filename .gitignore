@@ -13,6 +13,7 @@ yarn-error.log
 
 # IDEs and editors
 .idea/
+.idea/
 .project
 .classpath
 .c9/
@@ -42,5 +43,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
-.vs/ 
-node_modules/ 
+.vs/
+node_modules/
+
+.artifacts

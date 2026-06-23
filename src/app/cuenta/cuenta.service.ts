@@ -3,7 +3,7 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { APP_CONFIG } from '../core/config/app-config'; 
+import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
 
 import { isPlatformBrowser } from '@angular/common';
@@ -44,7 +44,9 @@ export class CuentaService {
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
-      this.error.set('No se encontr� el ID de usuario.');
+      if(isPlatformBrowser (this.platformId)){
+        this.error.set('No se encontr� el ID de usuario.');
+      }
       return;
     }
 

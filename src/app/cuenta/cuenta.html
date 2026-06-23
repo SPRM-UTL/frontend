@@ -10,10 +10,10 @@
     <div class="profile-main">
       <div class="avatar-container">
         <div class="avatar-circle">
-          <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+          <svg lucideUser></svg>
         </div>
         <button class="avatar-edit-btn" (click)="onEditAvatar()" aria-label="Editar avatar">
-          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
+          <svg lucidePencil></svg>
         </button>
       </div>
       <div class="profile-info">
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="profile-arrow">
-      <span class="icon-mask chevron-right"></span>
+      <svg lucideChevronRight></svg>
     </div>
   </div>
 
@@ -32,89 +32,107 @@
     <!-- Nombres -->
     <div class="info-item" [class.editing]="editingField() === 'nombre'">
       <div class="info-icon">
-        <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+        <svg lucideUser></svg>
       </div>
       <div class="info-content">
         <label>Nombres</label>
-        <div class="info-value" *ngIf="editingField() !== 'nombre'">{{ userName() }}</div>
-        <input *ngIf="editingField() === 'nombre'"
-               class="info-input"
-               type="text"
-               [(ngModel)]="editValue"
-               (keydown.enter)="saveField('nombre')"
-               (keydown.escape)="cancelEdit()"
-               [disabled]="isSaving()"
-               autoFocus />
+        @if (editingField() !== 'nombre') {
+          <div class="info-value">{{ userName() }}</div>
+        } @else {
+          <input
+                 class="info-input"
+                 type="text"
+                 [(ngModel)]="editValue"
+                 (keydown.enter)="saveField('nombre')"
+                 (keydown.escape)="cancelEdit()"
+                 [disabled]="isSaving()"
+                 autoFocus />
+        }
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField() !== 'nombre'" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
-          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
-        </button>
-        <div class="save-cancel" *ngIf="editingField() === 'nombre'">
-          <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
-            {{ isSaving() ? '...' : 'Guardar' }}
+        @if (editingField() !== 'nombre') {
+          <button class="edit-pill-btn" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
+            <svg lucidePencil></svg>
           </button>
-          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-        </div>
+        } @else {
+          <div class="save-cancel">
+            <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
+              {{ isSaving() ? '...' : 'Guardar' }}
+            </button>
+            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+          </div>
+        }
       </div>
     </div>
 
     <!-- Correo -->
     <div class="info-item" [class.editing]="editingField() === 'correo'">
       <div class="info-icon">
-        <span class="icon-mask" style="mask-image: url('/icons/user.svg'); -webkit-mask-image: url('/icons/user.svg');"></span>
+        <svg lucideUser></svg>
       </div>
       <div class="info-content">
         <label>Correo</label>
-        <div class="info-value email" *ngIf="editingField() !== 'correo'">{{ userEmail() }}</div>
-        <input *ngIf="editingField() === 'correo'"
-               class="info-input"
-               type="email"
-               [(ngModel)]="editValue"
-               (keydown.enter)="saveField('correo')"
-               (keydown.escape)="cancelEdit()"
-               [disabled]="isSaving()" />
+        @if (editingField() !== 'correo') {
+          <div class="info-value email">{{ userEmail() }}</div>
+        } @else {
+          <input
+                 class="info-input"
+                 type="email"
+                 [(ngModel)]="editValue"
+                 (keydown.enter)="saveField('correo')"
+                 (keydown.escape)="cancelEdit()"
+                 [disabled]="isSaving()" />
+        }
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField() !== 'correo'" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
-          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
-        </button>
-        <div class="save-cancel" *ngIf="editingField() === 'correo'">
-          <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
-            {{ isSaving() ? '...' : 'Guardar' }}
+        @if (editingField() !== 'correo') {
+          <button class="edit-pill-btn" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
+            <svg lucidePencil></svg>
           </button>
-          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-        </div>
+        } @else {
+          <div class="save-cancel">
+            <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
+              {{ isSaving() ? '...' : 'Guardar' }}
+            </button>
+            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+          </div>
+        }
       </div>
     </div>
 
     <!-- Contraseña -->
     <div class="info-item" [class.editing]="editingField() === 'password'">
       <div class="info-icon">
-        <span class="icon-mask" style="mask-image: url('/icons/lock.svg'); -webkit-mask-image: url('/icons/lock.svg');"></span>
+        <svg lucideLock></svg>
       </div>
       <div class="info-content">
         <label>Contraseña</label>
-        <div class="info-value dots" *ngIf="editingField() !== 'password'">••••••••••••</div>
-        <input *ngIf="editingField() === 'password'"
-               class="info-input"
-               type="password"
-               [(ngModel)]="editValue"
-               placeholder="Nueva contraseña"
-               (keydown.enter)="saveField('password')"
-               (keydown.escape)="cancelEdit()"
-               [disabled]="isSaving()" />
+        @if (editingField() !== 'password') {
+          <div class="info-value dots">••••••••••••</div>
+        } @else {
+          <input
+                 class="info-input"
+                 type="password"
+                 [(ngModel)]="editValue"
+                 placeholder="Nueva contraseña"
+                 (keydown.enter)="saveField('password')"
+                 (keydown.escape)="cancelEdit()"
+                 [disabled]="isSaving()" />
+        }
       </div>
       <div class="info-actions">
-        <button class="edit-pill-btn" *ngIf="editingField() !== 'password'" (click)="startEdit('password', '')" aria-label="Editar contraseña">
-          <span class="icon-mask" style="mask-image: url('/icons/pencil.svg'); -webkit-mask-image: url('/icons/pencil.svg');"></span>
-        </button>
-        <div class="save-cancel" *ngIf="editingField() === 'password'">
-          <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
-            {{ isSaving() ? '...' : 'Guardar' }}
+        @if (editingField() !== 'password') {
+          <button class="edit-pill-btn" (click)="startEdit('password', '')" aria-label="Editar contraseña">
+            <svg lucidePencil></svg>
           </button>
-          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-        </div>
+        } @else {
+          <div class="save-cancel">
+            <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
+              {{ isSaving() ? '...' : 'Guardar' }}
+            </button>
+            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+          </div>
+        }
       </div>
     </div>
   </div>
@@ -123,7 +141,7 @@
   <div class="privacy-banner logout-banner">
     <div class="banner-left">
       <div class="banner-icon logout-icon">
-        <span class="icon-mask" style="mask-image: url('/icons/log-out.svg'); -webkit-mask-image: url('/icons/log-out.svg');"></span>
+        <svg lucideLogOut></svg>
       </div>
       <div class="banner-text">
         <h4>¿Deseas salir de tu cuenta?</h4>
@@ -132,7 +150,7 @@
     </div>
     <button class="banner-btn logout-btn" (click)="onLogout()">
       Cerrar sesión
-      <span class="icon-mask arrow-right"></span>
+      <svg lucideArrowRight></svg>
     </button>
   </div>
 

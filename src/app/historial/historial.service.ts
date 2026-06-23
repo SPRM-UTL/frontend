@@ -1,4 +1,5 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
@@ -17,9 +18,10 @@ interface ApiResponse {
   providedIn: 'root'
 })
 export class HistorialService {
+  private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
 
- // private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
+  // private readonly apiUrl = 'http://localhost:5295/api/Fact_Historico_Actividad';
   private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.historial}`;
   // Declaramos correctamente los signals dentro de la clase para quitar los errores en rojo
 
@@ -32,7 +34,7 @@ export class HistorialService {
    */
   private getHeaders(): HttpHeaders {
     let token = '';
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (isPlatformBrowser(this.platformId)) {
       token = localStorage.getItem('token') ?? '';
     }
     return new HttpHeaders({

@@ -1,103 +1,106 @@
-<!-- gestos.html — solo contenido, sin sidebar ni dashboard-wrapper -->
+<div class="gestos-container">
 
-<!-- Header -->
-<div class="page-header">
-  <div>
-    <p class="page-subtitle">Administra tus gestos guardados</p>
-  </div>
-  <button class="btn-agregar">
-    <img src="/icons/circle-plus.svg" width="16" alt="Agregar" style="filter: brightness(0) invert(1);">
-    Agregar gesto
-  </button>
-</div>
-
-<!-- Search bar -->
-<div class="search-wrapper">
-  <img src="/icons/search.svg" class="search-icon" width="16" alt="Buscar">
-  <input class="search-input"
-         type="text"
-         placeholder="Search"
-         [value]="searchQuery()"
-         (input)="onSearch($any($event.target).value)" />
-</div>
-
-<!-- Filter bar -->
-<div class="filter-bar">
-  <div class="filter-label">
-    <span class="filter-emoji">👋</span>
-    <div>
-      <p class="filter-title">Todos los gestos</p>
-      <p class="filter-count">{{ totalActivos() }} gestos activos</p>
-    </div>
-  </div>
-</div>
-
-<!-- Estado de carga -->
-<div *ngIf="loading()" class="empty-state">
-  <img src="/icons/sun.svg" width="24" class="spin" alt="Cargando">
-  <p>Cargando gestos…</p>
-</div>
-
-<!-- Estado de error -->
-<div *ngIf="error()" class="empty-state">
-  <img src="/icons/triangle-alert.svg" width="24" alt="Error">
-  <p>{{ error() }}</p>
-</div>
-
-<!-- Gestos grid -->
-<div class="gestos-grid" *ngIf="!loading()">
-  <div class="gesto-card" *ngFor="let gesto of gestosFiltrados()">
-
-    <div class="gesto-card-header">
-      <span class="gesto-emoji">
-        <img [src]="getIconPath(gesto.icono)" width="28" alt="Gesto">
-      </span>
-
-      <span class="badge"
-            [class.badge-activo]="gesto.estado === 'Activo'"
-            [class.badge-pausado]="gesto.estado === 'Pausado'">
-        {{ gesto.estado }}
-      </span>
-    </div>
-
-    <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
-    <div class="gesto-dispositivo">
-      <span class="dispositivo-icon" [style.background]="gesto.dispositivoIconColor + '22'">
-        {{ gesto.dispositivoIconEmoji }}
-      </span>
+  <!-- VISTA PRINCIPAL (GRID) - Siempre visible en el fondo -->
+  <div class="main-grid-view">
+    <!-- Header -->
+    <div class="page-header">
       <div>
-        <p class="dispositivo-label">Dispositivo</p>
-        <p class="dispositivo-nombre">Aparato #{{ gesto.sk_aparato_id }}</p>
+        <p class="page-subtitle">Administra tus gestos guardados</p>
       </div>
     </div>
 
-    <div class="gesto-accion">
-      <p class="accion-label">Acción</p>
-      <p class="accion-valor">  {{ gesto.tipo_disparador_nombre }}</p>
-    </div>
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-row">
+      <div class="search-wrapper">
+        <svg lucideSearch class="search-icon"></svg>
+        <input class="search-input"
+               type="text"
+               placeholder="Buscar gesto..."
+               [value]="searchQuery()"
+               (input)="onSearch($any($event.target).value)" />
+      </div>
 
-    <div class="gesto-footer">
-      <span class="gesto-tiempo">
-        <img src="/icons/clock.svg" width="12" alt="Reloj">
-        {{ gesto.tiempo }}
-      </span>
-      <div class="gesto-actions">
-        <!-- Ver -->
-        <button class="action-btn" title="Ver">
-          <img src="/icons/search.svg" width="14" alt="Ver">
-        </button>
-        <!-- Editar -->
-        <button class="action-btn" title="Editar">
-          <img src="/icons/pencil.svg" width="14" alt="Editar">
-        </button>
+      <div class="filter-wrapper">
+        <div class="custom-dropdown">
+          <button class="dropdown-trigger" (click)="toggleFilter()">
+            <svg lucideFilter class="filter-icon"></svg>
+            <span class="trigger-label">{{ selectedFilterLabel() }}</span>
+            <svg lucideChevronDown class="arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
+          </button>
+
+          @if (isFilterOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
+              <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
+              <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
+            </div>
+          }
+        </div>
       </div>
     </div>
 
+    <!-- Summary Card -->
+    <div class="summary-card">
+      <div class="summary-left">
+        <div class="summary-icon-wrapper">
+          <svg lucideHand [size]="20"></svg>
+        </div>
+        <div>
+          <p class="summary-title">Todos los gestos</p>
+          <p class="summary-subtitle">{{ totalActivos() }} gestos activos en total</p>
+        </div>
+      </div>
+      <svg lucideChevronDown class="chevron-rotate" [size]="16"></svg>
+    </div>
+
+    <!-- Gestos grid -->
+    @if (!loading() && gestosFiltrados().length > 0) {
+      <div class="gestos-grid">
+        @for (gesto of gestosFiltrados(); track gesto.sk_gesto_id) {
+          <div class="gesto-card" (click)="verDetalle(gesto)">
+            <div class="gesto-card-header">
+              <div class="gesto-icon-circle">
+                <svg lucideHand [size]="24" class="gesto-icon-img"></svg>
+              </div>
+            </div>
+            <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
+            <div class="info-group">
+              <p class="info-label">DISPOSITIVO</p>
+              <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
+            </div>
+            <div class="info-group">
+              <p class="info-label">ESTADO</p>
+              <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
+            </div>
+            <div class="gesto-card-footer">
+              <svg lucideClock class="footer-icon" [size]="14"></svg>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty/Loading/Error states -->
+    @if (!loading() && !error() && gestosFiltrados().length === 0) {
+      <div class="empty-state">
+        <svg lucideSearch [size]="48" style="opacity: 0.3;"></svg>
+        <p>No se encontraron gestos que coincidan con los filtros.</p>
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="empty-state">
+        <svg lucideSun [size]="24" class="spin"></svg>
+        <p>Cargando gestos…</p>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="empty-state">
+        <svg lucideTriangleAlert [size]="24"></svg>
+        <p>{{ error() }}</p>
+      </div>
+    }
   </div>
 
-  <!-- Empty state -->
-  <div class="empty-state" *ngIf="gestosFiltrados().length === 0 && !loading()">
-    <img src="/icons/search.svg" width="32" alt="No encontrado">
-    <p>No se encontraron gestos</p>
-  </div>
 </div>

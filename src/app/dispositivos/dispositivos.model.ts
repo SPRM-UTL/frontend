@@ -1,4 +1,4 @@
-export interface Device {
+export interface Dispositivo {
 
   sk_aparato_id: number;
 

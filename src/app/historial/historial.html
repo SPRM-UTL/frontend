@@ -1,138 +1,185 @@
-<div class="page-header">
-  <div>
-    <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
-  </div>
-</div>
-
-<!-- Search and Filter Bar -->
-<div class="search-filter-row">
-  <div class="search-wrapper">
-    <span class="icon-mask search-icon" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg');"></span>
-    <input class="search-input"
-           type="text"
-           placeholder="Buscar en el historial..."
-           [value]="searchQuery()"
-           (input)="onSearch($any($event.target).value)" />
-  </div>
-
-  <div class="filter-wrapper">
-    <div class="filter-select">
-      <span class="icon-mask filter-icon" style="mask-image: url('/icons/filter.svg'); -webkit-mask-image: url('/icons/filter.svg');"></span>
-      <select>
-        <option value="">Todos los estados</option>
-        <option value="Ejecutado">Ejecutado</option>
-        <option value="Error">Error</option>
-      </select>
-      <span class="icon-mask arrow-icon" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg');"></span>
+<div class="historial-container">
+  <div class="page-header">
+    <div>
+      <p class="page-subtitle">Registro detallado de todas las acciones y eventos del sistema</p>
     </div>
   </div>
-</div>
 
-<!-- History Section -->
-<div class="history-section">
-  <div class="section-header">
-    <div class="section-title-row">
-      <div class="clock-circle">
-        <span class="icon-mask" style="mask-image: url('/icons/clock.svg'); -webkit-mask-image: url('/icons/clock.svg');"></span>
+  <!-- Search and Filter Bar -->
+  <div class="search-filter-row">
+    <div class="search-wrapper">
+      <svg lucideSearch class="search-icon" [size]="18"></svg>
+      <input class="search-input"
+             type="text"
+             placeholder="Buscar en el historial..."
+             [value]="searchQuery()"
+             (input)="onSearch($any($event.target).value)" />
+    </div>
+
+    <div class="filter-wrapper">
+      <div class="custom-dropdown">
+        <button class="dropdown-trigger" (click)="toggleFilter()">
+          <svg lucideFilter class="filter-icon" [size]="16"></svg>
+          <span class="trigger-label">{{ selectedFilterLabel() }}</span>
+          <svg lucideChevronDown class="arrow-icon" [size]="14" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
+        </button>
+
+        @if (isFilterOpen()) {
+          <div class="dropdown-menu">
+            <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los estados')">Todos los estados</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Ejecutado'" (click)="selectFilter('Ejecutado', 'Ejecutados')">Ejecutados</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Error'" (click)="selectFilter('Error', 'Errores')">Errores</div>
+          </div>
+        }
       </div>
-      <div>
-        <h2 class="section-title">Actividad Reciente</h2>
-        <p class="section-sub">Registros de las últimas 24 horas</p>
+    </div>
+  </div>
+
+  <!-- History Section -->
+  <div class="history-section">
+    <div class="section-header">
+      <div class="section-title-row">
+        <div class="clock-circle">
+          <svg lucideClock [size]="20"></svg>
+        </div>
+        <div>
+          <h2 class="section-title">Actividad Reciente</h2>
+          <p class="section-sub">{{ actividadesFiltradas().length }} registros encontrados</p>
+        </div>
+        <svg lucideChevronDown class="section-arrow" [size]="20" style="transform: rotate(-90deg);"></svg>
       </div>
-      <span class="icon-mask section-arrow" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
     </div>
+
+    <!-- Estado de carga -->
+    @if (loading()) {
+      <div class="table-feedback">
+        <svg lucideSun [size]="20" class="spin"></svg>
+        Cargando historial…
+      </div>
+    }
+
+    <!-- Estado de error -->
+    @if (error()) {
+      <div class="table-feedback table-feedback--error">
+        <svg lucideTriangleAlert [size]="18"></svg>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Table -->
+    @if (!loading()) {
+      <div class="table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>EVENTO / ACCIÓN</th>
+              <th>DISPOSITIVO</th>
+              <th>ESTADO</th>
+              <th>MÉTODO</th>
+              <th>HORA</th>
+              @if (showActions()) {
+                <th>ACCIONES</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of actividadesFiltradas(); track $index) {
+              <tr class="history-row">
+                <!-- Action / Event -->
+                <td class="action-cell">
+                  <div class="action-content">
+                    <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
+                      @switch (getIconName(a.icono)) {
+                        @case ('smartphone') { <svg lucideSmartphone [size]="20"></svg> }
+                        @case ('speaker') { <svg lucideSpeaker [size]="20"></svg> }
+                        @case ('lightbulb') { <svg lucideLightbulb [size]="20"></svg> }
+                        @case ('lamp-floor') { <svg lucideLampFloor [size]="20"></svg> }
+                        @case ('wind') { <svg lucideWind [size]="20"></svg> }
+                        @case ('tv-minimal') { <svg lucideTvMinimal [size]="20"></svg> }
+                        @case ('plug') { <svg lucidePlug [size]="20"></svg> }
+                        @case ('circle-plus') { <svg lucideCirclePlus [size]="20"></svg> }
+                        @default { <svg lucideSparkles [size]="20"></svg> }
+                      }
+                    </div>
+                    <div class="event-details">
+                      <span class="action-text">{{ a.accion }}</span>
+                      @if ($any(a).sk_aparato_id) {
+                        <div class="event-id-tag">
+                          <svg lucideSmartphone [size]="12"></svg>
+                          {{ $any(a).sk_aparato_id }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Device -->
+                <td class="device-cell">
+                  <div class="device-tag">
+                    <svg lucideSmartphone [size]="14"></svg>
+                    {{ a.dispositivo }}
+                  </div>
+                </td>
+
+                <!-- Status -->
+                <td class="status-cell">
+                  <div class="status-badge" [ngClass]="a.estado === 'Ejecutado' ? 'status--success' : 'status--error'">
+                    <span class="dot"></span>
+                    {{ a.estado }}
+                  </div>
+                </td>
+
+                <!-- Method -->
+                <td class="method-cell">
+                  <div class="method-tag">
+                    @switch (getMethodIcon(a.metodo)) {
+                      @case ('hand') { <svg lucideHand [size]="14"></svg> }
+                      @case ('smartphone') { <svg lucideSmartphone [size]="14"></svg> }
+                      @case ('bolt') { <svg lucideBolt [size]="14"></svg> }
+                      @case ('mic') { <svg lucideMic [size]="14"></svg> }
+                      @default { <svg lucideSparkles [size]="14"></svg> }
+                    }
+                    {{ a.metodo }}
+                  </div>
+                </td>
+
+                <!-- Time -->
+                <td class="time-cell">
+                  <span class="time-text">{{ formatHora($any(a).hora_periodo ?? a.hora) }}</span>
+                </td>
+
+                <!-- Actions -->
+                @if (showActions()) {
+                  <td class="actions-cell">
+                    <button class="row-action-btn" title="Ver detalles">
+                      <svg lucideChevronDown [size]="18" style="transform: rotate(-90deg);"></svg>
+                    </button>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              @if (!loading()) {
+                <tr>
+                  <td [attr.colspan]="showActions() ? 6 : 5" class="empty-state">
+                    <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                    <p>No se encontraron registros en el historial</p>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- Pagination -->
+    <footer class="table-footer">
+      <p class="results-count">Mostrando 1 a {{ actividadesFiltradas().length }} de {{ actividadesFiltradas().length }} registros</p>
+      <div class="pagination">
+        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(-90deg);"></svg></button>
+      </div>
+    </footer>
   </div>
-
-  <!-- Estado de carga -->
-  <div *ngIf="loading()" class="table-feedback">
-    <span class="icon-mask spin" style="mask-image: url('/icons/sun.svg'); -webkit-mask-image: url('/icons/sun.svg');"></span>
-    Cargando historial…
-  </div>
-
-  <!-- Estado de error -->
-  <div *ngIf="error()" class="table-feedback table-feedback--error">
-    <span class="icon-mask" style="mask-image: url('/icons/triangle-alert.svg'); -webkit-mask-image: url('/icons/triangle-alert.svg');"></span>
-    {{ error() }}
-  </div>
-
-  <!-- Table -->
-  <div class="table-wrapper" *ngIf="!loading()">
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th>EVENTO / ACCIÓN</th>
-          <th>DISPOSITIVO</th>
-          <th>ESTADO</th>
-          <th>MÉTODO</th>
-          <th>HORA</th>
-          <th>ACCIONES</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let a of actividadesFiltradas()" class="history-row">
-          <!-- Action / Event -->
-          <td class="action-cell">
-            <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
-              <span class="icon-mask" [style.mask-image]="'url(' + getIconPath(a.icono) + ')'" [style.-webkit-mask-image]="'url(' + getIconPath(a.icono) + ')'"></span>
-            </div>
-            <span class="action-text">{{ a.accion }}</span>
-          </td>
-
-          <!-- Device -->
-          <td class="device-cell">
-            <div class="device-tag">
-              <span class="icon-mask" style="mask-image: url('/icons/smartphone.svg'); -webkit-mask-image: url('/icons/smartphone.svg'); width: 14px; height: 14px;"></span>
-              {{ a.dispositivo }}
-            </div>
-          </td>
-
-          <!-- Status -->
-          <td class="status-cell">
-            <div class="status-badge" [ngClass]="a.estado === 'Ejecutado' ? 'status--success' : 'status--error'">
-              <span class="dot"></span>
-              {{ a.estado }}
-            </div>
-          </td>
-
-          <!-- Method -->
-          <td class="method-cell">
-            <div class="method-tag">
-              <span class="icon-mask" [style.mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" [style.-webkit-mask-image]="'url(' + getMethodIcon(a.metodo) + ')'" style="width: 14px; height: 14px;"></span>
-              {{ a.metodo }}
-            </div>
-          </td>
-
-          <!-- Time -->
-          <td class="time-cell">
-            <span class="time-text">{{ a.hora }}</span>
-          </td>
-
-          <!-- Actions -->
-          <td class="actions-cell">
-            <button class="row-action-btn" title="Ver detalles">
-              <span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg);"></span>
-            </button>
-          </td>
-        </tr>
-
-        <!-- Empty state -->
-        <tr *ngIf="actividadesFiltradas().length === 0 && !loading()">
-          <td colspan="6" class="empty-state">
-            <span class="icon-mask" style="mask-image: url('/icons/search.svg'); -webkit-mask-image: url('/icons/search.svg'); width: 32px; height: 32px; opacity: 0.3;"></span>
-            <p>No se encontraron registros en el historial</p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <footer class="table-footer">
-    <p class="results-count">Mostrando 1 a {{ actividadesFiltradas().length }} de {{ actividadesFiltradas().length }} registros</p>
-    <div class="pagination">
-      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(90deg); width: 12px; height: 12px;"></span></button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn"><span class="icon-mask" style="mask-image: url('/icons/chevron-down.svg'); -webkit-mask-image: url('/icons/chevron-down.svg'); transform: rotate(-90deg); width: 12px; height: 12px;"></span></button>
-    </div>
-  </footer>
 </div>

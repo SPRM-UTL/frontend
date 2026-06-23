@@ -1,9 +1,10 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
-import { Device } from '../../dispositivos/device.model';
+import { Dispositivo } from '../../dispositivos/dispositivos.model';
 import { Gesto } from '../../gestos/gesto.model';
 import { Actividad } from '../../historial/actividad.model';
-import { DevicesService } from '../../dispositivos/devices.service';
+import { DispositivosService } from '../../dispositivos/dispositivos.service';
 import { GestosService } from '../../gestos/gestos.service';
 import { HistorialService } from '../../historial/historial.service';
 
@@ -12,7 +13,8 @@ import { DashboardStats, UltimoGesto, AparatoUtilizado } from './inicio.model';
 
 @Injectable({ providedIn: 'root' })
 export class InicioService {
-  private devicesService = inject(DevicesService);
+  private platformId = inject(PLATFORM_ID);
+  private devicesService = inject(DispositivosService);
   private gestosService = inject(GestosService);
   private historialService = inject(HistorialService);
 
@@ -25,7 +27,8 @@ export class InicioService {
     this.loading.set(true);
     this.error.set(null);
 
-    const fallbackName = typeof localStorage !== 'undefined'
+    const isBrowser = isPlatformBrowser(this.platformId);
+    const fallbackName = isBrowser
       ? localStorage.getItem('nombre') ?? 'Usuario'
       : 'Usuario';
 
@@ -58,7 +61,7 @@ export class InicioService {
         const gestosData = Array.isArray(gestos) ? gestos : [];
         const actividades = Array.isArray(historial) ? historial : [];
 
-        const userName = typeof localStorage !== 'undefined'
+        const userName = isBrowser
           ? localStorage.getItem('nombre') ?? fallbackName
           : fallbackName;
         const estadoConexion = dispositivosData.length > 0 ? 'En línea' : 'Desconectado';
@@ -67,13 +70,15 @@ export class InicioService {
         const dispositivosActivos = this.contarDispositivosActivos(actividades);
         const accionesHoy = this.contarAccionesHoy(actividades);
 
+        const gestosActivos = gestosData.filter(g => g.estado === 'Activo' || g.activo === true).length;
+
         const stats: DashboardStats = {
           gestosGuardados: gestosData.length,
-          automatizaciones: 0,
+          automatizaciones: gestosActivos,
           dispositivosVinculados: dispositivosData.length,
           accionesHoy,
           devicesOnline: dispositivosData.length,
-          activeAutomations: 0,
+          activeAutomations: gestosData.length,
           userName,
           dispositivosActivos,
           estadoConexion,
@@ -115,8 +120,8 @@ export class InicioService {
     };
   }
 
-  private obtenerAparatosUtilizados(dispositivos: Device[], actividades: Actividad[]): AparatoUtilizado[] {
-    const contadores: Record<string, { dispositivo: Device; count: number }> = {};
+  private obtenerAparatosUtilizados(dispositivos: Dispositivo[], actividades: Actividad[]): AparatoUtilizado[] {
+    const contadores: Record<string, { dispositivo: Dispositivo; count: number }> = {};
 
     actividades.forEach(actividad => {
       const dispositivo = dispositivos.find(d =>

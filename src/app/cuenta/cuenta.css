@@ -5,6 +5,17 @@
   width: 100%;
 }
 
+@keyframes slideUpFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* --- CONTENEDOR DE CENTRADO --- */
 /* Centramos todo el contenido de la página para que no se vea vacío a la derecha */
 .page-header,
@@ -13,6 +24,7 @@
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+  animation: slideUpFromBottom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* --- RE-ESTILIZADO DEL HEADER --- */
@@ -78,7 +90,7 @@
   color: var(--white);
 }
 
-.avatar-circle .icon-mask {
+.avatar-circle svg {
   width: 42px;
   height: 42px;
 }
@@ -103,7 +115,7 @@
   transform: scale(1.1);
 }
 
-.avatar-edit-btn .icon-mask {
+.avatar-edit-btn svg {
   width: 14px;
   height: 14px;
 }
@@ -123,13 +135,10 @@
   margin: 4px 0 0 0;
 }
 
-.profile-arrow .icon-mask {
+.profile-arrow svg {
   width: 20px;
   height: 20px;
   color: #ccc;
-  mask-image: url('/icons/chevron-down.svg');
-  -webkit-mask-image: url('/icons/chevron-down.svg');
-  transform: rotate(-90deg);
 }
 
 /* --- SECTION TITLE --- */
@@ -183,7 +192,7 @@
   flex-shrink: 0;
 }
 
-.info-icon .icon-mask {
+.info-icon svg {
   width: 22px;
   height: 22px;
 }
@@ -257,7 +266,7 @@
   color: var(--cafe-primary);
 }
 
-.edit-pill-btn .icon-mask {
+.edit-pill-btn svg {
   width: 18px;
   height: 18px;
 }
@@ -292,7 +301,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.banner-icon .icon-mask {
+.banner-icon svg {
   width: 24px;
   height: 24px;
 }
@@ -336,12 +345,9 @@
   border-color: #ef4444;
 }
 
-.banner-btn .icon-mask.arrow-right {
+.banner-btn svg {
   width: 18px;
   height: 18px;
-  mask-image: url('/icons/arrow-left.svg');
-  -webkit-mask-image: url('/icons/arrow-left.svg');
-  transform: rotate(180deg);
 }
 
 /* --- SAVE/CANCEL --- */
@@ -377,13 +383,6 @@
 
 .icon-mask {
   display: inline-block;
-  background-color: currentColor;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
 }
 
 @media (max-width: 1100px) {

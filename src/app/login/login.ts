@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, PLATFORM_ID } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 
@@ -13,17 +13,28 @@ import { ToastService } from '../services/toast.service';
 import { LoaderService } from '../services/loader.service';
 
 import { finalize } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+
+import {
+  LucideEye,
+  LucideEyeOff,
+  LucideMail,
+  LucideLock,
+  LucideLogIn
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-login',
-
   standalone: true,
-
   imports: [
     RouterLink,
     FormsModule,
-    CommonModule
+    CommonModule,
+    LucideMail,
+    LucideLock,
+    LucideEye,
+    LucideEyeOff,
+    LucideLogIn
   ],
 
   templateUrl: './login.html',
@@ -32,6 +43,7 @@ import { CommonModule } from '@angular/common';
 })
 
 export class Login {
+  private platformId = inject(PLATFORM_ID);
 
   showPassword = signal(false);
 
@@ -125,16 +137,18 @@ export class Login {
           ?? data?.user?.id ?? payload?.user?.id
           ?? data?.user?.userId ?? payload?.user?.userId;
 
-        if (token) {
-          localStorage.setItem('token', token);
-        }
+        if (isPlatformBrowser(this.platformId)) {
+          if (token) {
+            localStorage.setItem('token', token);
+          }
 
-        if (nombre) {
-          localStorage.setItem('nombre', nombre);
-        }
+          if (nombre) {
+            localStorage.setItem('nombre', nombre);
+          }
 
-        if (userId) {
-          localStorage.setItem('userId', String(userId));
+          if (userId) {
+            localStorage.setItem('userId', String(userId));
+          }
         }
 
         this.toastService.success('Bienvenido', 'hand');
