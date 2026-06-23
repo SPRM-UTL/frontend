@@ -1,7 +1,14 @@
-<div class="login-wrapper">
-  <div class="login-left">
-    <div class="login-box">
+<div class="auth-background">
+  <div class="auth-card">
+    <div class="auth-left">
+      
+      <div class="auth-header">
+        <img src="icono_manordomo.png" alt="logo mini" class="logo-mini"/>
+        <span class="brand-name">manordomo</span>
+      </div>
+
       <h1>Bienvenido a<br><span>manordomo</span></h1>
+      <p class="auth-subtitle">Ingresa a tu cuenta para continuar.</p>
 
       <div class="field">
         <label>Email</label>
@@ -11,61 +18,53 @@
         </div>
       </div>
 
-<div class="field">
+      <div class="field">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <svg lucideLock class="input-icon" style="width: 20px; height: 20px;"></svg>
+          <div class="password-wrapper">
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              placeholder="Al menos 8 caracteres"
+              [(ngModel)]="contrasenia"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePassword()">
+              @if (!showPassword()) {
+                <svg lucideEye style="width: 22px; height: 22px;"></svg>
+              } @else {
+                <svg lucideEyeOff style="width: 22px; height: 22px;"></svg>
+              }
+            </button>
+          </div>
+        </div>
+        <a class="forgot" href="#">¿Olvidaste tu contraseña?</a>
+      </div>
 
-  <label>Contraseña</label>
-
-  <div class="input-wrapper">
-
-    <svg lucideLock class="input-icon" style="width: 20px; height: 20px;"></svg>
-
-    <div class="password-wrapper">
-
-      <input
-        [type]="showPassword() ? 'text' : 'password'"
-        placeholder="Al menos 8 caracteres"
-        [(ngModel)]="contrasenia"
-      />
-
-      <button
-        type="button"
-        class="toggle-password"
-        (click)="togglePassword()">
-
-        @if (!showPassword()) {
-          <svg
-            lucideEye
-            style="width: 22px; height: 22px;">
-          </svg>
-        } @else {
-          <svg
-            lucideEyeOff
-            style="width: 22px; height: 22px;">
-          </svg>
-        }
-
+      <button class="btn-primary" (click)="onLogin()">
+        Iniciar sesión
       </button>
+
+      <p class="register-link">¿No tienes una cuenta? <a routerLink="/register">Regístrate</a></p>
+
+      <footer>
+        <div class="security-note">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="var(--cafe-primary)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10" stroke="#fff" stroke-width="2" fill="none"/></svg>
+          <span>Tu información está segura con nosotros.</span>
+        </div>
+        <p>© 2026 Todos los derechos reservados</p>
+      </footer>
 
     </div>
 
-  </div>
-
-  <a class="forgot" href="#">
-    ¿Olvidaste tu contraseña?
-  </a>
-
-</div>      <button class="btn-primary" (click)="onLogin()">
-        <svg lucideLogIn style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;"></svg>
-        Ingresar
+    <div class="auth-right">
+      <button class="btn-close" routerLink="/">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-
-      <p class="register">¿No tienes una cuenta? <a routerLink="/register">Regístrate</a></p>
+      <div class="deco-wave"></div>
+      <img src="icono_manordomo.png" alt="logo grande" class="logo-large" />
     </div>
-
-    <footer>© 2026 Todos los derechos reservados</footer>
-  </div>
-
-  <div class="login-right">
-    <img src="lago.png" alt="logo" class="logo-img" />
   </div>
 </div>
