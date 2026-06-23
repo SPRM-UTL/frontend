@@ -18,10 +18,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           localStorage.removeItem('token');
         }
         router.navigateByUrl('/');
+        alertService.warning('Sesión expirada o no autorizada. Por favor, inicia sesión de nuevo.');
       } else if (err.status === 0) {
         alertService.error('No se pudo establecer conexión con el servidor.');
       } else if (err.status >= 500) {
         alertService.error('Error interno del servidor. Por favor, intenta más tarde.');
+      } else if (err.status >= 400 && err.status < 500) {
+        // Mejorar manejo de errores 4xx extrayendo el mensaje del backend
+        const errorMessage = err.error?.message || err.error?.error || err.error || 'Ocurrió un error en la solicitud.';
+        const textMessage = typeof errorMessage === 'string' ? errorMessage : 'Datos de solicitud inválidos.';
+        alertService.error(textMessage);
+      } else {
+        alertService.error('Ocurrió un error inesperado.');
       }
 
       return throwError(() => err);
