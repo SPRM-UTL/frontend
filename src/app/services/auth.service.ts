@@ -5,6 +5,7 @@ import { Router } from '@angular/router'; // Necesario para redirigir al cerrar 
 import { isPlatformBrowser } from '@angular/common';
 import { APP_CONFIG } from '../core/config/app-config'; 
 import { ENDPOINTS } from '../core/config/endpoints';
+import { LoaderService } from './loader.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,7 +16,7 @@ export class AuthService {
   readonly showLogoutModal = signal(false);
 
   // En tu AuthService.ts
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private loaderService: LoaderService) {
     // Ejecuta la verificación cada 60 segundos automáticamente en el cliente
     if (isPlatformBrowser(this.platformId)) {
       setInterval(() => {
@@ -80,6 +81,9 @@ export class AuthService {
 
   logout() {
     this.showLogoutModal.set(false);
+    // Ocultamos el loader ANTES de navegar para evitar que quede colgado
+    // cuando el Dashboard se destruye y pierde su suscripción al router
+    this.loaderService.hide();
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('nombre');

@@ -87,17 +87,7 @@
                 <td class="action-cell">
                   <div class="action-content">
                     <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
-                      @switch (getIconName(a.icono)) {
-                        @case ('smartphone') { <svg lucideSmartphone [size]="20"></svg> }
-                        @case ('speaker') { <svg lucideSpeaker [size]="20"></svg> }
-                        @case ('lightbulb') { <svg lucideLightbulb [size]="20"></svg> }
-                        @case ('lamp-floor') { <svg lucideLampFloor [size]="20"></svg> }
-                        @case ('wind') { <svg lucideWind [size]="20"></svg> }
-                        @case ('tv-minimal') { <svg lucideTvMinimal [size]="20"></svg> }
-                        @case ('plug') { <svg lucidePlug [size]="20"></svg> }
-                        @case ('circle-plus') { <svg lucideCirclePlus [size]="20"></svg> }
-                        @default { <svg lucideSparkles [size]="20"></svg> }
-                      }
+                      <svg [lucideIcon]="getActivityIcon(a.icono, a.estado, a.accion)" [size]="20"></svg>
                     </div>
                     <div class="event-details">
                       <span class="action-text">{{ a.accion }}</span>
@@ -114,7 +104,7 @@
                 <!-- Device -->
                 <td class="device-cell">
                   <div class="device-tag">
-                    <svg lucideSmartphone [size]="14"></svg>
+                    <svg [lucideIcon]="getDeviceIcon(a.dispositivo)" [size]="14"></svg>
                     {{ a.dispositivo }}
                   </div>
                 </td>

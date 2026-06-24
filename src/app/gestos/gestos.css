@@ -65,7 +65,7 @@
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: var(--cafe-primary);
+  color: #94a3b8;
 }
 .search-input { width: 100%; padding: 0.85rem 1rem 0.85rem 3rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; font-size: 0.95rem; outline: none; }
 .search-input:focus { background: white; border-color: #2bbfaa; }
@@ -94,7 +94,7 @@
 .dropdown-trigger:hover, .dropdown-trigger:focus {
   background: white;
   border-color: #2bbfaa;
-  box-shadow: 0 4px 12px rgba(43, 191, 170, 0.08);
+  box-shadow: 0 4px 12px var(--cafe-dark);
 }
 
 .trigger-label {

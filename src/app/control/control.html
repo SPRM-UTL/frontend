@@ -46,17 +46,7 @@
                (click)="selectTipo(t.nombre_tipo)">
 
             <div class="category-icon-circle" [class]="t.nombre_tipo.toLowerCase().replace(' ', '-')">
-              @switch (getIcon(t.nombre_tipo)) {
-                @case ('headphones') { <svg lucideHeadphones></svg> }
-                @case ('speaker') { <svg lucideSpeaker></svg> }
-                @case ('lightbulb') { <svg lucideLightbulb></svg> }
-                @case ('lamp-floor') { <svg lucideLampFloor></svg> }
-                @case ('wind') { <svg lucideWind></svg> }
-                @case ('tv-minimal') { <svg lucideTvMinimal></svg> }
-                @case ('plug') { <svg lucidePlug></svg> }
-                @case ('plus-circle') { <svg lucideCirclePlus></svg> }
-                @default { <svg lucideHelpCircle></svg> }
-              }
+              <svg [lucideIcon]="getDeviceIcon(t.nombre_tipo)"></svg>
             </div>
 
             <div class="category-info">
@@ -98,17 +88,7 @@
               <div class="device-control-card" [class.is-on]="d.encendido">
                 <div class="device-card-head">
                   <span class="device-type-icon" [class.on]="d.encendido">
-                    @switch (getIcon(d.tipo_aparato)) {
-                      @case ('headphones') { <svg lucideHeadphones></svg> }
-                      @case ('speaker') { <svg lucideSpeaker></svg> }
-                      @case ('lightbulb') { <svg lucideLightbulb></svg> }
-                      @case ('lamp-floor') { <svg lucideLampFloor></svg> }
-                      @case ('wind') { <svg lucideWind></svg> }
-                      @case ('tv-minimal') { <svg lucideTvMinimal></svg> }
-                      @case ('plug') { <svg lucidePlug></svg> }
-                      @case ('plus-circle') { <svg lucideCirclePlus></svg> }
-                      @default { <svg lucideHelpCircle></svg> }
-                    }
+                    <svg [lucideIcon]="getDeviceIcon(d.tipo_aparato)"></svg>
                   </span>
 
                   <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
@@ -177,17 +157,7 @@
           <div class="empty-detail-state">
             <div class="empty-illustration">
               <div class="lamp-graphic">
-                 @switch (getIcon(tipoSeleccionado())) {
-                   @case ('headphones') { <svg lucideHeadphones [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('speaker') { <svg lucideSpeaker [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('lightbulb') { <svg lucideLightbulb [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('lamp-floor') { <svg lucideLampFloor [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('wind') { <svg lucideWind [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('tv-minimal') { <svg lucideTvMinimal [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('plug') { <svg lucidePlug [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @case ('plus-circle') { <svg lucideCirclePlus [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                   @default { <svg lucideHelpCircle [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg> }
-                 }
+                 <svg [lucideIcon]="getDeviceIcon(tipoSeleccionado())" [size]="60" style="color: var(--cafe-primary); opacity: 0.8;"></svg>
               </div>
             </div>
             <div class="empty-text-group">

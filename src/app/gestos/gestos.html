@@ -60,12 +60,7 @@
           <div class="gesto-card" (click)="verDetalle(gesto)">
             <div class="gesto-card-header">
               <div class="gesto-icon-circle">
-                @switch (getIconName(gesto.icono)) {
-                  @case ('hand') { <svg lucideHand [size]="24" class="gesto-icon-img"></svg> }
-                  @case ('lightbulb') { <svg lucideLightbulb [size]="24" class="gesto-icon-img"></svg> }
-                  @case ('mic') { <svg lucideMic [size]="24" class="gesto-icon-img"></svg> }
-                  @default { <svg lucideHand [size]="24" class="gesto-icon-img"></svg> }
-                }
+                <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="24" class="gesto-icon-img"></svg>
               </div>
             </div>
             <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>

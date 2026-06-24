@@ -5,7 +5,7 @@
     <div class="sidebar-overlay" (click)="closeMenu()"></div>
   }
 
-  <aside class="sidebar" (click)="$event.stopPropagation()">
+  <aside class="sidebar" [class.first-item-active]="isFirstItemActive()" (click)="$event.stopPropagation()">
     <div class="sidebar-logo">
       <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
       <div class="logo-text"><span class="logo-name">Manordomo</span></div>
@@ -103,21 +103,7 @@
                 @for (n of recentActivities(); track n.id) {
                   <article class="notif-item" [class]="'severity-' + n.severity">
                     <span class="notif-icon">
-                      @switch (n.icon) {
-                        @case ('triangle-alert') { <svg lucideTriangleAlert></svg> }
-                        @case ('cloud-lightning') { <svg lucideCloudLightning></svg> }
-                        @case ('camera') { <svg lucideCamera></svg> }
-                        @case ('wifi') { <svg lucideWifi></svg> }
-                        @case ('lock') { <svg lucideLock></svg> }
-                        @case ('fan') { <svg lucideFan></svg> }
-                        @case ('speaker') { <svg lucideSpeaker></svg> }
-                        @case ('tv') { <svg lucideTv></svg> }
-                        @case ('lightbulb') { <svg lucideLightbulb></svg> }
-                        @case ('bolt') { <svg lucideBolt></svg> }
-                        @case ('zap') { <svg lucideZap></svg> }
-                        @case ('bell') { <svg lucideBell></svg> }
-                        @default { <svg lucideSparkles></svg> }
-                      }
+                      <svg [lucideIcon]="n.icon" [size]="18"></svg>
                     </span>
 
                     <div class="notif-content">
@@ -215,12 +201,7 @@
               <section class="card hero-info-card">
                 <div class="hero-header">
                   <div class="hero-icon-box">
-                    @switch (getIconName(gesto.icono)) {
-                      @case ('hand') { <svg lucideHand [size]="44" class="gesto-hero-img"></svg> }
-                      @case ('lightbulb') { <svg lucideLightbulb [size]="44" class="gesto-hero-img"></svg> }
-                      @case ('mic') { <svg lucideMic [size]="44" class="gesto-hero-img"></svg> }
-                      @default { <svg lucideHand [size]="44" class="gesto-hero-img"></svg> }
-                    }
+                    <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-hero-img"></svg>
                   </div>
                   <div class="hero-titles">
                     <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
@@ -259,12 +240,7 @@
                           @if (foto && foto.startsWith('http')) {
                             <img [src]="foto" alt="Gesto" style="width: 100%; height: 100%; object-fit: cover;">
                           } @else {
-                            @switch (getIconName(gesto.icono)) {
-                              @case ('hand') { <svg lucideHand [size]="44" class="gesto-thumb-fallback-img"></svg> }
-                              @case ('lightbulb') { <svg lucideLightbulb [size]="44" class="gesto-thumb-fallback-img"></svg> }
-                              @case ('mic') { <svg lucideMic [size]="44" class="gesto-thumb-fallback-img"></svg> }
-                              @default { <svg lucideHand [size]="44" class="gesto-thumb-fallback-img"></svg> }
-                            }
+                            <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-thumb-fallback-img"></svg>
                           }
                         </div>
                         <span class="thumb-icon-overlay">
@@ -374,17 +350,7 @@
               <section class="card hero-info-card">
                 <div class="hero-header">
                   <div class="hero-icon-box">
-                    @switch (getDeviceIconName(device.tipo_aparato || device.icono)) {
-                      @case ('headphones') { <svg lucideHeadphones [size]="44"></svg> }
-                      @case ('speaker') { <svg lucideSpeaker [size]="44"></svg> }
-                      @case ('lightbulb') { <svg lucideLightbulb [size]="44"></svg> }
-                      @case ('lamp-floor') { <svg lucideLampFloor [size]="44"></svg> }
-                      @case ('wind') { <svg lucideWind [size]="44"></svg> }
-                      @case ('tv-minimal') { <svg lucideTvMinimal [size]="44"></svg> }
-                      @case ('plug') { <svg lucidePlug [size]="44"></svg> }
-                      @case ('plus-circle') { <svg lucideCirclePlus [size]="44"></svg> }
-                      @default { <svg lucideCirclePlus [size]="44"></svg> }
-                    }
+                    <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="44"></svg>
                   </div>
                   <div class="hero-titles">
                     <h2 class="hero-name">{{ device.nombre_aparato }}</h2>

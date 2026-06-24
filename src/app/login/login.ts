@@ -1,4 +1,4 @@
-import { Component, signal, inject, PLATFORM_ID } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 
@@ -13,7 +13,7 @@ import { ToastService } from '../services/toast.service';
 import { LoaderService } from '../services/loader.service';
 
 import { finalize } from 'rxjs/operators';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 import {
   LucideEye,
@@ -41,8 +41,6 @@ import {
 })
 
 export class Login {
-  private platformId = inject(PLATFORM_ID);
-
   showPassword = signal(false);
 
   correo = '';
@@ -120,35 +118,7 @@ export class Login {
 
     .subscribe({
 
-      next: (response) => {
-        const payload = response?.data ?? response;
-        const data = payload?.data ?? payload;
-
-        const token = data?.token ?? payload?.token ?? '';
-        const nombre = data?.nombre ?? payload?.nombre ?? data?.name ?? payload?.name
-          ?? data?.usuario?.nombre ?? payload?.usuario?.nombre
-          ?? data?.user?.nombre ?? payload?.user?.nombre
-          ?? data?.user?.name ?? payload?.user?.name
-          ?? '';
-        const userId = data?.id ?? payload?.id ?? data?.userId ?? payload?.userId
-          ?? data?.usuario?.id ?? payload?.usuario?.id
-          ?? data?.user?.id ?? payload?.user?.id
-          ?? data?.user?.userId ?? payload?.user?.userId;
-
-        if (isPlatformBrowser(this.platformId)) {
-          if (token) {
-            localStorage.setItem('token', token);
-          }
-
-          if (nombre) {
-            localStorage.setItem('nombre', nombre);
-          }
-
-          if (userId) {
-            localStorage.setItem('userId', String(userId));
-          }
-        }
-
+      next: () => {
         this.toastService.success('Bienvenido', 'hand');
 
         this.correo = '';
@@ -171,3 +141,4 @@ export class Login {
     });
   }
 }
+

@@ -108,17 +108,7 @@
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
           <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)" >
             <div class="chip-ico-circle">
-              @switch (getIconName(device.tipo_aparato || device.icono)) {
-                @case ('headphones') { <svg lucideHeadphones></svg> }
-                @case ('speaker') { <svg lucideSpeaker></svg> }
-                @case ('lightbulb') { <svg lucideLightbulb></svg> }
-                @case ('lamp-floor') { <svg lucideLampFloor></svg> }
-                @case ('wind') { <svg lucideWind></svg> }
-                @case ('tv-minimal') { <svg lucideTvMinimal></svg> }
-                @case ('plug') { <svg lucidePlug></svg> }
-                @case ('plus-circle') { <svg lucideCirclePlus></svg> }
-                @default { <svg lucideHelpCircle></svg> }
-              }
+              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)"></svg>
             </div>
             <strong>{{ device.nombre_aparato }}</strong>
             <span>{{ device.tipo_aparato }}</span>
@@ -158,7 +148,7 @@
         @for(gesto of displayedGestos(); track gesto.sk_gesto_id; let i = $index){
         <div class="automation-row">
           <span class="automation-icon automation-icon--moon">
-            <svg lucideHand></svg>
+            <svg [lucideIcon]="getGestureIcon(gesto.icono)"></svg>
           </span>
           <div class="automation-copy">
             <strong>{{gesto.nombre_gesto}}</strong>

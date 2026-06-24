@@ -1,4 +1,3 @@
-import { Dispositivo } from './../dispositivos/dispositivos.model';
 import { Component, computed, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,9 +10,10 @@ import {
   LucideClock,
   LucideSun,
   LucideTriangleAlert,
-  LucideMic,
-  LucideLightbulb
+  LucideDynamicIcon,
 } from '@lucide/angular';
+
+import { getGestureIcon } from '../shared/icon-map';
 
 import { GestosService } from './gestos.service';
 import { Gesto } from './gesto.model';
@@ -35,8 +35,7 @@ import { ToastService } from '../services/toast.service';
     LucideClock,
     LucideSun,
     LucideTriangleAlert,
-    LucideMic,
-    LucideLightbulb
+    LucideDynamicIcon,
   ],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
@@ -125,14 +124,7 @@ export class Gestos {
     this.isFilterOpen.update(v => !v);
   }
 
-  getIconName(icono: string | undefined): string {
-    if (!icono) return 'hand';
-    const i = icono.toLowerCase();
-    if (i.includes('mano') || i.includes('hand') || i.includes('puño')) return 'hand';
-    if (i.includes('foco') || i.includes('luz')) return 'lightbulb';
-    if (i.includes('voz') || i.includes('mic')) return 'mic';
-    return 'hand';
-  }
+  getGestureIcon = getGestureIcon;
 
   getIconPath(icono: string | undefined): string {
     // Mantengo este método para compatibilidad con la estructura multimedia fallback

@@ -12,21 +12,11 @@ import {
   LucideWifi,
   LucideSun,
   LucideTriangleAlert,
-  LucideHeadphones,
-  LucideSpeaker,
-  LucideLightbulb,
-  LucideLampFloor,
-  LucideWind,
-  LucideTvMinimal,
-  LucidePlug,
-  LucideCirclePlus,
   LucideLogOut,
   LucideBolt,
-  LucideCamera,
-  LucideLock,
-  LucideFan,
-
+  LucideDynamicIcon,
 } from '@lucide/angular';
+import { getDeviceIcon, CATEGORY_ICON_MAP } from '../shared/icon-map';
 
 @Component({
   selector: 'app-dispositivos',
@@ -41,19 +31,9 @@ import {
     LucideWifi,
     LucideSun,
     LucideTriangleAlert,
-    LucideHeadphones,
-    LucideSpeaker,
-    LucideLightbulb,
-    LucideLampFloor,
-    LucideWind,
-    LucideTvMinimal,
-    LucidePlug,
-    LucideCirclePlus,
     LucideLogOut,
     LucideBolt,
-    LucideCamera,
-    LucideLock,
-    LucideFan
+    LucideDynamicIcon,
   ],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
@@ -72,18 +52,8 @@ export class Dispositivos implements OnInit {
   readonly selectedFilter = signal('');
   readonly selectedFilterLabel = signal('Todos los tipos');
 
-  // Mapeo de tipos de aparatos de la base de datos a nombres de iconos Lucide
-  readonly categoryIconMap: Record<string, string> = {
-    'Audífonos': 'headphones',
-    'Bocinas': 'speaker',
-    'Focos': 'lightbulb',
-    'Luces': 'lamp-floor',
-    'Ventilador': 'wind',
-    'Televisión': 'tv-minimal',
-    'Sockets': 'plug',
-    'Asistente': 'circle-plus',
-    'Predeterminado': 'circle-plus'
-  };
+  // Mapeo de tipos para filtros (solo se necesita para el filtro, no para iconos)
+  readonly categoryIconMap = CATEGORY_ICON_MAP;
 
   readonly devices = this.devicesService.devices;
 
@@ -105,14 +75,20 @@ export class Dispositivos implements OnInit {
 
     // Filtro por tipo (Categoría)
     if (type) {
+      // Mapa de categoría española → kebab string del filtro (sólo para comparación)
+      const filterKeyMap: Record<string, string> = {
+        'Audífonos': 'headphones', 'Bocinas': 'speaker', 'Focos': 'lightbulb',
+        'Luces': 'lamp-floor', 'Ventilador': 'wind', 'Televisión': 'tv-minimal',
+        'Sockets': 'plug', 'Asistente': 'circle-plus', 'Predeterminado': 'circle-plus'
+      };
       filtered = filtered.filter(device => {
         const devIcon = (device.icono || '').toLowerCase().trim();
         const devType = (device.tipo_aparato || '').toLowerCase().trim();
-        const mappedIcon = this.categoryIconMap[device.tipo_aparato || ''] || '';
+        const mappedKey = filterKeyMap[device.tipo_aparato || ''] || '';
 
         return devIcon === type ||
                devType === type.toLowerCase() ||
-               mappedIcon === type ||
+               mappedKey === type ||
                (type === 'lamp-floor' && devType === 'luces') ||
                (type === 'circle-plus' && devType === 'asistente') ||
                (type === 'circle-plus' && devType === 'predeterminado');
@@ -156,9 +132,5 @@ export class Dispositivos implements OnInit {
     this.devicesService.cerrarDetalle();
   }
 
-  getIconName(tipoOIcono: string | undefined): string {
-    if (!tipoOIcono) return 'circle-plus';
-    const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-    return iconName;
-  }
+  getDeviceIcon = getDeviceIcon;
 }
