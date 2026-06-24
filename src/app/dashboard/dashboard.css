@@ -26,7 +26,7 @@ body {
     "sidebar main";
   height: 100dvh;
   overflow: hidden;
-  background: #ffffff;
+  background: #000000; /* Fondo base negro para eliminar líneas blancas en el desenfoque */
   transition: grid-template-columns 0.25s ease-in-out;
 }
 
@@ -81,14 +81,14 @@ body {
 }
 
 .logo-icon {
-  width: 50px;
-  height: 50px;
-  background: transparent !important;
+  width: 60px;
+  height: 60px;
+  padding: 8px;
   object-fit: contain;
   flex-shrink: 0;
-  margin-right: 0.75rem;
+  margin-right: 0.1rem;
+  background: transparent !important;
 }
-
 .logo-text {
   font-family: var(--font-title);
   font-weight: 800;
@@ -105,37 +105,34 @@ body {
   width: auto;
 }
 
-.nav-item {
+.sidebar-nav {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.75rem 1.25rem;
-  margin-left: 12px;
+  flex-direction: column;
+  flex: 1;
+}
+
+.nav-spacer {
+  flex: 1;
+  min-height: 20px;
+}
+
+.nav-active-indicator {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: calc(100% - 12px);
+  height: 48px;
+  background: #ffffff;
   border-radius: 30px 0 0 30px;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.72);
-  text-decoration: none;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 0;
+  pointer-events: none;
 }
 
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-/* ✅ ESTADO ACTIVO - Curva cóncava */
-.nav-item.active {
-  background: #ffffff !important;
-  color: var(--cafe-primary) !important;
-  font-weight: 600;
-}
-
-.nav-item.active::before,
-.nav-item.active::after {
+/* ✅ CURVA CÓNCAVA EN EL INDICADOR */
+.nav-active-indicator::before,
+.nav-active-indicator::after {
   content: "";
   position: absolute;
   right: 0;
@@ -145,16 +142,53 @@ body {
   pointer-events: none;
 }
 
-.nav-item.active::before {
+.nav-active-indicator::before {
   top: -20px;
   border-radius: 0 0 20px 0;
   box-shadow: 5px 5px 0 5px #ffffff;
 }
 
-.nav-item.active::after {
+.nav-active-indicator::after {
   bottom: -20px;
   border-radius: 0 20px 0 0;
   box-shadow: 5px -5px 0 5px #ffffff;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 1.25rem;
+  margin-left: 12px;
+  height: 48px; /* Altura fija para el indicador */
+  border-radius: 30px 0 0 30px;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* ✅ ESTADO ACTIVO */
+.nav-item.active {
+  color: var(--cafe-primary) !important;
+  font-weight: 600;
+  background: transparent !important;
+}
+
+.nav-item.active .nav-icon,
+.nav-item.active .nav-icon-no-mask {
+  opacity: 1;
+  color: var(--cafe-primary);
 }
 
 .nav-icon, .icon-mask {
@@ -211,6 +245,35 @@ body {
 /* Ocultar botones móviles por defecto en escritorio */
 .mobile-menu-btn, .mobile-close-btn {
   display: none;
+}
+
+/* PANTALLAS MEDIANAS (Sidebar se superpone al contenido) */
+@media (max-width: 1250px) and (min-width: 769px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    z-index: 1000;
+  }
+
+  .sidebar:hover {
+    width: 260px;
+  }
+
+  /* Equilibrio perfecto: desenfoque medio y oscurecimiento moderado */
+  .dashboard-wrapper:has(.sidebar:hover) .dashboard-main,
+  .dashboard-wrapper:has(.sidebar:hover) .top-bar {
+    filter: blur(8px) brightness(0.65);
+    transform: scale(1.03); /* Ligero escalado para ocultar bordes sin deformar */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .dashboard-wrapper {
+    grid-template-columns: 80px 1fr; /* Mantenemos el grid base para que no salte el contenido */
+  }
 }
 
 /* MÓVIL Y TABLET (Ajustes de cabecera) */
@@ -339,7 +402,7 @@ body {
   }
 }
 
-/* Escritorio grande */
+/* Escritorio grande - Sidebar NO se superpone, empuja el contenido */
 @media (min-width: 1251px) {
   .dashboard-wrapper:has(.sidebar:hover) {
     grid-template-columns: 260px 1fr;
@@ -813,6 +876,7 @@ body {
 .hero-icon-box {
   width: 64px; height: 64px; border: 1px solid #f0f9f8; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   color: var(--cafe-primary);
+  background-color: #f0fdf4;
 }
 .hero-titles { flex: 1; }
 .hero-name { font-size: 1.3rem; font-weight: 800; color: #1a2e2a; margin: 0; }
@@ -856,6 +920,7 @@ body {
   width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   color: #10b981;
   border: 1px solid #10b981;
+  background-color: #ffffff;
 }
 .rec-pill p { font-size: 0.8rem; color: #4b5563; margin: 0; font-weight: 500; }
 

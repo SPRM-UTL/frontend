@@ -1,6 +1,9 @@
-import { afterNextRender, Component, computed, inject, signal , PLATFORM_ID} from '@angular/core';
+import { afterNextRender, Component, computed, inject, signal , PLATFORM_ID, OnDestroy} from '@angular/core';
 import {
   NavigationEnd,
+  NavigationStart,
+  NavigationCancel,
+  NavigationError,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -17,6 +20,7 @@ import { Actividad } from '../historial/actividad.model';
 import { GestosService } from '../gestos/gestos.service';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { AlertNotificationService, AlertNotification } from '../services/alert-notification.service';
+import { LoaderService } from '../services/loader.service';
 
 interface UnifiedNotification {
   id: string | number;
@@ -63,7 +67,8 @@ import {
   LucideWifi,
   LucideLock,
   LucideFan,
-  LucideTv
+  LucideTv,
+  LucideMic
 } from '@lucide/angular';
 
 @Component({
@@ -106,12 +111,13 @@ import {
     LucideWifi,
     LucideLock,
     LucideFan,
-    LucideTv
+    LucideTv,
+    LucideMic
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export class Dashboard implements OnDestroy {
   private timerId?: any;
   private routerSubscription?: Subscription;
 
@@ -127,10 +133,13 @@ export class Dashboard {
   public gestosService = inject(GestosService);
   public dispositivosService = inject(DispositivosService);
   public alertService = inject(AlertNotificationService);
+  private loaderService = inject(LoaderService);
 
   // Inyectamos ambos de forma pública para usarlos correctamente en el HTML
   public cuentaService = inject(CuentaService);
   public inicioService = inject(InicioService);
+
+  readonly indicatorTop = signal<number>(0);
 
   readonly userName = computed(() => {
     return this.cuentaService.userName() || 'Usuario';
@@ -232,12 +241,25 @@ export class Dashboard {
 
     // Initial title setup
     this.updateTitle(this.router.url);
+    this.updateActiveNavIndex(this.router.url);
 
     // Listen to routing changes
-    this.routerSubscription = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.updateTitle(event.urlAfterRedirects || event.url);
+    this.routerSubscription = this.router.events.subscribe((event: any) => {
+      if (event instanceof NavigationStart) {
+        this.loaderService.show();
+      } else if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects || event.url;
+        this.updateTitle(url);
+        this.updateActiveNavIndex(url);
+        this.updateIndicator();
+        // Pequeño delay para que se vea el cambio
+        setTimeout(() => this.loaderService.hide(), 500);
+      } else if (
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        this.loaderService.hide();
+      }
     });
 
     // SSR-safe: cargar historial únicamente en cliente
@@ -245,6 +267,7 @@ export class Dashboard {
       if (!this.isBrowser) {
         return;
       }
+      this.updateIndicator();
 
       const storedName = localStorage.getItem('nombre');
 
@@ -291,6 +314,25 @@ export class Dashboard {
       this.currentTitle.set('Cuenta');
     } else {
       this.currentTitle.set('Dashboard');
+    }
+  }
+
+  private updateActiveNavIndex(url: string) {
+    // Solo mantenemos la lógica para el título, el índice ya no es crítico para la posición
+  }
+
+  updateIndicator() {
+    if (this.isBrowser) {
+      // Usamos un pequeño delay para permitir que routerLinkActive aplique la clase .active
+      setTimeout(() => {
+        const activeEl = document.querySelector('.sidebar .nav-item.active') as HTMLElement;
+        if (activeEl) {
+          const navContainer = document.querySelector('.sidebar-nav') as HTMLElement;
+          if (navContainer) {
+            this.indicatorTop.set(activeEl.offsetTop);
+          }
+        }
+      }, 50);
     }
   }
 
@@ -406,6 +448,11 @@ export class Dashboard {
   }
 
   getIconName(icono: string | undefined): string {
+    if (!icono) return 'hand';
+    const i = icono.toLowerCase();
+    if (i.includes('mano') || i.includes('hand') || i.includes('puño')) return 'hand';
+    if (i.includes('foco') || i.includes('luz')) return 'lightbulb';
+    if (i.includes('voz') || i.includes('mic')) return 'mic';
     return 'hand';
   }
 

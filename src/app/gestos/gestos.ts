@@ -10,7 +10,9 @@ import {
   LucideHand,
   LucideClock,
   LucideSun,
-  LucideTriangleAlert
+  LucideTriangleAlert,
+  LucideMic,
+  LucideLightbulb
 } from '@lucide/angular';
 
 import { GestosService } from './gestos.service';
@@ -32,7 +34,9 @@ import { ToastService } from '../services/toast.service';
     LucideHand,
     LucideClock,
     LucideSun,
-    LucideTriangleAlert
+    LucideTriangleAlert,
+    LucideMic,
+    LucideLightbulb
   ],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'
@@ -121,8 +125,17 @@ export class Gestos {
     this.isFilterOpen.update(v => !v);
   }
 
+  getIconName(icono: string | undefined): string {
+    if (!icono) return 'hand';
+    const i = icono.toLowerCase();
+    if (i.includes('mano') || i.includes('hand') || i.includes('puño')) return 'hand';
+    if (i.includes('foco') || i.includes('luz')) return 'lightbulb';
+    if (i.includes('voz') || i.includes('mic')) return 'mic';
+    return 'hand';
+  }
+
   getIconPath(icono: string | undefined): string {
-    // Por ahora forzamos la mano para todos los gestos según petición
+    // Mantengo este método para compatibilidad con la estructura multimedia fallback
     return '/icons/hand.svg';
   }
 
