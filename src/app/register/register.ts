@@ -156,9 +156,12 @@ export class Register {
 
           console.log(error);
 
-          this.toastService.error(
-            error.error.data
-          );
+          const errorMessage = error?.error?.message 
+            || error?.error?.data 
+            || error?.message 
+            || 'Ocurrió un error al registrarse. Intenta nuevamente.';
+
+          this.toastService.error(errorMessage);
         }
       });
   }

@@ -162,10 +162,13 @@ export class Login {
       error: (error) => {
 
         console.error(error);
+        
+        const errorMessage = error?.error?.message 
+          || error?.error?.data 
+          || error?.message 
+          || 'Credenciales incorrectas. Por favor, intenta de nuevo.';
 
-        this.toastService.error(
-          error.error.data
-        );
+        this.toastService.error(errorMessage);
       }
     });
   }
