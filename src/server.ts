@@ -1,8 +1,6 @@
 import {
-  AngularNodeAppEngine,
   createNodeRequestHandler,
   isMainModule,
-  writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
@@ -10,7 +8,6 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -36,20 +33,8 @@ app.use(
 );
 
 /**
- * Handle all other requests by rendering the Angular application.
- */
-app.use((req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
-});
-
-/**
- * Fallback for SPA (RenderMode.Client) routes.
- * If angularApp.handle doesn't return a response, serve index.html.
+ * Fallback for SPA routes.
+ * Always serve index.html with a 200 status code to let the client router handle it.
  */
 app.use((req, res, next) => {
   res.sendFile(join(browserDistFolder, 'index.html'));
