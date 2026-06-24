@@ -15,6 +15,9 @@
     </div>
 
     <nav class="sidebar-nav">
+      <!-- Indicador animado -->
+      <div class="nav-active-indicator" [style.transform]="'translateY(' + indicatorTop() + 'px)'"></div>
+
       <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active" (click)="closeMenu()">
         <svg lucideLayoutDashboard class="nav-icon-no-mask"></svg>
         <span class="nav-text">Dashboard</span>
@@ -35,9 +38,10 @@
         <svg lucidePencil class="nav-icon-no-mask"></svg>
         <span class="nav-text">Control</span>
       </a>
-    </nav>
 
-    <div class="sidebar-bottom">
+      <!-- Espaciador para empujar el resto al fondo -->
+      <div class="nav-spacer"></div>
+
       <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active" (click)="closeMenu()">
         <svg lucideBolt class="nav-icon-no-mask"></svg>
         <span class="nav-text">Ajustes</span>
@@ -50,7 +54,7 @@
         <svg lucideLogOut class="nav-icon-no-mask"></svg>
         <span class="nav-text">Salir</span>
       </a>
-    </div>
+    </nav>
   </aside>
 
   <header class="top-bar">
@@ -211,7 +215,12 @@
               <section class="card hero-info-card">
                 <div class="hero-header">
                   <div class="hero-icon-box">
-                    <svg lucideHand [size]="44" class="gesto-hero-img"></svg>
+                    @switch (getIconName(gesto.icono)) {
+                      @case ('hand') { <svg lucideHand [size]="44" class="gesto-hero-img"></svg> }
+                      @case ('lightbulb') { <svg lucideLightbulb [size]="44" class="gesto-hero-img"></svg> }
+                      @case ('mic') { <svg lucideMic [size]="44" class="gesto-hero-img"></svg> }
+                      @default { <svg lucideHand [size]="44" class="gesto-hero-img"></svg> }
+                    }
                   </div>
                   <div class="hero-titles">
                     <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
@@ -228,12 +237,12 @@
                 <h3 class="section-title">Recomendaciones</h3>
                 <div class="rec-grid">
                   @for (rec of gesto.recomendaciones; track $index) {
-                    <div class="rec-pill">
-                      <div class="rec-check-circle">
-                        <svg lucideCheck [size]="12" class="check-icon" style="background-color: white;"></svg>
+                      <div class="rec-pill">
+                        <div class="rec-check-circle">
+                          <svg lucideCheck [size]="12" class="check-icon"></svg>
+                        </div>
+                        <p>{{ rec }}</p>
                       </div>
-                      <p>{{ rec }}</p>
-                    </div>
                   }
                 </div>
               </section>
@@ -250,11 +259,16 @@
                           @if (foto && foto.startsWith('http')) {
                             <img [src]="foto" alt="Gesto" style="width: 100%; height: 100%; object-fit: cover;">
                           } @else {
-                            <svg lucideHand [size]="44" class="gesto-thumb-fallback-img"></svg>
+                            @switch (getIconName(gesto.icono)) {
+                              @case ('hand') { <svg lucideHand [size]="44" class="gesto-thumb-fallback-img"></svg> }
+                              @case ('lightbulb') { <svg lucideLightbulb [size]="44" class="gesto-thumb-fallback-img"></svg> }
+                              @case ('mic') { <svg lucideMic [size]="44" class="gesto-thumb-fallback-img"></svg> }
+                              @default { <svg lucideHand [size]="44" class="gesto-thumb-fallback-img"></svg> }
+                            }
                           }
                         </div>
                         <span class="thumb-icon-overlay">
-                          <svg lucideCamera [size]="14" style="background-color: var(--cafe-primary);"></svg>
+                          <svg lucideCamera [size]="14"></svg>
                         </span>
                       </div>
                     }
@@ -262,7 +276,7 @@
                     @if (gesto.multimedia.video_url) {
                       <div class="media-thumb video-box">
                         <div class="video-preview-mask">
-                          <svg lucidePlay [size]="28" style="background-color: white;"></svg>
+                          <svg lucidePlay [size]="28"></svg>
                         </div>
                         <span class="video-duration">{{ gesto.multimedia.video_duracion || '0:05' }}</span>
                       </div>
@@ -323,11 +337,11 @@
         <!-- Footer Actions -->
         <footer class="modal-footer-actions">
           <button class="btn-action-outline-gray">
-            <svg lucideSun [size]="18" style="background-color: var(--cafe-primary);"></svg>
+            <svg lucideSun [size]="18"></svg>
             Descargar guía
           </button>
           <button class="btn-action-solid-teal">
-            <svg lucideSmartphone [size]="18" style="background-color: white;"></svg>
+            <svg lucideSmartphone [size]="18"></svg>
             Probar gesto
           </button>
         </footer>
@@ -361,15 +375,15 @@
                 <div class="hero-header">
                   <div class="hero-icon-box">
                     @switch (getDeviceIconName(device.tipo_aparato || device.icono)) {
-                      @case ('headphones') { <svg lucideHeadphones [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('speaker') { <svg lucideSpeaker [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('lightbulb') { <svg lucideLightbulb [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('lamp-floor') { <svg lucideLampFloor [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('wind') { <svg lucideWind [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('tv-minimal') { <svg lucideTvMinimal [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('plug') { <svg lucidePlug [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @case ('plus-circle') { <svg lucideCirclePlus [size]="44" style="background-color: var(--cafe-primary);"></svg> }
-                      @default { <svg lucideCirclePlus [size]="44" style="background-color: var(--cafe-primary);"></svg> }
+                      @case ('headphones') { <svg lucideHeadphones [size]="44"></svg> }
+                      @case ('speaker') { <svg lucideSpeaker [size]="44"></svg> }
+                      @case ('lightbulb') { <svg lucideLightbulb [size]="44"></svg> }
+                      @case ('lamp-floor') { <svg lucideLampFloor [size]="44"></svg> }
+                      @case ('wind') { <svg lucideWind [size]="44"></svg> }
+                      @case ('tv-minimal') { <svg lucideTvMinimal [size]="44"></svg> }
+                      @case ('plug') { <svg lucidePlug [size]="44"></svg> }
+                      @case ('plus-circle') { <svg lucideCirclePlus [size]="44"></svg> }
+                      @default { <svg lucideCirclePlus [size]="44"></svg> }
                     }
                   </div>
                   <div class="hero-titles">
@@ -433,7 +447,7 @@
             Cerrar
           </button>
           <button class="btn-action-solid-teal">
-            <svg lucideBolt [size]="18" style="background-color: white;"></svg>
+            <svg lucideBolt [size]="18"></svg>
             Ejecutar prueba
           </button>
         </footer>

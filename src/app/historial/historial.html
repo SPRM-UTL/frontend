@@ -74,8 +74,6 @@
             <tr>
               <th>EVENTO / ACCIÓN</th>
               <th>DISPOSITIVO</th>
-              <th>ESTADO</th>
-              <th>MÉTODO</th>
               <th>HORA</th>
               @if (showActions()) {
                 <th>ACCIONES</th>
@@ -121,27 +119,7 @@
                   </div>
                 </td>
 
-                <!-- Status -->
-                <td class="status-cell">
-                  <div class="status-badge" [ngClass]="a.estado === 'Ejecutado' ? 'status--success' : 'status--error'">
-                    <span class="dot"></span>
-                    {{ a.estado }}
-                  </div>
-                </td>
 
-                <!-- Method -->
-                <td class="method-cell">
-                  <div class="method-tag">
-                    @switch (getMethodIcon(a.metodo)) {
-                      @case ('hand') { <svg lucideHand [size]="14"></svg> }
-                      @case ('smartphone') { <svg lucideSmartphone [size]="14"></svg> }
-                      @case ('bolt') { <svg lucideBolt [size]="14"></svg> }
-                      @case ('mic') { <svg lucideMic [size]="14"></svg> }
-                      @default { <svg lucideSparkles [size]="14"></svg> }
-                    }
-                    {{ a.metodo }}
-                  </div>
-                </td>
 
                 <!-- Time -->
                 <td class="time-cell">

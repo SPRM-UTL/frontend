@@ -19,9 +19,7 @@ import {
   LucideTvMinimal,
   LucidePlug,
   LucideCirclePlus,
-  LucideHelpCircle,
-  LucideClock,
-  LucideLogOut
+  LucideHelpCircle
 } from '@lucide/angular';
 
 @Component({
@@ -43,9 +41,7 @@ import {
     LucideTvMinimal,
     LucidePlug,
     LucideCirclePlus,
-    LucideHelpCircle,
-    LucideClock,
-    LucideLogOut
+    LucideHelpCircle
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'

@@ -372,8 +372,8 @@
 
 .row-action-btn:hover {
   background: #f8fafc;
-  color: #2bbfaa;
-  border-color: #2bbfaa;
+  color: var(--cafe-dark);
+  border-color: var(--cafe-dark);
   transform: translateY(-2px);
 }
 
@@ -442,5 +442,5 @@
 }
 
 .device-row:hover .device-name {
-  color: #2bbfaa;
+  color: var(--cafe-dark);
 }
