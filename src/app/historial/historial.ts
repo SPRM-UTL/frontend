@@ -2,6 +2,7 @@ import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HistorialService } from './historial.service';
+import { DispositivosService } from '../dispositivos/dispositivos.service';
 
 import {
   LucideSearch,
@@ -11,15 +12,9 @@ import {
   LucideSun,
   LucideTriangleAlert,
   LucideSmartphone,
-  LucideSparkles,
-  LucideTvMinimal,
-  LucideSpeaker,
-  LucideLightbulb,
-  LucideLampFloor,
-  LucideWind,
-  LucidePlug,
-  LucideCirclePlus
+  LucideDynamicIcon,
 } from '@lucide/angular';
+import { getActivityIcon, getDeviceIcon } from '../shared/icon-map';
 
 @Component({
   selector: 'app-historial',
@@ -34,20 +29,14 @@ import {
     LucideSun,
     LucideTriangleAlert,
     LucideSmartphone,
-    LucideSparkles,
-    LucideTvMinimal,
-    LucideSpeaker,
-    LucideLightbulb,
-    LucideLampFloor,
-    LucideWind,
-    LucidePlug,
-    LucideCirclePlus
+    LucideDynamicIcon,
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css'
 })
 export class Historial implements OnInit {
   private historialService = inject(HistorialService);
+  private dispositivosService = inject(DispositivosService);
 
   readonly searchQuery = signal('');
   readonly showActions = signal(false);
@@ -87,6 +76,7 @@ export class Historial implements OnInit {
 
   ngOnInit(): void {
     this.historialService.loadHistorial();
+    this.dispositivosService.loadDevices();
   }
 
   onSearch(value: string): void {
@@ -104,34 +94,8 @@ export class Historial implements OnInit {
     this.isFilterOpen.set(false);
   }
 
-  // Mapeo de tipos de aparatos a iconos Lucide
-  readonly categoryIconMap: Record<string, string> = {
-    'Audífonos': 'headphones',
-    'Bocinas': 'speaker',
-    'Focos': 'lightbulb',
-    'Luces': 'lamp-floor',
-    'Ventilador': 'wind',
-    'Televisión': 'tv-minimal',
-    'Sockets': 'plug',
-    'Asistente': 'circle-plus',
-    'Predeterminado': 'circle-plus'
-  };
-
-  getIconName(icono: string | undefined): string {
-    if (!icono) return 'sparkles';
-    // Si el icono es un tipo de aparato, lo mapeamos
-    const iconName = this.categoryIconMap[icono] || icono;
-    return iconName;
-  }
-
-  getMethodIcon(metodo: string | undefined): string {
-    const m = (metodo || '').toLowerCase();
-    if (m.includes('gesto')) return 'hand';
-    if (m.includes('app') || m.includes('móvil')) return 'smartphone';
-    if (m.includes('auto')) return 'bolt';
-    if (m.includes('voz')) return 'mic';
-    return 'sparkles';
-  }
+  getActivityIcon = getActivityIcon;
+  getDeviceIcon   = getDeviceIcon;
 
   formatHora(hora: any): string {
     const h = parseInt(hora, 10);

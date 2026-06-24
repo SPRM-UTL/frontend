@@ -1,9 +1,6 @@
-import { afterNextRender, Component, computed, inject, signal , PLATFORM_ID, OnDestroy} from '@angular/core';
+import { afterNextRender, Component, computed, inject, signal, PLATFORM_ID, OnDestroy } from '@angular/core';
 import {
   NavigationEnd,
-  NavigationStart,
-  NavigationCancel,
-  NavigationError,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -11,7 +8,6 @@ import {
 } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { CuentaService } from '../cuenta/cuenta.service';
 import { InicioService } from './inicio/inicio.service';
@@ -20,7 +16,8 @@ import { Actividad } from '../historial/actividad.model';
 import { GestosService } from '../gestos/gestos.service';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { AlertNotificationService, AlertNotification } from '../services/alert-notification.service';
-import { LoaderService } from '../services/loader.service';
+import { LucideDynamicIcon } from '@lucide/angular';
+import { getActivityIcon, getGestureIcon, getDeviceIcon } from '../shared/icon-map';
 
 interface UnifiedNotification {
   id: string | number;
@@ -29,7 +26,7 @@ interface UnifiedNotification {
   title: string;
   subtitle: string;
   timeLabel: string;
-  icon: string;
+  icon: any;
   statusText?: string;
   originalId: number;
 }
@@ -48,27 +45,11 @@ import {
   LucideBell,
   LucideSun,
   LucideCheck,
-  LucidePlay,
   LucideCamera,
+  LucidePlay,
   LucideBluetooth,
   LucideHash,
   LucideZap,
-  LucideCloudLightning,
-  LucideTriangleAlert,
-  LucideSparkles,
-  LucideHeadphones,
-  LucideSpeaker,
-  LucideLightbulb,
-  LucideLampFloor,
-  LucideWind,
-  LucideTvMinimal,
-  LucidePlug,
-  LucideCirclePlus,
-  LucideWifi,
-  LucideLock,
-  LucideFan,
-  LucideTv,
-  LucideMic
 } from '@lucide/angular';
 
 @Component({
@@ -79,6 +60,7 @@ import {
     RouterLinkActive,
     RouterOutlet,
     CommonModule,
+    LucideDynamicIcon,
     LucideX,
     LucideLayoutDashboard,
     LucideSmartphone,
@@ -92,27 +74,11 @@ import {
     LucideBell,
     LucideSun,
     LucideCheck,
-    LucidePlay,
     LucideCamera,
+    LucidePlay,
     LucideBluetooth,
     LucideHash,
     LucideZap,
-    LucideCloudLightning,
-    LucideTriangleAlert,
-    LucideSparkles,
-    LucideHeadphones,
-    LucideSpeaker,
-    LucideLightbulb,
-    LucideLampFloor,
-    LucideWind,
-    LucideTvMinimal,
-    LucidePlug,
-    LucideCirclePlus,
-    LucideWifi,
-    LucideLock,
-    LucideFan,
-    LucideTv,
-    LucideMic
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -133,13 +99,13 @@ export class Dashboard implements OnDestroy {
   public gestosService = inject(GestosService);
   public dispositivosService = inject(DispositivosService);
   public alertService = inject(AlertNotificationService);
-  private loaderService = inject(LoaderService);
 
   // Inyectamos ambos de forma pública para usarlos correctamente en el HTML
   public cuentaService = inject(CuentaService);
   public inicioService = inject(InicioService);
 
   readonly indicatorTop = signal<number>(0);
+  readonly isFirstItemActive = signal<boolean>(false);
 
   readonly userName = computed(() => {
     return this.cuentaService.userName() || 'Usuario';
@@ -163,17 +129,6 @@ export class Dashboard implements OnDestroy {
   readonly sidebarCollapsed = signal(true);
 
   // Mapeo de tipos de aparatos (Mismo que en dispositivos.ts)
-  readonly categoryIconMap: Record<string, string> = {
-    'Audífonos': 'headphones',
-    'Bocinas': 'speaker',
-    'Focos': 'lightbulb',
-    'Luces': 'lamp_floor',
-    'Ventilador': 'wind',
-    'Televisión': 'tv_minimal',
-    'Sockets': 'plug',
-    'Asistente': 'ic_input_add',
-    'Predeterminado': 'ic_default'
-  };
 
   readonly recentActivities = computed(() => {
     const allActivities = this.historialService.actividades();
@@ -191,7 +146,7 @@ export class Dashboard implements OnDestroy {
         title: a.message,
         subtitle: 'Sistema',
         timeLabel: this.formatTime(a.timestamp),
-        icon: a.icon || 'bell',
+        icon: getActivityIcon(a.icon),
         originalId: a.id
       });
     });
@@ -208,7 +163,7 @@ export class Dashboard implements OnDestroy {
             title: a.accion,
             subtitle: `${a.dispositivo}`,
             timeLabel: a.hora,
-            icon: this.iconNameForActivity(a),
+            icon: getActivityIcon(a.icono, a.estado, a.accion),
             statusText: a.estado,
             originalId: a.id
           });
@@ -242,23 +197,16 @@ export class Dashboard implements OnDestroy {
     // Initial title setup
     this.updateTitle(this.router.url);
     this.updateActiveNavIndex(this.router.url);
+    this.isFirstItemActive.set(this.router.url.includes('/dashboard/inicio') || this.router.url === '/dashboard');
 
     // Listen to routing changes
     this.routerSubscription = this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationStart) {
-        this.loaderService.show();
-      } else if (event instanceof NavigationEnd) {
+      if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects || event.url;
         this.updateTitle(url);
         this.updateActiveNavIndex(url);
+        this.isFirstItemActive.set(url.includes('/dashboard/inicio') || url === '/dashboard');
         this.updateIndicator();
-        // Pequeño delay para que se vea el cambio
-        setTimeout(() => this.loaderService.hide(), 500);
-      } else if (
-        event instanceof NavigationCancel ||
-        event instanceof NavigationError
-      ) {
-        this.loaderService.hide();
       }
     });
 
@@ -447,18 +395,9 @@ export class Dashboard implements OnDestroy {
     )?.nombre_aparato ?? 'Sin Dispositivo';
   }
 
-  getIconName(icono: string | undefined): string {
-    if (!icono) return 'hand';
-    const i = icono.toLowerCase();
-    if (i.includes('mano') || i.includes('hand') || i.includes('puño')) return 'hand';
-    if (i.includes('foco') || i.includes('luz')) return 'lightbulb';
-    if (i.includes('voz') || i.includes('mic')) return 'mic';
-    return 'hand';
-  }
+  /** Devuelve el icono Lucide para un gesto */
+  getGestureIcon = getGestureIcon;
 
-  getDeviceIconName(tipoOIcono: string | undefined): string {
-    if (!tipoOIcono) return 'circle-plus';
-    const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-    return iconName;
-  }
+  /** Devuelve el icono Lucide para un dispositivo */
+  getDeviceIcon = getDeviceIcon;
 }

@@ -11,16 +11,9 @@ import {
   LucideLayoutDashboard,
   LucideChevronDown,
   LucideBolt,
-  LucideHeadphones,
-  LucideSpeaker,
-  LucideLightbulb,
-  LucideLampFloor,
-  LucideWind,
-  LucideTvMinimal,
-  LucidePlug,
-  LucideCirclePlus,
-  LucideHelpCircle
+  LucideDynamicIcon
 } from '@lucide/angular';
+import { getDeviceIcon } from '../shared/icon-map';
 
 @Component({
   selector: 'app-control',
@@ -34,15 +27,7 @@ import {
     LucideLayoutDashboard,
     LucideChevronDown,
     LucideBolt,
-    LucideHeadphones,
-    LucideSpeaker,
-    LucideLightbulb,
-    LucideLampFloor,
-    LucideWind,
-    LucideTvMinimal,
-    LucidePlug,
-    LucideCirclePlus,
-    LucideHelpCircle
+    LucideDynamicIcon
   ],
   templateUrl: './control.html',
   styleUrl: './control.css'
@@ -57,18 +42,6 @@ export class Control implements OnInit {
   readonly LucideLayoutDashboard = LucideLayoutDashboard;
   readonly LucideChevronDown = LucideChevronDown;
   readonly LucideBolt = LucideBolt;
-
-  readonly iconMap: Record<string, any> = {
-    'headphones': LucideHeadphones,
-    'speaker': LucideSpeaker,
-    'lightbulb': LucideLightbulb,
-    'lamp-floor': LucideLampFloor,
-    'wind': LucideWind,
-    'tv-minimal': LucideTvMinimal,
-    'plug': LucidePlug,
-    'plus-circle': LucideCirclePlus,
-    'help-circle': LucideHelpCircle
-  };
 
   readonly tipos        = this.controlService.tiposDispositivos;
   readonly dispositivos = this.controlService.todosLosDispositivos;
@@ -102,20 +75,7 @@ export class Control implements OnInit {
     this.tipoSeleccionado.set(tipo);
   }
 
-  /**
-   * Obtiene el objeto de icono correcto basado en el nombre del tipo de dispositivo.
-   */
-  getIcon(tipo: string): any {
-    const t = this.tipos().find(x => x.nombre_tipo.toLowerCase() === tipo.toLowerCase());
-    let iconName = t?.icono || 'help-circle';
-
-    // Mapeos específicos
-    if (iconName === 'ic_default') iconName = 'help-circle';
-    if (iconName === 'ic_input_add') iconName = 'plus-circle';
-
-    const normalizedName = iconName.replace('_', '-');
-    return this.iconMap[normalizedName] || LucideHelpCircle;
-  }
+  getDeviceIcon = getDeviceIcon;
 
   getDeviceCount(tipo: string): number {
     return this.dispositivos().filter(d => (d.tipo_aparato || '').toLowerCase() === tipo.toLowerCase()).length;

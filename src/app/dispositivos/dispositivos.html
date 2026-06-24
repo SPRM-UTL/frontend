@@ -96,22 +96,7 @@
                 <!-- Device -->
                 <td class="device-cell">
                  <div class="device-avatar">
-                   @switch (getIconName(device.tipo_aparato || device.icono)) {
-                     @case ('headphones') { <svg lucideHeadphones [size]="20"></svg> }
-                     @case ('speaker') { <svg lucideSpeaker [size]="20"></svg> }
-                     @case ('lightbulb') { <svg lucideLightbulb [size]="20"></svg> }
-                     @case ('lamp-floor') { <svg lucideLampFloor [size]="20"></svg> }
-                     @case ('wind') { <svg lucideWind [size]="20"></svg> }
-                     @case ('tv-minimal') { <svg lucideTvMinimal [size]="20"></svg> }
-                     @case ('tv') { <svg lucideTvMinimal [size]="20"></svg> }
-                     @case ('ac') { <svg lucideTvMinimal [size]="20"></svg> }
-                     @case ('plug') { <svg lucidePlug [size]="20"></svg> }
-                     @case ('camera') { <svg lucideCamera [size]="20"></svg> }
-                     @case ('lock') { <svg lucideLock [size]="20"></svg> }
-                     @case ('fan') { <svg lucideFan [size]="20"></svg> }
-                     @case ('circle-plus') { <svg lucideCirclePlus [size]="20"></svg> }
-                     @default { <svg lucideCirclePlus [size]="20"></svg> }
-                   }
+                   <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="20"></svg>
                  </div>
                  <div class="device-info">
                    <span class="device-name">{{ device.nombre_aparato }}</span>

@@ -11,16 +11,9 @@ import {
   LucideHand,
   LucideBolt,
   LucideLayoutDashboard,
-  LucideHeadphones,
-  LucideSpeaker,
-  LucideLightbulb,
-  LucideLampFloor,
-  LucideWind,
-  LucideTvMinimal,
-  LucidePlug,
-  LucideCirclePlus,
-  LucideHelpCircle
+  LucideDynamicIcon
 } from '@lucide/angular';
+import { getDeviceIcon, getGestureIcon } from '../../shared/icon-map';
 
 @Component({
   selector: 'app-inicio',
@@ -33,15 +26,7 @@ import {
     LucideHand,
     LucideBolt,
     LucideLayoutDashboard,
-    LucideHeadphones,
-    LucideSpeaker,
-    LucideLightbulb,
-    LucideLampFloor,
-    LucideWind,
-    LucideTvMinimal,
-    LucidePlug,
-    LucideCirclePlus,
-    LucideHelpCircle
+    LucideDynamicIcon
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
@@ -77,23 +62,8 @@ export class Inicio {
     return colorClasses[index % colorClasses.length];
   }
 
-  readonly categoryIconMap: Record<string, string> = {
-    'Audífonos': 'headphones',
-    'Bocinas': 'speaker',
-    'Focos': 'lightbulb',
-    'Luces': 'lamp-floor',
-    'Ventilador': 'wind',
-    'Televisión': 'tv-minimal',
-    'Sockets': 'plug',
-    'Asistente': 'plus-circle',
-    'Predeterminado': 'help-circle'
-  };
-
-getIconName(tipoOIcono: string | undefined): string {
-  if (!tipoOIcono) return 'help-circle';
-  const iconName = this.categoryIconMap[tipoOIcono] || tipoOIcono;
-  return iconName;
-}
+  getDeviceIcon = getDeviceIcon;
+  getGestureIcon = getGestureIcon;
 
   actividadSeries = [{
     name: 'acciones',
