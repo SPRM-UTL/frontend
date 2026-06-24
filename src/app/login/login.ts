@@ -19,8 +19,7 @@ import {
   LucideEye,
   LucideEyeOff,
   LucideMail,
-  LucideLock,
-  LucideLogIn
+  LucideLock
 } from '@lucide/angular';
 
 @Component({
@@ -33,8 +32,7 @@ import {
     LucideMail,
     LucideLock,
     LucideEye,
-    LucideEyeOff,
-    LucideLogIn
+    LucideEyeOff
   ],
 
   templateUrl: './login.html',
