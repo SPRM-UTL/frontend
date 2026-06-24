@@ -51,7 +51,7 @@ app.use((req, res, next) => {
  * Fallback for SPA (RenderMode.Client) routes.
  * If angularApp.handle doesn't return a response, serve index.html.
  */
-app.use('/**', (req, res, next) => {
+app.use('*', (req, res, next) => {
   res.sendFile(join(browserDistFolder, 'index.html'));
 });
 
