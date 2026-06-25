@@ -5,14 +5,19 @@ import { LoaderService } from '../services/loader.service';
 
 export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
   const loaderService = inject(LoaderService);
-  
-  // Opcional: Podrías omitir el loader para ciertas peticiones si quieres, 
-  // revisando la URL de req.url. Pero por ahora, se activa en todas.
+
+  // Saltar loader
+  if (req.headers.has('X-Skip-Loader')) {
+    const cleanReq = req.clone({
+      headers: req.headers.delete('X-Skip-Loader')
+    });
+
+    return next(cleanReq);
+  }
+
   loaderService.show();
 
   return next(req).pipe(
-    finalize(() => {
-      loaderService.hide();
-    })
+    finalize(() => loaderService.hide())
   );
 };
