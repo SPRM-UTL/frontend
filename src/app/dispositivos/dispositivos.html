@@ -101,8 +101,8 @@
                  <div class="device-info">
                    <span class="device-name">{{ device.nombre_aparato }}</span>
                    <span class="status-online">
-                     <span class="dot"></span>
-                     En línea
+                     <span class="dot" [class.offline]="!connectedDevices().includes(device.mac_bluetooth || '')"></span>
+                     {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
                    </span>
                  </div>
                 </td>

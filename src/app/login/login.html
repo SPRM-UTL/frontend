@@ -1,9 +1,9 @@
 <div class="auth-background">
   <div class="auth-card">
     <div class="auth-left">
-      
+
       <div class="auth-header">
-        <img src="icono_manordomo.png" alt="logo mini" class="logo-mini"/>
+        <img src="icono_manordomo.svg" alt="logo mini" class="logo-mini"/>
         <span class="brand-name">manordomo</span>
       </div>
 
@@ -14,7 +14,7 @@
         <label>Email</label>
         <div class="input-wrapper">
           <svg lucideMail class="input-icon" style="width: 20px; height: 20px;"></svg>
-          <input type="email" placeholder="ejemplo@email.com" [(ngModel)]="correo"/>
+          <input type="email" placeholder="ejemplo@email.com" [(ngModel)]="correo" (keydown.enter)="passwordInput.focus()"/>
         </div>
       </div>
 
@@ -24,9 +24,11 @@
           <svg lucideLock class="input-icon" style="width: 20px; height: 20px;"></svg>
           <div class="password-wrapper">
             <input
+            #passwordInput
               [type]="showPassword() ? 'text' : 'password'"
               placeholder="Al menos 8 caracteres"
               [(ngModel)]="contrasenia"
+              (keydown.enter)="onLogin()"
             />
             <button
               type="button"

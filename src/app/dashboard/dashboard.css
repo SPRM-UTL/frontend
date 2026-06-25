@@ -1138,6 +1138,14 @@ body {
   border-radius: 50%;
 }
 
+.status-indicator .dot.offline {
+  background: #f43f5e;
+}
+
+.status-indicator:has(.dot.offline) {
+  color: #f43f5e;
+}
+
 .hero-desc {
   font-size: 0.85rem;
   color: #4b5563;

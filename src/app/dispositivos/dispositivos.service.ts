@@ -29,6 +29,10 @@ export class DispositivosService {
   public selectedDevice = signal<Dispositivo | null>(null);
   public device = signal<Dispositivo | null>(null);
 
+  // Lista de MACs (deviceKey) conectadas globalmente
+  public connectedDevices = signal<string[]>([]);
+  private globalPollingInterval: any;
+
   /**
    * Obtiene los headers con el token de localStorage de forma segura para SSR
    */
@@ -105,7 +109,73 @@ export class DispositivosService {
     );
   }
 
+  public selectedDeviceOnline = signal<boolean>(false);
+  private pollingInterval: any;
+
+  verDetalle(device: Dispositivo | null) {
+    this.selectedDevice.set(device);
+    
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+
+    if (device && device.mac_bluetooth) {
+      this.checkWsStatus(device.mac_bluetooth);
+      if (isPlatformBrowser(this.platformId)) {
+        this.pollingInterval = setInterval(() => {
+          this.checkWsStatus(device.mac_bluetooth!);
+        }, 3000);
+      }
+    } else {
+      this.selectedDeviceOnline.set(false);
+    }
+  }
+
+  private checkWsStatus(mac: string) {
+    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/${mac}`, {
+      headers: new HttpHeaders({ 'X-Skip-Loader': 'true' })
+    }).subscribe({
+      next: (res) => {
+        this.selectedDeviceOnline.set(res.connected === true);
+      },
+      error: () => {
+        this.selectedDeviceOnline.set(false);
+      }
+    });
+  }
+
+  // --- Funciones para el listado global ---
+  public startGlobalPolling() {
+    this.fetchGlobalStatus();
+    if (isPlatformBrowser(this.platformId) && !this.globalPollingInterval) {
+      this.globalPollingInterval = setInterval(() => {
+        this.fetchGlobalStatus();
+      }, 5000);
+    }
+  }
+
+  public stopGlobalPolling() {
+    if (this.globalPollingInterval) {
+      clearInterval(this.globalPollingInterval);
+      this.globalPollingInterval = null;
+    }
+  }
+
+  private fetchGlobalStatus() {
+    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/all`, {
+      headers: new HttpHeaders({ 'X-Skip-Loader': 'true' })
+    }).subscribe({
+      next: (res) => {
+        this.connectedDevices.set(res.connectedDevices || []);
+      },
+      error: () => {
+        this.connectedDevices.set([]);
+      }
+    });
+  }
+
   cerrarDetalle() {
-    this.selectedDevice.set(null);
+    this.verDetalle(null);
   }
 }

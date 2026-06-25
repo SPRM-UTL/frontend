@@ -326,6 +326,14 @@
   border-radius: 50%;
 }
 
+.status-online .dot.offline {
+  background: #f43f5e;
+}
+
+.status-online:has(.dot.offline) {
+  color: #f43f5e;
+}
+
 /* Cells */
 .type-cell {
   color: #64748b;

@@ -132,7 +132,9 @@ export class ControlService {
     const body = this.mapToBackend(device, nuevoEstado);
     const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}/${device.id}`;
 
-    this.http.put(url, body, { headers: this.getHeaders() }).subscribe({
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.put(url, body, { headers }).subscribe({
       next: () => {
         this.todosLosDispositivos.update(list =>
           list.map(d => d.id === id ? { ...d, encendido: nuevoEstado } : d)
@@ -140,7 +142,6 @@ export class ControlService {
       },
       error: err => {
         console.error('Error toggling device:', err);
-        this.error.set(`Error al cambiar estado del dispositivo`);
       }
     });
   }
@@ -149,7 +150,9 @@ export class ControlService {
     const body = this.mapToBackend(device);
     const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}/${device.id}`;
 
-    this.http.put(url, body, { headers: this.getHeaders() }).subscribe({
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.put(url, body, { headers }).subscribe({
       next: () => {
         this.todosLosDispositivos.update(list =>
           list.map(d => d.id === device.id ? { ...device } : d)
@@ -157,7 +160,6 @@ export class ControlService {
       },
       error: err => {
         console.error('Error updating device:', err);
-        this.error.set(`Error al actualizar el dispositivo`);
       }
     });
   }

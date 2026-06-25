@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal, inject } from '@angular/core';
+import { Component, computed, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -38,7 +38,7 @@ import { getDeviceIcon, CATEGORY_ICON_MAP } from '../shared/icon-map';
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'
 })
-export class Dispositivos implements OnInit {
+export class Dispositivos implements OnInit, OnDestroy {
 
   private devicesService = inject(DispositivosService);
   private route = inject(ActivatedRoute);
@@ -100,9 +100,15 @@ export class Dispositivos implements OnInit {
 
   readonly loading = this.devicesService.loading;
   readonly error = this.devicesService.error;
+  readonly connectedDevices = this.devicesService.connectedDevices;
 
   ngOnInit(): void {
     this.devicesService.loadDevices();
+    this.devicesService.startGlobalPolling();
+  }
+
+  ngOnDestroy(): void {
+    this.devicesService.stopGlobalPolling();
   }
 
   onSearch(value: string): void {
@@ -125,7 +131,7 @@ export class Dispositivos implements OnInit {
   }
 
   verDetalle(device: Dispositivo): void {
-    this.devicesService.selectedDevice.set(device);
+    this.devicesService.verDetalle(device);
   }
 
   cerrarDetalle(): void {
