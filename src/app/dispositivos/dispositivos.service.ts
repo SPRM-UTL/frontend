@@ -133,7 +133,9 @@ export class DispositivosService {
   }
 
   private checkWsStatus(mac: string) {
-    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/${mac}`).subscribe({
+    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/${mac}`, {
+      headers: new HttpHeaders({ 'X-Skip-Loader': 'true' })
+    }).subscribe({
       next: (res) => {
         this.selectedDeviceOnline.set(res.connected === true);
       },
@@ -161,7 +163,9 @@ export class DispositivosService {
   }
 
   private fetchGlobalStatus() {
-    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/all`).subscribe({
+    this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/all`, {
+      headers: new HttpHeaders({ 'X-Skip-Loader': 'true' })
+    }).subscribe({
       next: (res) => {
         this.connectedDevices.set(res.connectedDevices || []);
       },
