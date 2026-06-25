@@ -16,7 +16,8 @@ import {
   LucideBolt,
   LucideDynamicIcon,
 } from '@lucide/angular';
-import { getDeviceIcon, CATEGORY_ICON_MAP } from '../shared/icon-map';
+
+import { getDeviceIcon } from '../shared/icon-map';
 
 @Component({
   selector: 'app-dispositivos',
@@ -44,27 +45,31 @@ export class Dispositivos implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
 
   activeNav = 'dispositivos';
+
   readonly searchQuery = signal('');
   readonly showActions = signal(false);
 
-  // Dropdown Filter State
+  // Estado del filtro
   readonly isFilterOpen = signal(false);
   readonly selectedFilter = signal('');
   readonly selectedFilterLabel = signal('Todos los tipos');
 
-  // Mapeo de tipos para filtros (solo se necesita para el filtro, no para iconos)
-  readonly categoryIconMap = CATEGORY_ICON_MAP;
-
   readonly devices = this.devicesService.devices;
+  readonly loading = this.devicesService.loading;
+  readonly error = this.devicesService.error;
+  readonly connectedDevices = this.devicesService.connectedDevices;
 
   readonly filteredDevices = computed(() => {
     let filtered = this.devices();
-    if (!Array.isArray(filtered)) return [];
+
+    if (!Array.isArray(filtered)) {
+      return [];
+    }
 
     const q = this.searchQuery().toLowerCase().trim();
     const type = this.selectedFilter();
 
-    // Filtro por búsqueda
+    // Búsqueda
     if (q) {
       filtered = filtered.filter(device =>
         device.nombre_aparato?.toLowerCase().includes(q) ||
@@ -73,34 +78,38 @@ export class Dispositivos implements OnInit, OnDestroy {
       );
     }
 
-    // Filtro por tipo (Categoría)
+    // Filtro por tipo
     if (type) {
-      // Mapa de categoría española → kebab string del filtro (sólo para comparación)
       const filterKeyMap: Record<string, string> = {
-        'Audífonos': 'headphones', 'Bocinas': 'speaker', 'Focos': 'lightbulb',
-        'Luces': 'lamp-floor', 'Ventilador': 'wind', 'Televisión': 'tv-minimal',
-        'Sockets': 'plug', 'Asistente': 'circle-plus', 'Predeterminado': 'circle-plus'
+        'Audífonos': 'headphones',
+        'Bocinas': 'speaker',
+        'Focos': 'lightbulb',
+        'Luces': 'lamp-floor',
+        'Ventilador': 'wind',
+        'Televisión': 'tv-minimal',
+        'Sockets': 'plug',
+        'Asistente': 'circle-plus',
+        'Predeterminado': 'circle-plus'
       };
+
       filtered = filtered.filter(device => {
         const devIcon = (device.icono || '').toLowerCase().trim();
         const devType = (device.tipo_aparato || '').toLowerCase().trim();
         const mappedKey = filterKeyMap[device.tipo_aparato || ''] || '';
 
-        return devIcon === type ||
-               devType === type.toLowerCase() ||
-               mappedKey === type ||
-               (type === 'lamp-floor' && devType === 'luces') ||
-               (type === 'circle-plus' && devType === 'asistente') ||
-               (type === 'circle-plus' && devType === 'predeterminado');
+        return (
+          devIcon === type ||
+          devType === type.toLowerCase() ||
+          mappedKey === type ||
+          (type === 'lamp-floor' && devType === 'luces') ||
+          (type === 'circle-plus' && devType === 'asistente') ||
+          (type === 'circle-plus' && devType === 'predeterminado')
+        );
       });
     }
 
     return filtered;
   });
-
-  readonly loading = this.devicesService.loading;
-  readonly error = this.devicesService.error;
-  readonly connectedDevices = this.devicesService.connectedDevices;
 
   ngOnInit(): void {
     this.devicesService.loadDevices();
@@ -115,16 +124,15 @@ export class Dispositivos implements OnInit, OnDestroy {
     this.searchQuery.set(value);
   }
 
-  // Dropdown Methods
-  toggleFilter() {
-    this.isFilterOpen.update(v => !v);
+  toggleFilter(): void {
+    this.isFilterOpen.update(value => !value);
   }
 
-  closeFilter() {
+  closeFilter(): void {
     this.isFilterOpen.set(false);
   }
 
-  selectFilter(value: string, label: string) {
+  selectFilter(value: string, label: string): void {
     this.selectedFilter.set(value);
     this.selectedFilterLabel.set(label);
     this.isFilterOpen.set(false);

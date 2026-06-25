@@ -145,9 +145,58 @@
 
           <!-- Panel de fecha para móvil -->
           @if (datePanelOpen()) {
-            <div class="mobile-date-panel" (mouseleave)="closeDatePanel()">
-              <strong>{{ dayLabel }}</strong>
-              <span>{{ timeLabel }}</span>
+            <div class="weather-date-panel" (mouseleave)="closeDatePanel()">
+              <div class="weather-orbit">
+                <div class="weather-circle">
+                  @if (weatherLoading()) {
+                    <svg lucideSun class="spin" [size]="76"></svg>
+                  } @else if (weatherInfo(); as weather) {
+                    <svg [lucideIcon]="weather.icon" [size]="76"></svg>
+                  } @else {
+                    <svg lucideSun [size]="76"></svg>
+                  }
+                </div>
+                <div class="weather-time-box">
+                  <span class="weather-clock-main">{{ clockTime() }}</span>
+                  <span class="weather-clock-period">{{ clockMeridiem() }}</span>
+                </div>
+              </div>
+
+              <div class="weather-info-box">
+                <div class="weather-calendar-badge">
+                  <svg lucideCalendarDays [size]="28"></svg>
+                </div>
+                <strong>{{ dayLabel }}</strong>
+                @if (weatherInfo(); as weather) {
+                  <span>{{ weather.summary }} · {{ weather.temperature }}</span>
+                  <small>{{ weather.place }} · {{ weather.updatedAt }}</small>
+                } @else if (weatherLoading()) {
+                  <span>Cargando clima...</span>
+                  <small>Consultando ubicación</small>
+                } @else {
+                  <span>Dia y clima</span>
+                  <small>{{ weatherError() || 'Toca para actualizar' }}</small>
+                }
+              </div>
+
+              <div class="weather-footer-row">
+                <span class="weather-footer-place">
+                  <svg lucideMapPin [size]="16"></svg>
+                  @if (weatherInfo(); as weather) {
+                    {{ weather.place }}
+                  } @else {
+                    Ubicación actual
+                  }
+                </span>
+                <span class="weather-footer-time">
+                  @if (weatherInfo(); as weather) {
+                    {{ weather.updatedAt }}
+                  } @else {
+                    {{ timeLabel }}
+                  }
+                </span>
+                <svg lucideChevronRight [size]="18" class="weather-footer-arrow"></svg>
+              </div>
             </div>
           }
         </div>

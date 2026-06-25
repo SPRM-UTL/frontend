@@ -12,7 +12,6 @@ import { AuthService } from '../services/auth.service';
 import { CuentaService } from '../cuenta/cuenta.service';
 import { InicioService } from './inicio/inicio.service';
 import { HistorialService } from '../historial/historial.service';
-import { Actividad } from '../historial/actividad.model';
 import { GestosService } from '../gestos/gestos.service';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { AlertNotificationService, AlertNotification } from '../services/alert-notification.service';
@@ -31,19 +30,36 @@ interface UnifiedNotification {
   originalId: number;
 }
 
+interface WeatherInfo {
+  temperature: string;
+  summary: string;
+  place: string;
+  updatedAt: string;
+  icon: any;
+}
+
 import {
   LucideX,
   LucideLayoutDashboard,
   LucideSmartphone,
   LucideHand,
   LucideClock,
+  LucideCloud,
+  LucideCloudMoon,
+  LucideCloudRain,
+  LucideCloudSun,
+  LucideCloudLightning,
   LucidePencil,
   LucideBolt,
   LucideUser,
   LucideLogOut,
   LucideMenu,
   LucideBell,
+  LucideMoon,
   LucideSun,
+  LucideCalendarDays,
+  LucideChevronRight,
+  LucideMapPin,
   LucideCheck,
   LucideCamera,
   LucidePlay,
@@ -73,6 +89,9 @@ import {
     LucideMenu,
     LucideBell,
     LucideSun,
+    LucideCalendarDays,
+    LucideChevronRight,
+    LucideMapPin,
     LucideCheck,
     LucideCamera,
     LucidePlay,
@@ -124,6 +143,9 @@ export class Dashboard implements OnDestroy {
 
   // Control de fecha móvil
   readonly datePanelOpen = signal(false);
+  readonly weatherInfo = signal<WeatherInfo | null>(null);
+  readonly weatherLoading = signal(false);
+  readonly weatherError = signal('');
 
   // Control del sidebar (ChatGPT Style)
   readonly sidebarCollapsed = signal(true);
@@ -308,39 +330,6 @@ export class Dashboard implements OnDestroy {
       .toUpperCase();
   }
 
-  iconNameForActivity(a: Actividad): string {
-    if (a.estado === 'Error') return 'triangle-alert';
-
-    const accion = (a.accion ?? '').toLowerCase();
-    const icono = (a.icono ?? '').toLowerCase();
-
-    const hayEncendido = accion.includes('encend') || accion.includes('on') || icono.includes('bolt') || icono.includes('zap');
-    if (hayEncendido) return 'cloud-lightning';
-
-    const hayCamara = icono.includes('camera') || accion.includes('cám') || accion.includes('cam');
-    if (hayCamara) return 'camera';
-
-    const hayWifi = icono.includes('wifi') || accion.includes('wifi') || accion.includes('red');
-    if (hayWifi) return 'wifi';
-
-    const hayLock = icono.includes('lock') || accion.includes('bloq') || accion.includes('segur');
-    if (hayLock) return 'lock';
-
-    const hayFan = icono.includes('fan') || accion.includes('ventil') || accion.includes('aire');
-    if (hayFan) return 'fan';
-
-    const haySpeaker = icono.includes('speaker') || accion.includes('altav') || accion.includes('audio');
-    if (haySpeaker) return 'speaker';
-
-    const hayTv = icono.includes('tv') || accion.includes('tv') || accion.includes('tele');
-    if (hayTv) return 'tv';
-
-    const hayLight = icono.includes('lightbulb') || icono.includes('light') || accion.includes('luz') || accion.includes('ilumin');
-    if (hayLight) return 'lightbulb';
-
-    return 'sparkles';
-  }
-
   togglePanel(): void {
     if (!this.panelOpen()) {
       this.datePanelOpen.set(false);
@@ -351,6 +340,7 @@ export class Dashboard implements OnDestroy {
   toggleDatePanel(): void {
     if (!this.datePanelOpen()) {
       this.panelOpen.set(false);
+      this.loadWeather();
     }
     this.datePanelOpen.set(!this.datePanelOpen());
   }
@@ -361,6 +351,105 @@ export class Dashboard implements OnDestroy {
 
   closeDatePanel(): void {
     this.datePanelOpen.set(false);
+  }
+
+  private async loadWeather(): Promise<void> {
+    if (!this.isBrowser || this.weatherLoading()) return;
+
+    this.weatherLoading.set(true);
+    this.weatherError.set('');
+
+    try {
+      const position = await this.getBrowserPosition();
+      const response = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&current=temperature_2m,weather_code&timezone=auto`
+      );
+
+      if (!response.ok) {
+        throw new Error('No se pudo consultar el clima');
+      }
+
+      const data = await response.json();
+      const code = Number(data?.current?.weather_code ?? 0);
+      const temperature = Math.round(Number(data?.current?.temperature_2m ?? 0));
+      const now = new Date();
+
+      this.weatherInfo.set({
+        temperature: `${temperature}°C`,
+        summary: this.weatherDescription(code),
+        place: position.isFallback ? 'Clima local' : 'Ubicación actual',
+        updatedAt: this.formatTime(now),
+        icon: this.weatherIcon(code, now)
+      });
+    } catch {
+      this.weatherError.set('No se pudo cargar el clima');
+      this.weatherInfo.set({
+        temperature: '--°C',
+        summary: 'Clima no disponible',
+        place: 'Ubicación local',
+        updatedAt: this.timeLabel || '--:--',
+        icon: this.isNight(new Date()) ? LucideMoon : LucideSun
+      });
+    } finally {
+      this.weatherLoading.set(false);
+    }
+  }
+
+  private getBrowserPosition(): Promise<{ latitude: number; longitude: number; isFallback: boolean }> {
+    const fallback = { latitude: 19.4326, longitude: -99.1332, isFallback: true };
+
+    if (!navigator.geolocation) {
+      return Promise.resolve(fallback);
+    }
+
+    return new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        position => resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          isFallback: false
+        }),
+        () => resolve(fallback),
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 }
+      );
+    });
+  }
+
+  private weatherIcon(code: number, date: Date): any {
+    const night = this.isNight(date);
+
+    if (code === 0) return night ? LucideMoon : LucideSun;
+    if ([1, 2].includes(code)) return night ? LucideCloudMoon : LucideCloudSun;
+    if ([3, 45, 48].includes(code)) return LucideCloud;
+    if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return LucideCloudRain;
+    if ([95, 96, 99].includes(code)) return LucideCloudLightning;
+
+    return night ? LucideCloudMoon : LucideCloudSun;
+  }
+
+  private weatherDescription(code: number): string {
+    if (code === 0) return 'Despejado';
+    if ([1, 2].includes(code)) return 'Parcialmente nublado';
+    if ([3, 45, 48].includes(code)) return 'Nublado';
+    if ([51, 53, 55, 56, 57].includes(code)) return 'Llovizna';
+    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'Lluvia';
+    if ([95, 96, 99].includes(code)) return 'Tormenta';
+
+    return 'Clima actual';
+  }
+
+  private isNight(date: Date): boolean {
+    const hour = date.getHours();
+    return hour < 6 || hour >= 19;
+  }
+
+  clockTime(): string {
+    return (this.timeLabel || '--:--').replace(/\s?(AM|PM)$/i, '');
+  }
+
+  clockMeridiem(): string {
+    const match = (this.timeLabel || '').match(/(AM|PM)$/i);
+    return match?.[1]?.toUpperCase() ?? '';
   }
 
   dismissNotification(item: UnifiedNotification): void {
@@ -401,3 +490,4 @@ export class Dashboard implements OnDestroy {
   /** Devuelve el icono Lucide para un dispositivo */
   getDeviceIcon = getDeviceIcon;
 }
+

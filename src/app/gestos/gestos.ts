@@ -1,26 +1,23 @@
-import { Component, computed, signal, inject, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
-  LucideSearch,
-  LucideFilter,
   LucideChevronDown,
-  LucideHand,
   LucideClock,
+  LucideDynamicIcon,
+  LucideFilter,
+  LucideHand,
+  LucideSearch,
   LucideSun,
   LucideTriangleAlert,
-  LucideDynamicIcon,
 } from '@lucide/angular';
 
-import { getGestureIcon } from '../shared/icon-map';
-
-import { GestosService } from './gestos.service';
-import { Gesto } from './gesto.model';
-
 import { DispositivosService } from '../dispositivos/dispositivos.service';
-
+import { getGestureIcon } from '../shared/icon-map';
 import { ToastService } from '../services/toast.service';
+import { Gesto } from './gesto.model';
+import { GestosService } from './gestos.service';
 
 @Component({
   selector: 'app-gestos',
@@ -41,10 +38,10 @@ import { ToastService } from '../services/toast.service';
   styleUrl: './gestos.css'
 })
 export class Gestos {
-
   private dispositivosService = inject(DispositivosService);
   private gestosService = inject(GestosService);
   private toastService = inject(ToastService);
+
   public gestos = signal<Gesto[]>([]);
 
   readonly searchQuery = signal('');
@@ -69,11 +66,10 @@ export class Gestos {
     if (status) {
       filtered = filtered.filter(g => {
         const isActive = g.estado === 'Activo' || g.activo === true || (g.activo as any) == 1;
-        if (status === 'Activo') {
-          return isActive;
-        } else if (status === 'Pausado') {
-          return !isActive;
-        }
+
+        if (status === 'Activo') return isActive;
+        if (status === 'Pausado') return !isActive;
+
         return true;
       });
     }
@@ -95,16 +91,13 @@ export class Gestos {
       this.dispositivosService.loadDevices();
 
       this.gestosService.loadGestos().subscribe({
-        next: (data) => {
+        next: data => {
           console.log('Gestos cargados en componente:', data);
           this.gestos.set(data);
         },
-        error: (err) => {
-          console.error('Error al activar la petición de gestos:', err);
-
-          this.toastService.error(
-            err?.error?.data || 'Error al cargar los gestos'
-          );
+        error: err => {
+          console.error('Error al activar la peticion de gestos:', err);
+          this.toastService.error(err?.error?.data || 'Error al cargar los gestos');
         }
       });
     });
@@ -124,13 +117,6 @@ export class Gestos {
     this.isFilterOpen.update(v => !v);
   }
 
-  getGestureIcon = getGestureIcon;
-
-  getIconPath(icono: string | undefined): string {
-    // Mantengo este método para compatibilidad con la estructura multimedia fallback
-    return '/icons/hand.svg';
-  }
-
   obtenerNombreDispositivo(id: number | null): string {
     return this.dispositivosService.devices().find(
       d => d.sk_aparato_id === id
@@ -139,42 +125,31 @@ export class Gestos {
 
   verDetalle(gesto: Gesto): void {
     this.gestosService.getGestoDetalle(gesto.sk_gesto_id).subscribe({
-      next: (detalle) => {
-
+      next: detalle => {
         const gestoCompleto: Gesto = {
           ...gesto,
           ...detalle,
           multimedia: detalle.multimedia || gesto.multimedia || {
-            fotos: [
-              this.getIconPath(gesto.icono),
-              this.getIconPath(gesto.icono)
-            ],
+            fotos: [],
             video_url: 'placeholder_url',
             video_duracion: '0:05'
           }
         };
 
-        if (
-          !gestoCompleto.recomendaciones ||
-          gestoCompleto.recomendaciones.length === 0
-        ) {
+        if (!gestoCompleto.recomendaciones || gestoCompleto.recomendaciones.length === 0) {
           gestoCompleto.recomendaciones = [
-            'Distancia 0.5 - 1.5 m de cámara.',
+            'Distancia 0.5 - 1.5 m de camara.',
             'Gesto claro por 1 seg.',
-            'Iluminación adecuada.',
+            'Iluminacion adecuada.',
             'Evitar obstrucciones.'
           ];
         }
 
         this.gestosService.selectedGesto.set(gestoCompleto);
       },
-
-      error: (err) => {
+      error: err => {
         console.error('Error al cargar detalle real, usando fallback:', err);
-
-        this.toastService.error(
-          err?.error?.data || 'Error al cargar el detalle del gesto'
-        );
+        this.toastService.error(err?.error?.data || 'Error al cargar el detalle del gesto');
       }
     });
   }
@@ -182,4 +157,6 @@ export class Gestos {
   cerrarDetalle(): void {
     this.gestosService.cerrarDetalle();
   }
+
+  getGestureIcon = getGestureIcon;
 }

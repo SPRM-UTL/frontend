@@ -59,11 +59,11 @@ export class AlertNotificationService {
 
   private getDefaultIcon(type: AlertType): string {
     switch (type) {
-      case 'success': return '/icons/check.svg';
-      case 'error': return '/icons/triangle-alert.svg';
-      case 'warning': return '/icons/triangle-alert.svg';
-      case 'info': return '/icons/info.svg';
-      default: return '/icons/bell.svg';
+      case 'success': return 'check';
+      case 'error': return 'triangle-alert';
+      case 'warning': return 'triangle-alert';
+      case 'info': return 'info';
+      default: return 'bell';
     }
   }
 }
