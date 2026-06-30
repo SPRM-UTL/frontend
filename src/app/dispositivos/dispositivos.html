@@ -103,9 +103,9 @@
                 <td class="type-cell">{{ device.tipo_aparato }}</td>
 
                 <td class="power-cell">
-                  <div class="action-badge">
-                    <svg lucideBolt [size]="12"></svg>
-                    {{device.accion_nombre}}
+                  <div class="action-btn-status" [class.on]="device.accion_nombre === 'Encendido'">
+                    <svg lucidePower [size]="14"></svg>
+                    <span>{{ device.accion_nombre }}</span>
                   </div>
                 </td>
 

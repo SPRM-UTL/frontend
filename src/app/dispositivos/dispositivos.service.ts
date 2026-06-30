@@ -114,7 +114,7 @@ export class DispositivosService {
 
   verDetalle(device: Dispositivo | null) {
     this.selectedDevice.set(device);
-    
+
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
       this.pollingInterval = null;
@@ -177,5 +177,28 @@ export class DispositivosService {
 
   cerrarDetalle() {
     this.verDetalle(null);
+  }
+
+  /**
+   * Alterna el estado de encendido/apagado de un dispositivo
+   */
+  toggleDevice(device: Dispositivo): void {
+    const nuevoEstado = device.accion_nombre === 'Encendido' ? 'Apagado' : 'Encendido';
+    const body = {
+      ...device,
+      accion_nombre: nuevoEstado
+    };
+    const url = `${this.apiUrl}/${device.sk_aparato_id}`;
+
+    this.http.put(url, body, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
+      next: () => {
+        this.devices.update(list =>
+          list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, accion_nombre: nuevoEstado } : d)
+        );
+      },
+      error: (err) => {
+        console.error('Error toggling device:', err);
+      }
+    });
   }
 }

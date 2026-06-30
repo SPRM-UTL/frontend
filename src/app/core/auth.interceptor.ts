@@ -1,24 +1,19 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
 import { AlertNotificationService } from '../services/alert-notification.service';
+import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
-  const platformId = inject(PLATFORM_ID);
   const alertService = inject(AlertNotificationService);
+  const authService = inject(AuthService);
+  const isAuthRequest = /\/api\/auth\/(login|register)\b/i.test(req.url);
 
   return next(req).pipe(
     catchError((err) => {
-      if (err.status === 401) {
-        if (isPlatformBrowser(platformId)) {
-          localStorage.removeItem('token');
-        }
-        router.navigateByUrl('/');
-        alertService.warning('Sesión expirada o no autorizada. Por favor, inicia sesión de nuevo.');
+      if (err.status === 401 && !isAuthRequest) {
+        authService.expireSession();
       } else if (err.status === 0) {
         alertService.error('No se pudo establecer conexión con el servidor.');
       } else if (err.status >= 500) {

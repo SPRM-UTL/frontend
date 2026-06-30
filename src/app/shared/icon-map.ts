@@ -26,6 +26,7 @@ import {
   LucideWifi,
   LucideWind,
   LucideZap,
+  LucidePower,
 } from '@lucide/angular';
 
 type LucideIcon = any;
@@ -115,31 +116,7 @@ export function getToastIcon(icono: string | undefined, type: string = 'info'): 
 
 export function getActivityIcon(icono: string | undefined, estado?: string, accion?: string): LucideIcon {
   if (estado === 'Error') return LucideTriangleAlert;
-
-  const direct = TOAST_ICONS_BY_NAME[normalizeIconName(icono)];
-  if (direct) return direct;
-
-  if (!icono && !accion) return LucideSparkles;
-
-  const i = normalizeIconName(icono);
-  const a = (accion ?? '').toLowerCase();
-
-  if (i.includes('bolt') || i.includes('zap') || a.includes('encend') || a.includes(' on')) return LucideCloudLightning;
-  if (i.includes('camera') || a.includes('camara') || a.includes('cámara') || a.includes('cam')) return LucideCamera;
-  if (i.includes('wifi') || a.includes('wifi') || a.includes('red')) return LucideWifi;
-  if (i.includes('lock') || a.includes('bloq') || a.includes('segur')) return LucideLock;
-  if (i.includes('fan') || a.includes('ventil') || a.includes('aire')) return LucideFan;
-  if (i.includes('speaker') || a.includes('altav') || a.includes('audio')) return LucideSpeaker;
-  if (i.includes('tv') || a.includes('tv') || a.includes('tele')) return LucideTv;
-  if (i.includes('lightbulb') || i.includes('light') || a.includes('luz') || a.includes('ilumin')) return LucideLightbulb;
-  if (i.includes('headphones')) return LucideHeadphones;
-  if (i.includes('lamp')) return LucideLampFloor;
-  if (i.includes('wind')) return LucideWind;
-  if (i.includes('plug')) return LucidePlug;
-  if (i.includes('smartphone') || i.includes('phone')) return LucideSmartphone;
-  if (i.includes('bell')) return LucideBell;
-
-  return LucideSparkles;
+  return LucideClock;
 }
 
 export function getMethodIcon(metodo: string | undefined): LucideIcon {
@@ -157,6 +134,6 @@ export const ALL_ICONS = [
   LucideBan, LucideBell, LucideBolt, LucideCamera, LucideCheck, LucideCirclePlus, LucideClock,
   LucideCloudLightning, LucideFan, LucideHand, LucideHeadphones, LucideHelpCircle, LucideInfo,
   LucideLampFloor, LucideLightbulb, LucideLock, LucideMic, LucidePlug, LucideSmartphone,
-  LucideSparkles, LucideSpeaker, LucideTriangleAlert, LucideTv, LucideTvMinimal, LucideWifi,
-  LucideWind, LucideZap,
+  LucideSparkles, LucideSpeaker, LucideTriangleAlert, LucideTv,  LucideTvMinimal, LucideWifi,
+  LucideWind, LucideZap, LucidePower,
 ];

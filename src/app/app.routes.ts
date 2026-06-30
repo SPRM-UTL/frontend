@@ -9,14 +9,19 @@ import { Dispositivos } from './dispositivos/dispositivos';
 import { Gestos } from './gestos/gestos';
 import { Historial } from './historial/historial';
 import { Control } from './control/control';
+import { authChildGuard, authGuard } from './core/auth.guard';
+import { SesionExpirada } from './sesion-expirada/sesion-expirada';
 
 export const routes: Routes = [
   { path: '', component: Login },
   { path: 'register', component: Register },
+  { path: 'sesion-expirada', component: SesionExpirada },
 
   {
     path: 'dashboard',
     component: Dashboard,
+    canActivate: [authGuard],
+    canActivateChild: [authChildGuard],
     children: [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },
       { path: 'inicio', component: Inicio },

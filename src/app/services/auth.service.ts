@@ -12,6 +12,7 @@ import { LoaderService } from './loader.service';
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.auth}`;
+  private readonly sessionKeys = ['token', 'nombre', 'userId', 'token_exp'];
   
   readonly showLogoutModal = signal(false);
 
@@ -48,7 +49,7 @@ export class AuthService {
           if (token) {
             localStorage.setItem('token', token);
             const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
-            localStorage.setItem('token_exp', expirationDate.toString());
+            localStorage.setItem('token_exp', expirationDate.toISOString());
           }
 
           if (nombre) {
@@ -84,13 +85,14 @@ export class AuthService {
     // Ocultamos el loader ANTES de navegar para evitar que quede colgado
     // cuando el Dashboard se destruye y pierde su suscripción al router
     this.loaderService.hide();
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('nombre');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('token_exp');
-    }
+    this.clearSession();
     this.router.navigate(['/']);
+  }
+
+  clearSession() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.sessionKeys.forEach(key => localStorage.removeItem(key));
+    }
   }
 
   // 2. MÉTODO PARA OBTENER FECHA: Decodifica el token (ejemplo simple)
@@ -98,14 +100,48 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) return null; // 👈 ESTO EVITA EL ERROR
 
     const exp = localStorage.getItem('token_exp');
-    return exp ? new Date(exp) : null;
+    if (!exp) return null;
+
+    const expirationDate = new Date(exp);
+    return Number.isNaN(expirationDate.getTime()) ? null : expirationDate;
+  }
+
+  getToken(): string {
+    if (!isPlatformBrowser(this.platformId)) return '';
+
+    return localStorage.getItem('token') ?? '';
+  }
+
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    const expirationDate = this.getTokenExpirationDate();
+
+    return !!token && !!expirationDate && expirationDate.getTime() > Date.now();
+  }
+
+  expireSession(returnUrl: string = this.router.url) {
+    this.showLogoutModal.set(false);
+    this.loaderService.hide();
+    this.clearSession();
+
+    if (!this.router.url.startsWith('/sesion-expirada')) {
+      const queryParams = returnUrl && !returnUrl.startsWith('/sesion-expirada')
+        ? { returnUrl }
+        : undefined;
+
+      this.router.navigate(['/sesion-expirada'], { queryParams });
+    }
   }
 
   // 3. TU MÉTODO DE VERIFICACIÓN
   checkTokenExpiration() {
-    const expirationDate = this.getTokenExpirationDate();
-    if (expirationDate && expirationDate < new Date()) {
-      this.logout();
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const token = this.getToken();
+    const isProtectedRoute = this.router.url.startsWith('/dashboard');
+
+    if ((token || isProtectedRoute) && !this.isAuthenticated()) {
+      this.expireSession();
     }
   }
 }

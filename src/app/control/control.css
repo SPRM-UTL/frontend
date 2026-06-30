@@ -236,13 +236,17 @@
   background: var(--cafe-primary) !important;
   border-color: var(--cafe-primary) !important;
   color: #fff !important;
-  box-shadow: 0 4px 12px rgba(43, 191, 170, 0.25);
+  box-shadow: none; /* Quitamos sombra */
 }
 
 .toggle-power-btn .icon-mask {
   width: 20px;
   height: 20px;
   background-color: currentColor !important;
+}
+
+.toggle-power-btn svg {
+  fill: none; /* Aseguramos que solo sea contorno si es necesario */
 }
 
 .device-card-body strong {

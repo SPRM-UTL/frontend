@@ -124,32 +124,53 @@ export class Gestos {
   }
 
   verDetalle(gesto: Gesto): void {
+    // Primero seteamos el gesto básico para que el modal se abra inmediatamente
+    this.gestosService.selectedGesto.set(gesto);
+
+    // Luego cargamos el detalle real desde el endpoint específico
     this.gestosService.getGestoDetalle(gesto.sk_gesto_id).subscribe({
-      next: detalle => {
-        const gestoCompleto: Gesto = {
-          ...gesto,
-          ...detalle,
-          multimedia: detalle.multimedia || gesto.multimedia || {
-            fotos: [],
-            video_url: 'placeholder_url',
-            video_duracion: '0:05'
+      next: (detalle: any) => {
+        // Actualizamos el signal con los datos reales del detalle
+        this.gestosService.selectedGesto.update(current => {
+          if (current && current.sk_gesto_id === gesto.sk_gesto_id) {
+            // Extraer videos y fotos
+            const videos = (detalle.medios_referencia || [])
+              .filter((m: any) => m.tipo_media === 2);
+
+            const fotos = (detalle.medios_referencia || [])
+              .filter((m: any) => m.tipo_media === 1)
+              .map((m: any) => m.url_archivo);
+
+            return {
+              ...current,
+              // Mapeamos los campos del detalle a los que espera el template
+              duracion_segundos: detalle.duracion_segundos,
+              iluminacion_requerida: detalle.iluminacion_recomendada,
+              distancia_minima_m: undefined, // Usaremos la cadena descriptiva de la API
+              distancia_maxima_m: undefined,
+              precision_ia: 'Alta',
+              recomendaciones: [
+                detalle.distancia_recomendada,
+                detalle.iluminacion_recomendada,
+                'Gesto claro por 1 seg.',
+                'Evitar obstrucciones.'
+              ],
+              // Guardamos la lista completa de videos si hay más de uno
+              videos: videos.map((v: any) => v.url_archivo),
+              multimedia: {
+                fotos: fotos,
+                video_url: videos.length > 0 ? videos[0].url_archivo : undefined,
+                video_duracion: `${detalle.duracion_segundos} seg.`
+              },
+              detalle: detalle // Guardamos el objeto detalle completo para el visor multimedia
+            };
           }
-        };
-
-        if (!gestoCompleto.recomendaciones || gestoCompleto.recomendaciones.length === 0) {
-          gestoCompleto.recomendaciones = [
-            'Distancia 0.5 - 1.5 m de camara.',
-            'Gesto claro por 1 seg.',
-            'Iluminacion adecuada.',
-            'Evitar obstrucciones.'
-          ];
-        }
-
-        this.gestosService.selectedGesto.set(gestoCompleto);
+          return current;
+        });
       },
       error: err => {
-        console.error('Error al cargar detalle real, usando fallback:', err);
-        this.toastService.error(err?.error?.data || 'Error al cargar el detalle del gesto');
+        console.error('Error al cargar detalle real:', err);
+        this.toastService.error('Error al cargar el detalle del gesto');
       }
     });
   }
