@@ -5,7 +5,6 @@
     </div>
   </div>
 
-  <!-- Search and Filter Bar -->
   <div class="search-filter-row">
     <div class="search-wrapper">
       <svg lucideSearch class="search-icon" [size]="18"></svg>
@@ -27,21 +26,20 @@
         @if (isFilterOpen()) {
           <div class="dropdown-menu">
             <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'headphones'" (click)="selectFilter('headphones', 'Audífonos')">Audífonos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'speaker'" (click)="selectFilter('speaker', 'Bocinas')">Bocinas</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'lightbulb'" (click)="selectFilter('lightbulb', 'Focos')">Focos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'lamp-floor'" (click)="selectFilter('lamp-floor', 'Luces')">Luces</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'wind'" (click)="selectFilter('wind', 'Ventilador')">Ventilador</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'tv-minimal'" (click)="selectFilter('tv-minimal', 'Televisión')">Televisión</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'plug'" (click)="selectFilter('plug', 'Sockets')">Sockets</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'circle-plus'" (click)="selectFilter('circle-plus', 'Asistente')">Asistente</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Audifonos'" (click)="selectFilter('Audifonos', 'Audifonos')">Audifonos</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Bocinas'" (click)="selectFilter('Bocinas', 'Bocinas')">Bocinas</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Focos'" (click)="selectFilter('Focos', 'Focos')">Focos</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Luces'" (click)="selectFilter('Luces', 'Luces')">Luces</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Ventilador'" (click)="selectFilter('Ventilador', 'Ventilador')">Ventilador</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Television'" (click)="selectFilter('Television', 'Television')">Television</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Sockets'" (click)="selectFilter('Sockets', 'Sockets')">Sockets</div>
+            <div class="dropdown-option" [class.active]="selectedFilter() === 'Asistente'" (click)="selectFilter('Asistente', 'Asistente')">Asistente</div>
           </div>
         }
       </div>
     </div>
   </div>
 
-  <!-- Device table section -->
   <div class="devices-section">
     <div class="section-header">
       <div class="section-title-row">
@@ -50,21 +48,19 @@
         </div>
         <div>
           <h2 class="section-title">Todos los dispositivos</h2>
-          <p class="section-sub">{{ filteredDevices().length }} dispositivos en línea</p>
+          <p class="section-sub">{{ filteredDevices().length }} dispositivos en linea</p>
         </div>
         <svg lucideChevronDown class="section-arrow" [size]="20" style="transform: rotate(-90deg);"></svg>
       </div>
     </div>
 
-    <!-- Estado de carga -->
     @if (loading()) {
       <div class="table-feedback">
         <svg lucideSun [size]="20" class="spin"></svg>
-        Cargando dispositivos…
+        Cargando dispositivos...
       </div>
     }
 
-    <!-- Estado de error -->
     @if (error()) {
       <div class="table-feedback table-feedback--error">
         <svg lucideTriangleAlert [size]="18"></svg>
@@ -72,7 +68,6 @@
       </div>
     }
 
-    <!-- Table -->
     @if (!loading()) {
       <div class="table-wrapper">
         <table class="devices-table">
@@ -80,11 +75,10 @@
             <tr>
               <th>DISPOSITIVO</th>
               <th>TIPO</th>
-              <th>ACCIÓN</th>
+              <th>ACCION</th>
               <th>BLUETOOTH</th>
               <th>MAC</th>
-              <th>SINCRONIZACIÓN</th>
-              <!-- Columna oculta por defecto por petición de usuario -->
+              <th>SINCRONIZACION</th>
               @if (showActions()) {
                 <th>ACCIONES</th>
               }
@@ -93,10 +87,9 @@
           <tbody>
             @for (device of filteredDevices(); track device.sk_aparato_id) {
               <tr class="device-row" (click)="verDetalle(device)" style="cursor: pointer;">
-                <!-- Device -->
                 <td class="device-cell">
                  <div class="device-avatar">
-                   <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="20"></svg>
+                   <svg [lucideIcon]="getDeviceIcon(device.icono)" [size]="20"></svg>
                  </div>
                  <div class="device-info">
                    <span class="device-name">{{ device.nombre_aparato }}</span>
@@ -107,39 +100,31 @@
                  </div>
                 </td>
 
-                <!-- Type -->
                 <td class="type-cell">{{ device.tipo_aparato }}</td>
 
-                <!-- Power / Action -->
                 <td class="power-cell">
-                  <div class="action-badge">
-                    <svg lucideBolt [size]="12"></svg>
-                    {{device.accion_nombre}}
+                  <div class="action-btn-status" [class.on]="device.accion_nombre === 'Encendido'">
+                    <svg lucidePower [size]="14"></svg>
+                    <span>{{ device.accion_nombre }}</span>
                   </div>
                 </td>
 
-                <!-- Bluetooth Name -->
                 <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
-
-                <!-- MAC -->
                 <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
-
-                <!-- Sync -->
                 <td class="sync-cell">
                   {{ (device.fecha_sincronizacion | date:'dd/MM/yyyy HH:mm') || 'Sin sincronizar' }}
                 </td>
 
-                <!-- Actions -->
                 @if (showActions()) {
                   <td class="actions-cell">
                     <div class="action-buttons-group">
-                      <button class="row-action-btn" title="Cerrar sesión">
+                      <button class="row-action-btn" title="Cerrar sesion">
                         <svg lucideLogOut [size]="18"></svg>
                       </button>
                       <button class="row-action-btn" title="Ajustes">
                         <svg lucideBolt [size]="18"></svg>
                       </button>
-                      <button class="row-action-btn" title="Más opciones">
+                      <button class="row-action-btn" title="Mas opciones">
                         <svg lucideChevronDown [size]="18"></svg>
                       </button>
                     </div>
@@ -161,7 +146,6 @@
       </div>
     }
 
-    <!-- Pagination -->
     <footer class="table-footer">
       <p class="results-count">Mostrando 1 a {{ filteredDevices().length }} de {{ filteredDevices().length }} dispositivos</p>
       <div class="pagination">
@@ -171,5 +155,4 @@
       </div>
     </footer>
   </div>
-
 </div>

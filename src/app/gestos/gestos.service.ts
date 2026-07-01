@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
-import { Gesto } from './gesto.model';
+import { Gesto, GestoDetalle } from './gesto.model';
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
 
@@ -69,8 +69,8 @@ export class GestosService {
   /**
    * Obtiene el detalle de un gesto específico por su ID
    */
-  getGestoDetalle(id: number): Observable<Gesto> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
+  getGestoDetalle(id: number): Observable<GestoDetalle> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/detalle`, { headers: this.getHeaders() }).pipe(
       map(response => response?.data ?? response),
       catchError(err => {
         console.error(`Error cargando detalle del gesto ${id}:`, err);

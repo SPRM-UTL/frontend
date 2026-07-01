@@ -10,7 +10,7 @@ import {
   LucideTriangleAlert,
   LucideLayoutDashboard,
   LucideChevronDown,
-  LucideBolt,
+  LucidePower,
   LucideDynamicIcon
 } from '@lucide/angular';
 import { getDeviceIcon } from '../shared/icon-map';
@@ -26,7 +26,7 @@ import { getDeviceIcon } from '../shared/icon-map';
     LucideTriangleAlert,
     LucideLayoutDashboard,
     LucideChevronDown,
-    LucideBolt,
+    LucidePower,
     LucideDynamicIcon
   ],
   templateUrl: './control.html',
@@ -41,7 +41,7 @@ export class Control implements OnInit {
   readonly LucideTriangleAlert = LucideTriangleAlert;
   readonly LucideLayoutDashboard = LucideLayoutDashboard;
   readonly LucideChevronDown = LucideChevronDown;
-  readonly LucideBolt = LucideBolt;
+  readonly LucidePower = LucidePower;
 
   readonly tipos        = this.controlService.tiposDispositivos;
   readonly dispositivos = this.controlService.todosLosDispositivos;

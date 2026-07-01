@@ -345,7 +345,7 @@
   color: #475569;
 }
 
-/* Action Badge */
+/* Action Badge (Old) */
 .action-badge {
   display: inline-flex;
   align-items: center;
@@ -357,6 +357,72 @@
   border-radius: 10px;
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+/* Action Status (New design - Non-clickable) */
+.action-btn-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 110px;
+  justify-content: center;
+  user-select: none;
+}
+
+.action-btn-status.on {
+  background: #e6f7f5;
+  color: #2bbfaa;
+  border-color: #2bbfaa;
+}
+
+.action-btn-status svg {
+  transition: transform 0.3s;
+}
+
+.action-btn-status.on svg {
+  transform: scale(1.1);
+}
+
+/* Action Status (Non-clickable) */
+.action-btn-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 110px;
+  justify-content: center;
+  user-select: none;
+}
+
+.action-btn-status.on {
+  background: #e6f7f5;
+  color: #2bbfaa;
+  border-color: #2bbfaa;
+}
+
+.action-btn-status svg {
+  transition: transform 0.3s;
+}
+
+.action-btn-status.on svg {
+  transform: scale(1.1);
+}
+
+.action-btn-toggle:active {
+  transform: translateY(0);
 }
 
 /* Actions buttons group */

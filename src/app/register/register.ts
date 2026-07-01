@@ -12,6 +12,13 @@ import { LoaderService } from '../services/loader.service';
 
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import {
+  LucideEye,
+  LucideEyeOff,
+  LucideLock,
+  LucideMail,
+  LucideUser
+} from '@lucide/angular';
 @Component({
   selector: 'app-register',
 
@@ -20,7 +27,12 @@ import { CommonModule } from '@angular/common';
   imports: [
     RouterLink,
     FormsModule,
-    CommonModule
+    CommonModule,
+    LucideEye,
+    LucideEyeOff,
+    LucideLock,
+    LucideMail,
+    LucideUser
   ],
 
   templateUrl: './register.html',

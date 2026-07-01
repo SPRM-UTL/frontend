@@ -46,7 +46,7 @@
                (click)="selectTipo(t.nombre_tipo)">
 
             <div class="category-icon-circle" [class]="t.nombre_tipo.toLowerCase().replace(' ', '-')">
-              <svg [lucideIcon]="getDeviceIcon(t.nombre_tipo)"></svg>
+              <svg [lucideIcon]="getDeviceIcon(t.icono)"></svg>
             </div>
 
             <div class="category-info">
@@ -88,11 +88,11 @@
               <div class="device-control-card" [class.is-on]="d.encendido">
                 <div class="device-card-head">
                   <span class="device-type-icon" [class.on]="d.encendido">
-                    <svg [lucideIcon]="getDeviceIcon(d.tipo_aparato)"></svg>
+                    <svg [lucideIcon]="getDeviceIcon(d.icono)"></svg>
                   </span>
 
                   <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
-                     <svg lucideBolt></svg>
+                     <svg lucidePower></svg>
                   </button>
                 </div>
 

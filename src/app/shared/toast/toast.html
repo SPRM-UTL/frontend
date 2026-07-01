@@ -4,9 +4,8 @@
     [class.visible]="visible"
     [ngClass]="type"
   >
-    <span *ngIf="icon" class="toast-icon"
-          [style.mask-image]="'url(/icons/' + icon + '.svg)'"
-          [style.-webkit-mask-image]="'url(/icons/' + icon + '.svg)'">
+    <span *ngIf="icon" class="toast-icon">
+      <svg [lucideIcon]="icon" [size]="22"></svg>
     </span>
     {{ message }}
   </div>

@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angula
 import { CommonModule } from '@angular/common';
 import { ToastService, Toast } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
+import { LucideDynamicIcon } from '@lucide/angular';
+import { getToastIcon } from '../icon-map';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideDynamicIcon],
   templateUrl: './toast.html',
   styleUrl: './toast.css'
 })
@@ -15,7 +17,7 @@ export class ToastComponent implements OnInit, OnDestroy {
   visible = false;
   message = '';
   type: Toast['type'] = 'info';
-  icon = '';
+  icon: any = null;
 
   private subscription?: Subscription;
   private timeoutId?: any;
@@ -50,7 +52,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.message = toast.message;
       this.type = toast.type;
-      this.icon = toast.icon || this.getDefaultIcon(toast.type);
+      this.icon = getToastIcon(toast.icon, toast.type);
 
       this.visible = true;
       this.cdr.detectChanges();
@@ -64,13 +66,4 @@ export class ToastComponent implements OnInit, OnDestroy {
     }, 10);
   }
 
-  private getDefaultIcon(type: Toast['type']): string {
-    switch (type) {
-      case 'success': return 'check';
-      case 'error': return 'ban';
-      case 'warning': return 'triangle-alert';
-      case 'loading': return 'clock';
-      default: return 'sparkles';
-    }
-  }
 }
