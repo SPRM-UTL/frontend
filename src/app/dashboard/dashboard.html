@@ -397,7 +397,7 @@
 
             <div class="detail-main">
 
-              <section class="card hero-info-card">
+              <section class="card hero-info-card" style="position: relative;">
                 <div class="hero-header">
                   <div class="hero-icon-box">
                     <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="44"></svg>
@@ -409,6 +409,14 @@
                       {{ dispositivosService.selectedDeviceOnline() ? 'En línea' : 'Desconectado' }}
                     </span>
                     <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
+                  </div>
+                  
+                  <div class="action-btn-status"
+                       [class.on]="device.accion_nombre === 'Encendido'"
+                       (click)="dispositivosService.toggleDevice(device); $event.stopPropagation()"
+                       style="position: absolute; right: 24px; top: 24px; z-index: 10;">
+                    <svg lucidePower [size]="14"></svg>
+                    <span>{{ device.accion_nombre }}</span>
                   </div>
                 </div>
               </section>
