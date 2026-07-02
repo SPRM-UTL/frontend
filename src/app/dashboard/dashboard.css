@@ -1847,3 +1847,43 @@ body {
   max-height: 95vh;
   overflow-y: auto;
 }
+
+/* Action Status Modal Button */
+.action-btn-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 110px;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.action-btn-status:hover {
+  background: #e2e8f0;
+}
+
+.action-btn-status.on {
+  background: #e6f7f5;
+  color: #2bbfaa;
+  border-color: #2bbfaa;
+}
+
+.action-btn-status.on:hover {
+  background: #d4f0eb;
+}
+
+.action-btn-status svg {
+  transition: transform 0.3s;
+}
+
+.action-btn-status.on svg {
+  transform: scale(1.1);
+}

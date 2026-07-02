@@ -35,7 +35,7 @@ import {
   LucideChevronRight, LucideMapPin, LucideCheck, LucideCamera,
   LucidePlay, LucideBluetooth, LucideHash, LucideZap,
   LucidePause, LucideVolume2, LucideVolumeX, LucideRotateCcw, LucideRotateCw,
-  LucideSettings, LucideMaximize, LucideChevronLeft, LucideDownload,
+  LucideSettings, LucideMaximize, LucideChevronLeft, LucideDownload, LucidePower,
 } from '@lucide/angular';
 
 // Mapa de rutas → títulos, evita la cadena de if/else
@@ -62,7 +62,7 @@ const ROUTE_TITLES: Record<string, string> = {
     LucidePlay, LucideBluetooth, LucideHash, LucideZap,
     LucidePause, LucideVolume2, LucideVolumeX, LucideRotateCcw, LucideRotateCw,
     LucideSettings, LucideMaximize, LucideChevronLeft, LucideChevronRight,
-    LucideDownload,
+    LucideDownload, LucidePower,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
