@@ -179,9 +179,6 @@ export class DispositivosService {
     this.verDetalle(null);
   }
 
-  /**
-   * Alterna el estado de encendido/apagado de un dispositivo
-   */
   toggleDevice(device: Dispositivo): void {
     const nuevoEstado = device.accion_nombre === 'Encendido' ? 'Apagado' : 'Encendido';
     const body = {
@@ -192,9 +189,15 @@ export class DispositivosService {
 
     this.http.put(url, body, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
       next: () => {
+        // 1. Actualizamos la lista principal (Tabla)
         this.devices.update(list =>
           list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, accion_nombre: nuevoEstado } : d)
         );
+        
+        // 2. Si el dispositivo modificado es el que está abierto en el modal, también lo actualizamos (Modal)
+        if (this.selectedDevice()?.sk_aparato_id === device.sk_aparato_id) {
+          this.selectedDevice.update(current => current ? { ...current, accion_nombre: nuevoEstado } : null);
+        }
       },
       error: (err) => {
         console.error('Error toggling device:', err);

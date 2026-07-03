@@ -106,7 +106,9 @@
                 <td class="type-cell">{{ device.tipo_aparato }}</td>
 
                 <td class="power-cell">
-                  <div class="action-btn-status" [class.on]="device.accion_nombre === 'Encendido'">
+                  <div class="action-btn-status" 
+                       [class.on]="device.accion_nombre === 'Encendido'"
+                       (click)="onToggleDevice(device); $event.stopPropagation()">
                     <svg lucidePower [size]="14"></svg>
                     <span>{{ device.accion_nombre }}</span>
                   </div>
