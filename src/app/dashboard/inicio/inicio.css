@@ -28,6 +28,7 @@
   gap: 1rem;
   min-width: 0;
   animation: slideUpFromBottom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  background: #f8fbff;
 }
 
 .icon-mask {
@@ -157,11 +158,11 @@
   align-items: center;
   gap: 1rem;
   min-width: 0;
-  background: var(--white);
-  border: 1px solid rgba(26, 46, 42, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  border: 1px solid #e5edf5;
   border-radius: 20px;
   padding: 1rem 1rem;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
 }
 
 .stat-ico {
@@ -215,16 +216,87 @@
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.55fr);
   gap: 1rem;
 }
-
-.chart-card,
-.panel-card,
-.quick-panel {
-  background: var(--white);
-  border: 1px solid rgba(26, 46, 42, 0.08);
+.chart-card {
+  background: linear-gradient(160deg, var(--cafe-primary) 70% , var(--cafe-dark) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
   padding: 1rem 1rem;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 18px 34px rgba(21, 128, 61, 0.24);
   min-width: 0;
+  color: #ffffff;
+}
+
+.panel-card,
+.quick-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  padding: 1rem 1rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+  min-width: 0;
+}
+
+/* Nuevo estilo oscuro para paneles sincronizado con gráficas */
+.panel-card--dark {
+  background: linear-gradient(160deg, var(--cafe-primary) 70% , var(--cafe-dark) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 34px rgba(21, 128, 61, 0.24);
+  color: #ffffff;
+}
+
+.panel-card--dark .panel-title {
+  color: #ffffff;
+}
+
+.panel-card--dark .panel-subtitle {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.panel-card--dark .text-link-box {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+}
+
+.panel-card--dark .text-link-box:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.panel-card--dark .automation-copy strong {
+  color: #ffffff;
+}
+
+.panel-card--dark .automation-copy span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.panel-card--dark .device-chip-new strong {
+  color: #ffffff;
+}
+
+.panel-card--dark .device-chip-new {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.panel-card--dark .device-chip-new:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.panel-card--dark .chip-ico-circle {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.panel-card--dark .automation-row {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.panel-card--dark .panel-icon-main {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
 .chart-card--wide {
@@ -244,7 +316,13 @@
   align-items: center;
 }
 
-.chart-title,
+.chart-title {
+  font-size: 1.02rem;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
 .panel-title {
   font-size: 1.02rem;
   color: var(--cafe-dark);
@@ -252,15 +330,31 @@
   font-weight: 700;
 }
 
-.chart-subtitle,
-.panel-subtitle {
+.chart-subtitle {
   margin-top: 0.18rem;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.8rem;
   font-family: var(--font-body);
 }
 
-.range-pill,
+.panel-subtitle {
+  margin-top: 0.18rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+}
+
+.range-pill {
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
 .text-link {
   border: 1px solid rgba(26, 46, 42, 0.1);
   background: #fff;
@@ -288,6 +382,19 @@ app-dynamic-chart {
   display: block;
   width: 100%;
   height: 320px;
+}
+
+:host ::ng-deep .chart-card .apexcharts-text,
+:host ::ng-deep .chart-card .apexcharts-legend-text,
+:host ::ng-deep .chart-card .apexcharts-datalabel,
+:host ::ng-deep .chart-card .apexcharts-datalabel-label,
+:host ::ng-deep .chart-card .apexcharts-datalabel-value {
+  fill: rgba(255, 255, 255, 0.88) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+:host ::ng-deep .chart-card .apexcharts-gridline {
+  stroke: rgba(255, 255, 255, 0.16) !important;
 }
 
 .content-grid {
@@ -422,12 +529,47 @@ app-dynamic-chart {
   border-radius: 50%;
 }
 
-/* Colores de las tarjetas y sus iconos sincronizados */
-.device-chip--orange { background: linear-gradient(180deg, rgba(249, 115, 22, 0.05) 0%, #ffffff 100%); color: #f97316; }
-.device-chip--blue { background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, #ffffff 100%); color: #3b82f6; }
-.device-chip--violet { background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, #ffffff 100%); color: #8b5cf6; }
-.device-chip--teal { background: linear-gradient(180deg, rgba(43, 191, 170, 0.05) 0%, #ffffff 100%); color: #2bbfaa; }
-.device-chip--green { background: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, #ffffff 100%); color: #22c55e; }
+/* Colores de las tarjetas con gradientes monocromáticos (Color -> Color más claro) */
+.device-chip--pink   { background: linear-gradient(135deg, #ec4899 0%, #f9a8d4 100%) !important; color: #ffffff !important; }
+.device-chip--violet { background: linear-gradient(135deg, #8b5cf6 0%, #c4b5fd 100%) !important; color: #ffffff !important; }
+.device-chip--green  { background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%) !important; color: #ffffff !important; }
+.device-chip--orange { background: linear-gradient(135deg, #f97316 0%, #fdba74 100%) !important; color: #ffffff !important; }
+
+/* Estilos de las tarjetas dentro del panel oscuro */
+.panel-card--dark .device-chip-new {
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+  padding: 1.5rem 1rem !important;
+}
+
+.panel-card--dark .device-chip-new strong {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.panel-card--dark .device-chip-new span {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+}
+
+.panel-card--dark .chip-ico-circle {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.panel-card--dark .status-pill-on {
+  background: #ffffff !important;
+  color: #16a34a !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
+}
+
+.panel-card--dark .status-pill-on {
+  background: #ffffff;
+  color: #16a34a;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border: none;
+}
 
 /* Tarjeta de Agregar */
 .add-device-chip {

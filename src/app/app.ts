@@ -23,6 +23,8 @@ export class App implements OnDestroy {
   private loaderService = inject(LoaderService);
   private routerSub: Subscription;
   private safetyTimer?: any;
+  private readonly loaderSafetyTimeoutMs = 8000;
+  private readonly loaderHideDelayMs = 3400;
 
   constructor() {
     // El componente raíz NUNCA se destruye durante la navegación,
@@ -30,12 +32,12 @@ export class App implements OnDestroy {
     this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.loaderService.show();
-        // Timeout de seguridad: si en 5 segundos no termina, ocultar el loader
+        // Timeout de seguridad: si en 8 segundos no termina, ocultar el loader
         clearTimeout(this.safetyTimer);
-        this.safetyTimer = setTimeout(() => this.loaderService.hide(), 5000);
+        this.safetyTimer = setTimeout(() => this.loaderService.hide(), this.loaderSafetyTimeoutMs);
       } else if (event instanceof NavigationEnd) {
         clearTimeout(this.safetyTimer);
-        setTimeout(() => this.loaderService.hide(), 400);
+        setTimeout(() => this.loaderService.hide(), this.loaderHideDelayMs);
       } else if (event instanceof NavigationCancel || event instanceof NavigationError) {
         clearTimeout(this.safetyTimer);
         this.loaderService.hide();

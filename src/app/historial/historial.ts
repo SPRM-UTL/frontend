@@ -74,6 +74,8 @@ export class Historial implements OnInit {
   readonly loading = this.historialService.loading;
   readonly error   = this.historialService.error;
 
+  readonly selectedId = signal<number | null>(null);
+
   ngOnInit(): void {
     this.historialService.loadHistorial();
     this.dispositivosService.loadDevices();

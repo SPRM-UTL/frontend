@@ -53,10 +53,10 @@ export class Inicio {
 
   getChipClass(tipo: string, index: number = 0): string {
     const colorClasses = [
-      'device-chip--orange',
-      'device-chip--blue',
+      'device-chip--pink',
       'device-chip--violet',
-      'device-chip--teal'
+      'device-chip--green',
+      'device-chip--orange'
     ];
     // Cicla los colores basados en el índice para que sean distintos
     return colorClasses[index % colorClasses.length];
@@ -73,7 +73,7 @@ export class Inicio {
 
   eficienciaSeries = [85];
   eficienciaLabels = ['Eficiencia global'];
-  eficienciaColors = ['#2bbfaa'];
+  eficienciaColors = ['#ffffff'];
 
   constructor() {
     afterNextRender(() => {

@@ -13,6 +13,7 @@ export const ENDPOINTS = {
 
   control: '/api/aparatos/control',
 
-  cuenta: '/api/usuarios'
+  cuenta: '/api/usuarios',
 
+  consumosHistorico: '/AparatosConsumoHistorico/todos_los_consumos'
 };
