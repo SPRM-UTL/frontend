@@ -26,7 +26,7 @@ export class InicioService {
   readonly acciones = signal<AparatoUtilizado[]>([]);
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
-  readonly consumos = signal<ConsumosService[]>([]);
+  readonly consumos = signal<AparatosConsumoHistorico[]>([]);
 
   loadInicio(id: number, token: string): void {
     this.loading.set(true);

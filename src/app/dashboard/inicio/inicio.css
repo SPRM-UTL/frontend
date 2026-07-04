@@ -217,18 +217,17 @@
   gap: 1rem;
 }
 .chart-card {
-  background: linear-gradient(160deg, var(--cafe-primary) 70% , var(--cafe-dark) 100%);
+  background: var(--cafe-primary);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
   padding: 1rem 1rem;
-  box-shadow: 0 18px 34px rgba(21, 128, 61, 0.24);
   min-width: 0;
   color: #ffffff;
 }
 
 .panel-card,
 .quick-panel {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  background: var(--cafe-primary);
   border: 1px solid #e5edf5;
   border-radius: 24px;
   padding: 1rem 1rem;
@@ -238,10 +237,14 @@
 
 /* Nuevo estilo oscuro para paneles sincronizado con gráficas */
 .panel-card--dark {
-  background: linear-gradient(160deg, var(--cafe-primary) 70% , var(--cafe-dark) 100%);
+  background: linear-gradient(160deg, var(--cafe-primary) 70% , var(--cafe-primary) 100%);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 18px 34px rgba(21, 128, 61, 0.24);
   color: #ffffff;
+}
+.panel-card-device{
+  background: var(--cafe-primary);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #000000;
 }
 
 .panel-card--dark .panel-title {
@@ -325,7 +328,7 @@
 
 .panel-title {
   font-size: 1.02rem;
-  color: var(--cafe-dark);
+  color: var(--white);
   font-family: var(--font-title);
   font-weight: 700;
 }
@@ -339,7 +342,7 @@
 
 .panel-subtitle {
   margin-top: 0.18rem;
-  color: #64748b;
+  color: white;
   font-size: 0.8rem;
   font-family: var(--font-body);
 }
@@ -417,7 +420,7 @@ app-dynamic-chart {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  color: var(--cafe-primary);
+  color: var(--white);
 }
 
 .panel-icon-main .icon-mask {
@@ -453,6 +456,7 @@ app-dynamic-chart {
 }
 
 .device-chip-new {
+  background: white;
   border-radius: 24px;
   border: 1px solid rgba(0, 0, 0, 0.04);
   padding: 1.5rem 1rem;
@@ -480,8 +484,7 @@ app-dynamic-chart {
   display: grid;
   place-items: center;
   margin-bottom: 0.5rem;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  background: var(--cafe-primary);
 }
 
 .chip-ico-circle .icon-mask {
@@ -529,11 +532,6 @@ app-dynamic-chart {
   border-radius: 50%;
 }
 
-/* Colores de las tarjetas con gradientes monocromáticos (Color -> Color más claro) */
-.device-chip--pink   { background: linear-gradient(135deg, #ec4899 0%, #f9a8d4 100%) !important; color: #ffffff !important; }
-.device-chip--violet { background: linear-gradient(135deg, #8b5cf6 0%, #c4b5fd 100%) !important; color: #ffffff !important; }
-.device-chip--green  { background: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%) !important; color: #ffffff !important; }
-.device-chip--orange { background: linear-gradient(135deg, #f97316 0%, #fdba74 100%) !important; color: #ffffff !important; }
 
 /* Estilos de las tarjetas dentro del panel oscuro */
 .panel-card--dark .device-chip-new {
@@ -553,7 +551,7 @@ app-dynamic-chart {
 }
 
 .panel-card--dark .chip-ico-circle {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: var (--cafe-dark)!important;
   color: #ffffff !important;
 }
 

@@ -49,14 +49,14 @@
     <article class="chart-card radial-box">
       <div class="chart-header">
         <div>
-          <h3 class="chart-title">Eficiencia del sistema</h3>
-          <p class="chart-subtitle">Rendimiento global</p>
+          <h3 class="chart-title">Consumo diario</h3>
+          <p class="chart-subtitle">Carga promedio de hoy</p>
         </div>
       </div>
       <div class="chart-body chart-body--radial">
         <app-dynamic-chart
           chartType="radialBar"
-          [series]="eficienciaSeries"
+          [series]="eficienciaSeries()"
           [labels]="eficienciaLabels"
           [colors]="eficienciaColors"
           [height]="300"
@@ -68,15 +68,15 @@
     <article class="chart-card chart-card--wide">
       <div class="chart-header chart-header--space">
         <div>
-          <h3 class="chart-title">Actividad semanal</h3>
-          <p class="chart-subtitle">Frecuencia de automatizaciones</p>
+          <h3 class="chart-title">Consumo semanal</h3>
+          <p class="chart-subtitle">Promedio de potencia (W) por día</p>
         </div>
         <button class="range-pill" type="button">Esta semana</button>
       </div>
       <div class="chart-body">
         <app-dynamic-chart
           chartType="area"
-          [series]="actividadSeries"
+          [series]="actividadSeries()"
           [categories]="actividadCategorias"
           [colors]="['#ffff','#ffff']"
           [height]="300"
@@ -87,7 +87,7 @@
   </section>
 
   <section class="content-grid card">
-    <article class="panel-card panel-card--dark">
+    <article class="panel-card panel-card--device">
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
@@ -106,9 +106,9 @@
 
       <div class="devices-strip">
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
-          <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)" >
+          <div class="device-chip-new " >
             <div class="chip-ico-circle">
-              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)"></svg>
+              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" class="panel-icon-main"></svg>
             </div>
             <strong>{{ device.nombre_aparato }}</strong>
             <span>{{ device.tipo_aparato }}</span>

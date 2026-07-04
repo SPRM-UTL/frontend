@@ -65,14 +65,58 @@ export class Inicio {
   getDeviceIcon = getDeviceIcon;
   getGestureIcon = getGestureIcon;
 
-  actividadSeries = [{
-    name: 'acciones',
-    data: [12, 18, 15, 22, 20, 25, 30]
-  }];
-  actividadCategorias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  readonly consumosData = this.inicioService.consumos;
 
-  eficienciaSeries = [85];
-  eficienciaLabels = ['Eficiencia global'];
+  readonly actividadCategorias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+  readonly actividadSeries = computed(() => {
+    const data = this.consumosData();
+    const dailySum = [0, 0, 0, 0, 0, 0, 0];
+    const dailyCount = [0, 0, 0, 0, 0, 0, 0];
+
+    data.forEach(item => {
+      const date = new Date(item.fecha_medicion);
+      // getDay() retorna 0 para domingo, 1 para lunes, etc.
+      // Ajustamos para que Lunes sea 0
+      let dayIdx = date.getDay() - 1;
+      if (dayIdx === -1) dayIdx = 6; // Domingo
+
+      dailySum[dayIdx] += item.potencia_w;
+      dailyCount[dayIdx]++;
+    });
+
+    const averageData = dailySum.map((sum, i) =>
+      dailyCount[i] > 0 ? Number((sum / dailyCount[i]).toFixed(2)) : 0
+    );
+
+    return [{
+      name: 'Consumo (W)',
+      data: averageData
+    }];
+  });
+
+  readonly eficienciaSeries = computed(() => {
+    const data = this.consumosData();
+    if (data.length === 0) return [0];
+
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
+    const todayData = data.filter(item => item.fecha_medicion.startsWith(todayStr));
+
+    if (todayData.length === 0) return [0];
+
+    const totalPotenciaToday = todayData.reduce((acc, item) => acc + item.potencia_w, 0);
+    const avgPotenciaToday = totalPotenciaToday / todayData.length;
+
+    // Supongamos una carga máxima de referencia de 200W para el porcentaje
+    const maxReference = 200;
+    const percentage = Math.min(100, Math.round((avgPotenciaToday / maxReference) * 100));
+
+    return [percentage];
+  });
+
+  eficienciaLabels = ['Consumo diario'];
   eficienciaColors = ['#ffffff'];
 
   constructor() {
