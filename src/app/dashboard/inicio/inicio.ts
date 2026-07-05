@@ -99,24 +99,17 @@ export class Inicio {
     const data = this.consumosData();
     if (data.length === 0) return [0];
 
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-
-    const todayData = data.filter(item => item.fecha_medicion.startsWith(todayStr));
-
-    if (todayData.length === 0) return [0];
-
-    const totalPotenciaToday = todayData.reduce((acc, item) => acc + item.potencia_w, 0);
-    const avgPotenciaToday = totalPotenciaToday / todayData.length;
+    const totalPotencia = data.reduce((acc, item) => acc + item.potencia_w, 0);
+    const avgPotencia = totalPotencia / data.length;
 
     // Supongamos una carga máxima de referencia de 200W para el porcentaje
     const maxReference = 200;
-    const percentage = Math.min(100, Math.round((avgPotenciaToday / maxReference) * 100));
+    const percentage = Math.min(100, Math.round((avgPotencia / maxReference) * 100));
 
     return [percentage];
   });
 
-  eficienciaLabels = ['Consumo diario'];
+  eficienciaLabels = ['Carga del sistema'];
   eficienciaColors = ['#ffffff'];
 
   constructor() {
