@@ -73,12 +73,10 @@
         <table class="devices-table">
           <thead>
             <tr>
-              <th>DISPOSITIVO</th>
+              <th>DISPOSITIVOS</th>
               <th>TIPO</th>
               <th>ACCION</th>
               <th>BLUETOOTH</th>
-              <th>MAC</th>
-              <th>SINCRONIZACION</th>
               @if (showActions()) {
                 <th>ACCIONES</th>
               }
@@ -115,10 +113,6 @@
                 </td>
 
                 <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
-                <td class="mac-cell">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</td>
-                <td class="sync-cell">
-                  {{ (device.fecha_sincronizacion | date:'dd/MM/yyyy HH:mm') || 'Sin sincronizar' }}
-                </td>
 
                 @if (showActions()) {
                   <td class="actions-cell">
@@ -139,9 +133,11 @@
             } @empty {
               @if (!loading()) {
                 <tr>
-                  <td [attr.colspan]="showActions() ? 7 : 6" class="empty-state">
-                    <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
-                    <p>No se encontraron dispositivos</p>
+                  <td [attr.colspan]="showActions() ? 5 : 4">
+                    <div class="empty-state">
+                      <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                      <p>No se encontraron dispositivos</p>
+                    </div>
                   </td>
                 </tr>
               }
