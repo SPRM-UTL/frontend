@@ -38,7 +38,7 @@ export class AudioService {
   private crearSonido(ruta: string): HTMLAudioElement {
     const audio = new Audio(ruta);
     audio.preload = 'auto';
-    audio.volume = 0.7;
+    audio.volume = 0.4;
     return audio;
   }
 
@@ -51,8 +51,8 @@ export class AudioService {
     }
 
     try {
-      const nivel = typeof volumen === 'number' ? Math.max(0, Math.min(1, volumen / 100)) : 0.7;
-      sonido.volume = nombre === 'volumen' ? nivel : 0.7;
+      const nivel = typeof volumen === 'number' ? Math.max(0, Math.min(1, volumen / 100)) : 0.4;
+      sonido.volume = nombre === 'volumen' ? nivel : 0.4;
       sonido.pause();
       sonido.currentTime = 0;
 
