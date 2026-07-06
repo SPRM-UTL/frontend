@@ -15,5 +15,10 @@ export const ENDPOINTS = {
 
   cuenta: '/api/usuarios',
 
-  consumosHistorico: '/api/AparatosConsumoHistorico/todos_los_consumos'
+  consumo: '/api/AparatosConsumoHistorico/todos_los_consumos',
+
+  casas: '/api/Casas',
+
+  habitaciones: '/api/Habitaciones'
+
 };

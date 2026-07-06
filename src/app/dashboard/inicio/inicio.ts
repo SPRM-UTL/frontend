@@ -5,13 +5,10 @@ import { RouterLink } from '@angular/router';
 import { DynamicChartComponent } from '../../macros/dynamic-char.component';
 import { InicioService } from './inicio.service';
 import { DispositivosService } from '../../dispositivos/dispositivos.service';
+import { CasasService } from '../../casas/casas.service';
 
 import {
-  LucideSmartphone,
-  LucideHand,
-  LucideBolt,
-  LucideLayoutDashboard,
-  LucideDynamicIcon
+  LucideDynamicIcon,
 } from '@lucide/angular';
 import { getDeviceIcon, getGestureIcon } from '../../shared/icon-map';
 
@@ -22,10 +19,6 @@ import { getDeviceIcon, getGestureIcon } from '../../shared/icon-map';
     CommonModule,
     DynamicChartComponent,
     RouterLink,
-    LucideSmartphone,
-    LucideHand,
-    LucideBolt,
-    LucideLayoutDashboard,
     LucideDynamicIcon
   ],
   templateUrl: './inicio.html',
@@ -36,6 +29,7 @@ export class Inicio {
   private gestosService = inject(GestosService)
   public readonly inicioService = inject(InicioService);
   public readonly devicesService = inject(DispositivosService);
+  public readonly casasService = inject(CasasService);
 
   readonly stats = this.inicioService.stats;
   readonly acciones = this.inicioService.acciones;
@@ -48,6 +42,10 @@ export class Inicio {
 
   readonly displayedGestos = computed(() => {
     return this.gestosService.gestos().slice(0, 3);
+  });
+
+  readonly displayedCasas = computed(() => {
+    return this.casasService.casas().slice(0, 3);
   });
 
 
@@ -120,6 +118,7 @@ export class Inicio {
 
       if (userId > 0 && token) {
         this.inicioService.loadInicio(userId, token);
+        this.casasService.loadCasas();
       }
     });
   }

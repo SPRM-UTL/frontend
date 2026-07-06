@@ -15,7 +15,7 @@
       <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
       <span class="logo-name">Manordomo</span>
       <button class="mobile-close-btn" (click)="closeMenu()" aria-label="Cerrar menú">
-        <svg lucideX></svg>
+        <svg [lucideIcon]="getDeviceIcon('x')"></svg>
       </button>
     </div>
 
@@ -23,39 +23,43 @@
       <div class="nav-active-indicator" [style.transform]="'translateY(' + indicatorTop() + 'px)'"></div>
 
       <a class="nav-item" routerLink="/dashboard/inicio"      routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideLayoutDashboard class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Dashboard</span>
       </a>
       <a class="nav-item" routerLink="/dashboard/dispositivos" routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideSmartphone class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('smartphone')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Dispositivos</span>
       </a>
+      <a class="nav-item" routerLink="/dashboard/casas" routerLinkActive="active" (click)="closeMenu()">
+        <svg [lucideIcon]="getDeviceIcon('home')" class="nav-icon-no-mask"></svg>
+        <span class="nav-text">Casas</span>
+      </a>
       <a class="nav-item" routerLink="/dashboard/gestos"      routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideHand class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('hand')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Gestos</span>
       </a>
       <a class="nav-item" routerLink="/dashboard/historial"   routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideClock class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('clock')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Historial de actividad</span>
       </a>
       <a class="nav-item" routerLink="/dashboard/control"     routerLinkActive="active" (click)="closeMenu()">
-        <svg lucidePencil class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('pencil')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Control</span>
       </a>
 
       <div class="nav-spacer"></div>
 
       <a class="nav-item" routerLink="/dashboard/ajustes"     routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideBolt class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('bolt')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Ajustes</span>
       </a>
       <a class="nav-item" routerLink="/dashboard/cuenta"      routerLinkActive="active" (click)="closeMenu()">
-        <svg lucideUser class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('user')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Cuenta</span>
       </a>
       <a class="nav-item signout" style="cursor:pointer"
          (click)="onLogout(); closeMenu(); $event.stopPropagation()">
-        <svg lucideLogOut class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('log-out')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Salir</span>
       </a>
     </nav>
@@ -67,14 +71,14 @@
 
       <button class="mobile-menu-btn" aria-label="Abrir menú"
               (click)="toggleMenu(); $event.stopPropagation()">
-        <svg lucideMenu [size]="28"></svg>
+        <svg [lucideIcon]="getDeviceIcon('menu')" [size]="28"></svg>
       </button>
 
       <div class="hero-copy">
         <p class="eyebrow">{{ currentTitle() }}</p>
         <h1 class="welcome-text">
           ¡Buenos días, {{ userName() }}!
-          <svg lucideHand [size]="22" class="wave-icon"></svg>
+          <svg [lucideIcon]="getGestureIcon('hand')" [size]="22" class="wave-icon"></svg>
         </h1>
       </div>
 
@@ -85,7 +89,7 @@
         <button class="notif-button" type="button" aria-label="Notificaciones"
                 [class.is-active]="panelOpen()"
                 (click)="togglePanel()">
-          <svg lucideBell></svg>
+          <svg [lucideIcon]="getDeviceIcon('bell')"></svg>
           @if (notifCount() > 0) {
             <span class="notif-badge">{{ notifCount() }}</span>
           }
@@ -104,7 +108,7 @@
 
             @if (panelLoading()) {
               <div class="notif-empty">
-                <span class="notif-spin"><svg lucideSun></svg></span>
+                <span class="notif-spin"><svg [lucideIcon]="getDeviceIcon('sun')"></svg></span>
                 <p>Cargando notificaciones…</p>
               </div>
             } @else if (panelError()) {
@@ -127,7 +131,7 @@
                     }
                     <button class="notif-close-btn" type="button" aria-label="Cerrar notificación"
                             (click)="dismissNotification(n); $event.stopPropagation()">
-                      <svg lucideX [size]="14"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('x')" [size]="14"></svg>
                     </button>
                   </article>
                 }
@@ -142,7 +146,7 @@
         <!-- Pill de fecha / panel de clima -->
         <div class="date-container">
           <button class="date-pill-btn" (click)="toggleDatePanel(); $event.stopPropagation()">
-            <svg lucideSun [size]="18" style="color:#f4b400"></svg>
+            <svg [lucideIcon]="getDeviceIcon('sun')" [size]="18" style="color:#f4b400"></svg>
             <div class="date-text-wrapper">
               <strong>{{ dayLabel }}</strong>
               <span>{{ timeLabel }}</span>
@@ -155,11 +159,11 @@
               <div class="weather-orbit">
                 <div [class]="'weather-circle ' + (weatherService.info()?.cssClass || 'sunny')">
                   @if (weatherService.loading()) {
-                    <svg lucideSun class="spin" [size]="76"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('sun')" class="spin" [size]="76"></svg>
                   } @else if (weatherService.info(); as w) {
                     <svg [lucideIcon]="w.icon" [size]="76"></svg>
                   } @else {
-                    <svg lucideSun [size]="76"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('sun')" [size]="76"></svg>
                   }
                 </div>
                 <div class="weather-time-box">
@@ -170,7 +174,7 @@
 
               <div class="weather-info-box">
                 <div class="weather-calendar-badge">
-                  <svg lucideCalendarDays [size]="28"></svg>
+                  <svg [lucideIcon]="getDeviceIcon('calendar-days')" [size]="28"></svg>
                 </div>
                 <strong>{{ dayLabel }}</strong>
 
@@ -188,13 +192,13 @@
 
               <div class="weather-footer-row">
                 <span class="weather-footer-place">
-                  <svg lucideMapPin [size]="16"></svg>
+                  <svg [lucideIcon]="getDeviceIcon('map-pin')" [size]="16"></svg>
                   {{ weatherService.info()?.place ?? 'Ubicación actual' }}
                 </span>
                 <span class="weather-footer-time">
                   {{ weatherService.info()?.updatedAt ?? timeLabel }}
                 </span>
-                <svg lucideChevronRight [size]="18" class="weather-footer-arrow"></svg>
+                <svg [lucideIcon]="getDeviceIcon('chevron-right')" [size]="18" class="weather-footer-arrow"></svg>
               </div>
 
             </div>
@@ -215,7 +219,7 @@
     <div class="logout-modal-overlay" (click)="authService.cancelLogout()">
       <div class="logout-modal-card" (click)="$event.stopPropagation()">
         <div class="logout-modal-icon-container">
-          <svg lucideLogOut class="logout-modal-icon"></svg>
+          <svg [lucideIcon]="getDeviceIcon('log-out')" class="logout-modal-icon"></svg>
         </div>
         <h2 class="logout-modal-title">¿Estás seguro de que deseas salir?</h2>
         <p class="logout-modal-desc">Tu sesión se cerrará de forma segura en este dispositivo.</p>
@@ -267,7 +271,7 @@
                   @for (rec of gesto.recomendaciones; track $index) {
                     <div class="rec-pill">
                       <div class="rec-check-circle">
-                        <svg lucideCheck [size]="12" class="check-icon"></svg>
+                        <svg [lucideIcon]="getDeviceIcon('check')" [size]="12" class="check-icon"></svg>
                       </div>
                       <p>{{ rec }}</p>
                     </div>
@@ -292,14 +296,14 @@
                             }
                           </div>
                           <span class="thumb-icon-overlay">
-                            <svg lucideCamera [size]="14"></svg>
+                            <svg [lucideIcon]="getDeviceIcon('camera')" [size]="14"></svg>
                           </span>
                         </div>
                       } @else {
                         <!-- Video Box -->
                         <div class="media-thumb video-box" (click)="openMediaViewer($index)">
                           <div class="video-preview-mask">
-                            <svg lucidePlay [size]="32" color="white"></svg>
+                            <svg [lucideIcon]="getDeviceIcon('play')" [size]="32" color="white"></svg>
                           </div>
                         </div>
                       }
@@ -316,7 +320,7 @@
                 <div class="info-rows">
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideCheck class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('check')" class="info-icon"></svg>
                       <span>Estado</span>
                     </div>
                     <span class="info-row-val status-text-green">
@@ -325,21 +329,21 @@
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideClock class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('clock')" class="info-icon"></svg>
                       <span>Duración</span>
                     </div>
                     <span class="info-row-val">{{ gesto.duracion_segundos || 1 }} seg.</span>
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideSun class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('sun')" class="info-icon"></svg>
                       <span>Iluminación</span>
                     </div>
                     <span class="info-row-val">{{ gesto.iluminacion_requerida || 'Alta' }}</span>
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideLayoutDashboard class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" class="info-icon"></svg>
                       <span>Distancia recomendada</span>
                     </div>
                     <span class="info-row-val">
@@ -352,7 +356,7 @@
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideSmartphone class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('smartphone')" class="info-icon"></svg>
                       <span>Dispositivo</span>
                     </div>
                     <span class="info-row-val">{{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}</span>
@@ -366,11 +370,11 @@
 
         <footer class="modal-footer-actions">
           <button class="btn-action-outline-gray">
-            <svg lucideDownload [size]="18"></svg>
+            <svg [lucideIcon]="getDeviceIcon('download')" [size]="18"></svg>
             Descargar guía
           </button>
           <button class="btn-action-solid-teal">
-            <svg lucideSmartphone [size]="18"></svg>
+            <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="18"></svg>
             Probar gesto
           </button>
         </footer>
@@ -410,12 +414,12 @@
                     </span>
                     <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
                   </div>
-                  
+
                   <div class="action-btn-status"
                        [class.on]="device.accion_nombre === 'Encendido'"
                        (click)="dispositivosService.toggleDevice(device); $event.stopPropagation()"
                        style="position: absolute; right: 24px; top: 24px; z-index: 10;">
-                    <svg lucidePower [size]="14"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('power')" [size]="14"></svg>
                     <span>{{ device.accion_nombre }}</span>
                   </div>
                 </div>
@@ -439,21 +443,21 @@
                 <div class="info-rows">
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideBluetooth class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('bluetooth')" class="info-icon"></svg>
                       <span>Nombre</span>
                     </div>
                     <span class="info-row-val">{{ device.nombre_bluetooth || 'Sin nombre' }}</span>
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideHash class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('hash')" class="info-icon"></svg>
                       <span>MAC</span>
                     </div>
                     <span class="info-row-val">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</span>
                   </div>
                   <div class="info-row">
                     <div class="info-row-left">
-                      <svg lucideZap class="info-icon"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
                       <span>Acción</span>
                     </div>
                     <span class="info-row-val status-text-green">{{ device.accion_nombre }}</span>
@@ -470,7 +474,7 @@
             Cerrar
           </button>
           <button class="btn-action-solid-teal">
-            <svg lucideBolt [size]="18"></svg>
+            <svg [lucideIcon]="getDeviceIcon('bolt')" [size]="18"></svg>
             Ejecutar prueba
           </button>
         </footer>
@@ -497,14 +501,14 @@
             </div>
           </div>
           <button class="viewer-close-btn" (click)="closeMediaViewer()">
-            <svg lucideX [size]="20"></svg>
+            <svg [lucideIcon]="getDeviceIcon('x')" [size]="20"></svg>
           </button>
         </header>
 
         <!-- Área Principal de Media -->
         <div class="viewer-main-area">
           <button class="nav-arrow prev" (click)="prevMedia()">
-            <svg lucideChevronLeft [size]="32"></svg>
+            <svg [lucideIcon]="getDeviceIcon('chevron-left')" [size]="32"></svg>
             <span>Anterior</span>
           </button>
 
@@ -524,7 +528,7 @@
           </div>
 
           <button class="nav-arrow next" (click)="nextMedia()">
-            <svg lucideChevronRight [size]="32"></svg>
+            <svg [lucideIcon]="getDeviceIcon('chevron-right')" [size]="32"></svg>
             <span>Siguiente</span>
           </button>
         </div>
@@ -545,32 +549,32 @@
                 <div class="left-actions">
                   <button class="action-btn" (click)="togglePlay()">
                     @if (isPlaying()) {
-                      <svg lucidePause [size]="20"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('pause')" [size]="20"></svg>
                     } @else {
-                      <svg lucidePlay [size]="20"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('play')" [size]="20"></svg>
                     }
                   </button>
                   <button class="action-btn" (click)="toggleMute()">
                     @if (isMuted()) {
-                      <svg lucideVolumeX [size]="20"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('volume-x')" [size]="20"></svg>
                     } @else {
-                      <svg lucideVolume2 [size]="20"></svg>
+                      <svg [lucideIcon]="getDeviceIcon('volume-2')" [size]="20"></svg>
                     }
                   </button>
                   <button class="action-btn" (click)="skip(-10)">
-                    <svg lucideRotateCcw [size]="20"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('rotate-ccw')" [size]="20"></svg>
                   </button>
                   <button class="action-btn" (click)="skip(10)">
-                    <svg lucideRotateCw [size]="20"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('rotate-cw')" [size]="20"></svg>
                   </button>
                 </div>
 
                 <div class="right-actions">
                   <button class="action-btn">
-                    <svg lucideSettings [size]="20"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('settings')" [size]="20"></svg>
                   </button>
                   <button class="action-btn">
-                    <svg lucideMaximize [size]="20"></svg>
+                    <svg [lucideIcon]="getDeviceIcon('maximize')" [size]="20"></svg>
                   </button>
                 </div>
               </div>

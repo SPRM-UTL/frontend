@@ -2,7 +2,7 @@
   <section class="stats-grid card">
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideSmartphone></svg>
+        <svg [lucideIcon]="getDeviceIcon('smartphone')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Dispositivos</p>
@@ -13,7 +13,7 @@
 
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideHand></svg>
+        <svg [lucideIcon]="getDeviceIcon('hand')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Gestos</p>
@@ -24,7 +24,7 @@
 
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideBolt></svg>
+        <svg [lucideIcon]="getDeviceIcon('bolt')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Acciones realizadas</p>
@@ -35,7 +35,18 @@
 
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideLayoutDashboard></svg>
+        <svg [lucideIcon]="getDeviceIcon('home')"></svg>
+      </span>
+      <div class="stat-copy">
+        <p class="stat-label">Casas</p>
+        <p class="stat-number">{{ casasService.casas().length }}</p>
+        <p class="stat-sub">Ubicaciones</p>
+      </div>
+    </article>
+
+    <article class="stat-card stat-card--teal">
+      <span class="stat-ico">
+        <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Dispositivos activos</p>
@@ -91,7 +102,7 @@
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
-            <svg lucideLayoutDashboard></svg>
+            <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
           </span>
           <div>
             <h3 class="panel-title">Dispositivos conectados</h3>
@@ -99,7 +110,7 @@
           </div>
         </div>
         <button class="text-link-box" type="button" routerLink="/dashboard/dispositivos">
-          <svg lucideLayoutDashboard [size]="14"></svg>
+          <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" [size]="14"></svg>
           Ver todos
         </button>
       </div>
@@ -131,7 +142,7 @@
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
-            <svg lucideHand></svg>
+            <svg [lucideIcon]="getGestureIcon('hand')"></svg>
           </span>
           <div>
             <h3 class="panel-title">Gestos</h3>
@@ -139,7 +150,7 @@
           </div>
         </div>
         <button class="text-link-box" type="button" routerLink="/dashboard/gestos">
-          <svg lucideHand [size]="14"></svg>
+          <svg [lucideIcon]="getGestureIcon('hand')" [size]="14"></svg>
           Ver todos
         </button>
       </div>

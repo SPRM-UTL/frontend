@@ -1,4 +1,4 @@
-<!-- cuenta.html — interfaz estilo Apple/Moderno -->
+
 
 <div class="page-header">
   <p class="page-subtitle">Administra tu cuenta y preferencias</p>
@@ -10,11 +10,17 @@
     <div class="profile-main">
       <div class="avatar-container">
         <div class="avatar-circle">
-          <svg lucideUser></svg>
+          @if (userImage()) {
+            <img [src]="userImage()" alt="Avatar" class="profile-img" (error)="onImageError()">
+          } @else {
+            <svg lucideUser></svg>
+          }
         </div>
-        <button class="avatar-edit-btn" (click)="onEditAvatar()" aria-label="Editar avatar">
-          <svg lucidePencil></svg>
+        <button class="avatar-edit-btn" (click)="onEditAvatar()" aria-label="Editar avatar" [disabled]="isSaving()">
+          <svg lucideCamera></svg>
         </button>
+        <!-- Input de archivo oculto -->
+        <input type="file" #fileInput style="display: none" accept="image/*" (change)="onFileSelected($event)">
       </div>
       <div class="profile-info">
         <h2>{{ userName() }}</h2>

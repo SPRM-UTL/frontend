@@ -1,6 +1,7 @@
 
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { Dispositivo } from '../../dispositivos/dispositivos.model';
 import { Gesto } from '../../gestos/gesto.model';
@@ -52,15 +53,12 @@ export class InicioService {
       actividadReciente: []
     };
 
-    forkJoin({
-      // ── SOLUCIÓN DE ERRORES DE COMPILACIÓN EN EL FORKJOIN ──
-      // 1. Usamos getDevicesObservable() que sí retorna un flujo reactivo frío en vez de void.
-      dispositivos: this.devicesService.getDevicesObservable(),
-      // 2. loadGestos sigue retornando un Observable clásico, se queda igual.
-      gestos: this.gestosService.loadGestos(token),
-      // 3. Usamos getHistorialObservable() que también retorna un flujo reactivo frío.
-      historial: this.historialService.getHistorialObservable(),
+    const headers = new HttpHeaders().set('X-Show-Loader', 'true');
 
+    forkJoin({
+      dispositivos: this.devicesService.getDevicesObservable(),
+      gestos: this.gestosService.loadGestos(token),
+      historial: this.historialService.getHistorialObservable(),
       consumos: this.consumosService.getAparatosConsumoHistorico()
     }).pipe(
       map(({ dispositivos, gestos, historial, consumos }) => {

@@ -27,6 +27,43 @@ import {
   LucideWind,
   LucideZap,
   LucidePower,
+  LucideHome,
+  LucideDoorOpen,
+  LucidePlus,
+  LucideTrash2,
+  LucideMoreVertical,
+  LucideEdit,
+  LucideX,
+  LucideSearch,
+  LucideMapPin,
+  LucideLayoutDashboard,
+  LucideChevronRight,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideDownload,
+  LucideMaximize,
+  LucideSettings,
+  LucideRotateCw,
+  LucideRotateCcw,
+  LucideVolume2,
+  LucideVolumeX,
+  LucidePause,
+  LucidePlay,
+  LucideBluetooth,
+  LucideHash,
+  LucideCalendarDays,
+  LucideMenu,
+  LucideSun,
+  LucidePencil,
+  LucideLogOut,
+  LucideUser,
+  LucideSofa,
+  LucideBath,
+  LucideBed,
+  LucideUtensils,
+  LucideCar,
+  LucideTreePine,
+  LucideImage
 } from '@lucide/angular';
 
 type LucideIcon = any;
@@ -35,6 +72,7 @@ const DEVICE_ICONS_BY_NAME: Record<string, LucideIcon> = {
   audifonos: LucideHeadphones,
   audífonos: LucideHeadphones,
   bocinas: LucideSpeaker,
+  bell: LucideBell,
   foco: LucideLightbulb,
   focos: LucideLightbulb,
   luz: LucideLightbulb,
@@ -59,12 +97,65 @@ const DEVICE_ICONS_BY_NAME: Record<string, LucideIcon> = {
   camera: LucideCamera,
   wifi: LucideWifi,
   'circle-plus': LucideCirclePlus,
-  plus: LucideCirclePlus,
   'input-add': LucideCirclePlus,
   help: LucideHelpCircle,
   'help-circle': LucideHelpCircle,
   bocina: LucideSpeaker,
   ventiladores: LucideWind,
+  home: LucideHome,
+  casa: LucideHome,
+  'door-open': LucideDoorOpen,
+  habitacion: LucideDoorOpen,
+  plus: LucidePlus,
+  edit: LucideEdit,
+  trash: LucideTrash2,
+  'trash-2': LucideTrash2,
+  x: LucideX,
+  search: LucideSearch,
+  'layout-dashboard': LucideLayoutDashboard,
+  'chevron-right': LucideChevronRight,
+  'chevron-down': LucideChevronDown,
+  'chevron-left': LucideChevronLeft,
+  download: LucideDownload,
+  maximize: LucideMaximize,
+  settings: LucideSettings,
+  'rotate-cw': LucideRotateCw,
+  'rotate-ccw': LucideRotateCcw,
+  'volume-2': LucideVolume2,
+  'volume-x': LucideVolumeX,
+  pause: LucidePause,
+  play: LucidePlay,
+  bluetooth: LucideBluetooth,
+  hash: LucideHash,
+  'calendar-days': LucideCalendarDays,
+  menu: LucideMenu,
+  sun: LucideSun,
+  pencil: LucidePencil,
+  'log-out': LucideLogOut,
+  user: LucideUser,
+  smartphone: LucideSmartphone,
+  hand: LucideHand,
+  bolt: LucideBolt,
+  clock: LucideClock,
+  ellipsis: LucideMoreVertical,
+  'map-pin': LucideMapPin,
+  check: LucideCheck,
+  'check-circle': LucideCheck,
+  info: LucideInfo,
+  warning: LucideTriangleAlert,
+  error: LucideBan,
+  image: LucideImage,
+  power: LucidePower,
+  zap: LucideZap,
+  // Iconos para habitaciones
+  armchair: LucideSofa,
+  sofa: LucideSofa,
+  bath: LucideBath,
+  bed: LucideBed,
+  utensils: LucideUtensils,
+  'utensils-crossed': LucideUtensils,
+  car: LucideCar,
+  'tree-pine': LucideTreePine
 };
 
 const TOAST_ICONS_BY_NAME: Record<string, LucideIcon> = {
@@ -77,9 +168,13 @@ const TOAST_ICONS_BY_NAME: Record<string, LucideIcon> = {
   info: LucideInfo,
   loading: LucideClock,
   clock: LucideClock,
+  history: LucideClock,
   hand: LucideHand,
   bell: LucideBell,
   sparkles: LucideSparkles,
+  sun: LucideSun,
+  camera: LucideCamera,
+  play: LucidePlay
 };
 
 function normalizeIconName(value: string | undefined): string {
@@ -89,14 +184,14 @@ function normalizeIconName(value: string | undefined): string {
     .replace(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase()
     .replace(/^\/?icons\//, '')
-    .replace(/\.svg$/, '')
+    .replace(/\\.svg$/, '')
     .replace(/_/g, '-')
     .replace(/^ic-/, '');
 }
 
 export function getDeviceIcon(tipoOIcono: string | undefined): LucideIcon {
   const key = normalizeIconName(tipoOIcono);
-  return DEVICE_ICONS_BY_NAME[key] ?? LucideHelpCircle;
+  return DEVICE_ICONS_BY_NAME[key] ?? TOAST_ICONS_BY_NAME[key] ?? LucideHelpCircle;
 }
 
 export function getGestureIcon(icono: string | undefined): LucideIcon {
@@ -115,8 +210,8 @@ export function getToastIcon(icono: string | undefined, type: string = 'info'): 
 }
 
 export function getActivityIcon(icono: string | undefined, estado?: string, accion?: string): LucideIcon {
-  if (estado === 'Error') return LucideTriangleAlert;
-  return LucideClock;
+  const key = normalizeIconName(icono);
+  return DEVICE_ICONS_BY_NAME[key] ?? LucideClock;
 }
 
 export function getMethodIcon(metodo: string | undefined): LucideIcon {
@@ -135,5 +230,11 @@ export const ALL_ICONS = [
   LucideCloudLightning, LucideFan, LucideHand, LucideHeadphones, LucideHelpCircle, LucideInfo,
   LucideLampFloor, LucideLightbulb, LucideLock, LucideMic, LucidePlug, LucideSmartphone,
   LucideSparkles, LucideSpeaker, LucideTriangleAlert, LucideTv,  LucideTvMinimal, LucideWifi,
-  LucideWind, LucideZap, LucidePower,
+  LucideWind, LucideZap, LucidePower, LucideHome, LucideDoorOpen,
+  LucidePlus, LucideTrash2, LucideEdit, LucideX, LucideSearch,
+  LucideLayoutDashboard, LucideChevronRight, LucideChevronDown, LucideChevronLeft,
+  LucideDownload, LucideMaximize, LucideSettings, LucideRotateCw, LucideRotateCcw,
+  LucideVolume2, LucideVolumeX, LucidePause, LucidePlay, LucideBluetooth,
+  LucideHash, LucideCalendarDays, LucideMenu, LucideSun, LucidePencil,
+  LucideLogOut, LucideUser
 ];

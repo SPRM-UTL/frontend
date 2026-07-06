@@ -35,6 +35,8 @@ import { getDeviceIcon } from '../shared/icon-map';
 export class Control implements OnInit {
 
   private controlService = inject(ControlService);
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private isIncrementing = false;
 
   // Expose icon objects to template
   readonly LucideSun = LucideSun;
@@ -90,15 +92,54 @@ export class Control implements OnInit {
   }
 
   incrementVolumen(device: DispositivoControl): void {
-    if ((device.volumen || 0) < 100) {
-      this.controlService.updateDevice({ ...device, volumen: (device.volumen || 0) + 5 });
-    }
+    const nuevoVolumen = Math.min(100, (device.volumen || 0) + 10);
+    this.controlService.updateDevice({ ...device, volumen: nuevoVolumen });
+    this.controlService.playVolumeSound(nuevoVolumen);
   }
 
   decrementVolumen(device: DispositivoControl): void {
-    if ((device.volumen || 0) > 0) {
-      this.controlService.updateDevice({ ...device, volumen: (device.volumen || 0) - 5 });
+    const nuevoVolumen = Math.max(0, (device.volumen || 0) - 10);
+    this.controlService.updateDevice({ ...device, volumen: nuevoVolumen });
+    this.controlService.playVolumeSound(nuevoVolumen);
+  }
+
+  startIncrementVolumen(device: DispositivoControl): void {
+    this.stopVolumeLoop();
+    this.isIncrementing = true;
+    this.runVolumeLoop(device, true);
+  }
+
+  startDecrementVolumen(device: DispositivoControl): void {
+    this.stopVolumeLoop();
+    this.isIncrementing = false;
+    this.runVolumeLoop(device, false);
+  }
+
+  stopVolumeLoop(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
     }
+  }
+
+  private runVolumeLoop(device: DispositivoControl, incrementando: boolean): void {
+    this.intervalId = setInterval(() => {
+      if (incrementando) {
+        const nuevoVolumen = Math.min(100, (device.volumen || 0) + 5);
+        if (nuevoVolumen !== (device.volumen || 0)) {
+          device.volumen = nuevoVolumen;
+          this.controlService.updateDevice({ ...device, volumen: nuevoVolumen });
+          this.controlService.playVolumeSound(nuevoVolumen);
+        }
+      } else {
+        const nuevoVolumen = Math.max(0, (device.volumen || 0) - 5);
+        if (nuevoVolumen !== (device.volumen || 0)) {
+          device.volumen = nuevoVolumen;
+          this.controlService.updateDevice({ ...device, volumen: nuevoVolumen });
+          this.controlService.playVolumeSound(nuevoVolumen);
+        }
+      }
+    }, 120);
   }
 
   incrementVelocidad(device: DispositivoControl): void {

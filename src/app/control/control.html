@@ -100,47 +100,7 @@
                   <strong>{{ d.nombre_aparato }}</strong>
                   <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
 
-                  <!-- CONTROLES EXTRA (Solo si está encendido) -->
-                  <div class="device-extra-controls" [class.visible]="d.encendido">
-
-                    <!-- Brillo para Luces/Focos -->
-                    @if (d.brillo !== undefined) {
-                      <div class="control-stepper">
-                        <div class="slider-container">
-                          <svg lucideSun [size]="14" class="mini"></svg>
-                          <input type="range" min="0" max="100" [ngModel]="d.brillo" (ngModelChange)="onBrilloChange(d, $event)" class="modern-slider">
-                          <span class="val-text">{{ d.brillo }}%</span>
-                        </div>
-                      </div>
-                    }
-
-                    <!-- Volumen para Audio (CON BARRITA PROGRESIVA) -->
-                    @if (d.volumen !== undefined) {
-                      <div class="audio-control-wrapper">
-                        <div class="audio-buttons-row">
-                          <button (click)="decrementVolumen(d)" class="step-btn">-</button>
-                          <div class="progress-container">
-                            <div class="progress-bar" [style.width]="d.volumen + '%'"></div>
-                            <span class="progress-text">{{ d.volumen }}%</span>
-                          </div>
-                          <button (click)="incrementVolumen(d)" class="step-btn">+</button>
-                        </div>
-                      </div>
-                    }
-
-                    <!-- Velocidad para Ventiladores -->
-                    @if (d.velocidad !== undefined) {
-                      <div class="control-stepper speed">
-                        <button (click)="decrementVelocidad(d)" class="step-btn">-</button>
-                        <div class="speed-indicator">
-                          @for (i of [1,2,3,4,5]; track i) {
-                            <span class="dot" [class.active]="d.velocidad >= i"></span>
-                          }
-                        </div>
-                        <button (click)="incrementVelocidad(d)" class="step-btn">+</button>
-                      </div>
-                    }
-                  </div>
+                  <!-- SOLO SE PERMITE ENCENDER/APAGAR -->
                 </div>
 
                 <div class="device-card-footer">

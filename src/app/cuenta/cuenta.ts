@@ -1,6 +1,6 @@
 // cuenta.ts
 
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -9,7 +9,8 @@ import {
   LucideChevronRight,
   LucideLock,
   LucideLogOut,
-  LucideArrowRight
+  LucideArrowRight,
+  LucideCamera
 } from '@lucide/angular';
 import { CuentaService } from './cuenta.service';
 import { AuthService } from '../services/auth.service';
@@ -26,7 +27,8 @@ import { ToastService } from '../services/toast.service';
     LucideChevronRight,
     LucideLock,
     LucideLogOut,
-    LucideArrowRight
+    LucideArrowRight,
+    LucideCamera
   ],
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
@@ -37,8 +39,11 @@ export class Cuenta implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
 
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   readonly userName  = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
+  readonly userImage = this.cuentaService.userImage;
 
   editingField = signal<string | null>(null);
   editValue = '';
@@ -49,7 +54,45 @@ export class Cuenta implements OnInit {
   }
 
   onEditAvatar(): void {
-    console.log('Edit avatar clicked');
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const fileName = file.name;
+
+    this.isSaving.set(true);
+    this.toastService.loading('Actualizando ruta de imagen...');
+
+    // Solo guardamos la ruta (el nombre o enlace) en la base de datos
+    this.cuentaService.updatePerfil({
+      RutaImagen: fileName
+    }).subscribe({
+      next: () => {
+        this.toastService.success('Ruta de imagen actualizada correctamente');
+
+        // Previsualización local inmediata para feedback visual
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.cuentaService.userImage.set(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+
+        this.isSaving.set(false);
+      },
+      error: (err) => {
+        console.error('Error al guardar ruta', err);
+        this.toastService.error('Error al actualizar la ruta de la imagen');
+        this.isSaving.set(false);
+      }
+    });
+  }
+
+  onImageError(): void {
+    this.cuentaService.userImage.set('');
   }
 
   startEdit(field: string, currentValue: string): void {
@@ -62,13 +105,44 @@ export class Cuenta implements OnInit {
 
   saveField(field: string): void {
     if (this.isSaving()) return;
-    if (!this.editValue.trim() && field !== 'password') return;
+
+    const trimmedValue = this.editValue.trim();
+
+    // Validaciones de campos vacíos
+    if (field !== 'password' && !trimmedValue) {
+      this.toastService.warning(`El campo ${field} no puede estar vacío`);
+      return;
+    }
+
+    // Validaciones específicas
+    if (field === 'correo') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedValue)) {
+        this.toastService.warning('Ingresa un correo válido');
+        return;
+      }
+    }
+
+    if (field === 'password') {
+      if (!trimmedValue) {
+        this.toastService.warning('La contraseña no puede estar vacía');
+        return;
+      }
+
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+      if (!passwordRegex.test(trimmedValue)) {
+        this.toastService.warning(
+          'La contraseña debe tener: mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo (@$!%*?&)'
+        );
+        return;
+      }
+    }
 
     this.isSaving.set(true);
     this.toastService.loading('Guardando cambios...');
 
     let updateObservable$;
-    const trimmedValue = this.editValue.trim();
 
     switch (field) {
       case 'nombre':

@@ -20,7 +20,7 @@ export class ConsumosService {
   private platformId = inject(PLATFORM_ID);
 
   private readonly apiUrl =
-    `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumosHistorico}`;
+    `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumo}`;
 
   /**
    * Obtiene los headers con el token de localStorage

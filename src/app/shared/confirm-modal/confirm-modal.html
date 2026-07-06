@@ -1,0 +1,21 @@
+@if (state().isOpen) {
+  <div class="delete-modal-overlay" (click)="onCancel()">
+    <div class="delete-modal-card" (click)="$event.stopPropagation()">
+      <div class="delete-modal-icon-container" [class]="state().options?.type || 'danger'">
+        <svg [lucideIcon]="getDeviceIcon(state().options?.icon)" class="delete-modal-icon"></svg>
+      </div>
+
+      <h2 class="delete-modal-title">{{ state().options?.title }}</h2>
+      <p class="delete-modal-desc">{{ state().options?.description }}</p>
+
+      <div class="delete-modal-buttons">
+        <button class="delete-btn-cancel" (click)="onCancel()">
+          {{ state().options?.cancelText }}
+        </button>
+        <button class="delete-btn-confirm" [class]="state().options?.type || 'danger'" (click)="onConfirm()">
+          {{ state().options?.confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

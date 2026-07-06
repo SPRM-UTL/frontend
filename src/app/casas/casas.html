@@ -1,0 +1,339 @@
+<div class="main-layout" (click)="closeMenus()">
+  <aside class="sidebar-casas-new">
+    <div class="section-head-new">
+      <h2 class="section-title-new">Mis casas</h2>
+      <button class="btn-add-text-new" (click)="openAddCasa()">
+        <svg [lucideIcon]="getDeviceIcon('plus')" [size]="16"></svg>
+        Agregar casa
+      </button>
+    </div>
+
+    <div class="search-box-new">
+      <svg [lucideIcon]="getDeviceIcon('search')" [size]="16" class="search-icon-new"></svg>
+      <input type="text" placeholder="Buscar por nombre..." (input)="onSearch($any($event.target).value)">
+    </div>
+
+    <div class="casas-list-new">
+      @if (loading()) {
+        <div class="loading-state">Cargando casas...</div>
+      } @else {
+        @for (casa of filteredCasas(); track casa.sk_casa_id) {
+          <div class="casa-item-card" [class.active]="selectedCasa()?.sk_casa_id === casa.sk_casa_id" (click)="selectCasa(casa)">
+            <div class="casa-card-icon">
+              <svg [lucideIcon]="getDeviceIcon('home')" [size]="20"></svg>
+            </div>
+            <div class="casa-card-info">
+              <span class="casa-card-name">{{ casa.nombre_casa }}</span>
+              <span class="casa-card-stats">{{ casa.habitaciones?.length || 0 }} habitaciones • {{ (casa.habitaciones | countDevices) || 0 }} dispositivos</span>
+            </div>
+
+            <div class="options-container">
+              <button class="btn-options-vertical" (click)="toggleCasaMenu($event, casa.sk_casa_id)">
+                <svg [lucideIcon]="getDeviceIcon('ellipsis')" [size]="18"></svg>
+              </button>
+
+              @if (activeCasaMenuId() === casa.sk_casa_id) {
+                <div class="dropdown-menu-options" (click)="$event.stopPropagation()">
+                  <button class="dropdown-item" (click)="openEditCasa(casa); closeMenus()">
+                    <svg [lucideIcon]="getDeviceIcon('edit')" [size]="14"></svg>
+                    Editar
+                  </button>
+                  <button class="dropdown-item danger" (click)="deleteCasa(casa); closeMenus()">
+                    <svg [lucideIcon]="getDeviceIcon('trash-2')" [size]="14"></svg>
+                    Eliminar
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">No tienes casas registradas</div>
+        }
+
+        <button class="btn-new-casa-outline" (click)="openAddCasa()">
+          <svg [lucideIcon]="getDeviceIcon('home')" [size]="20" style="margin-right: 8px;"></svg>
+          Nueva casa
+        </button>
+      }
+    </div>
+  </aside>
+
+  <main class="habitaciones-content-new">
+    @if (selectedCasa(); as casa) {
+      <div class="casa-hero-card">
+        <div class="hero-image-placeholder">
+          <svg [lucideIcon]="getDeviceIcon('home')" [size]="48" style="opacity: 0.8;"></svg>
+        </div>
+        <div class="hero-content">
+          <h1 class="hero-title">{{ casa.nombre_casa }}</h1>
+          <div class="hero-stats">
+            <span><svg [lucideIcon]="getDeviceIcon('home')" [size]="14"></svg> {{ casa.habitaciones?.length || 0 }} habitaciones</span>
+            <span class="stat-divider">|</span>
+            <span><svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="14"></svg> {{ (casa.habitaciones | countDevices) || 0 }} dispositivos</span>
+          </div>
+        </div>
+        <button class="btn-edit-casa-hero" (click)="openEditCasa(casa)">
+          <svg [lucideIcon]="getDeviceIcon('pencil')" [size]="16"></svg>
+          Editar casa
+        </button>
+      </div>
+
+      <div class="habitaciones-list-header">
+        <div class="list-titles">
+          <h2 class="list-main-title">Habitaciones</h2>
+          <p class="list-subtitle">Gestiona y organiza las habitaciones de esta casa.</p>
+        </div>
+        <button class="btn-add-habitacion-new" (click)="openAddHabitacion()">
+          <svg [lucideIcon]="getDeviceIcon('plus')" [size]="18"></svg>
+          Nueva habitación
+        </button>
+      </div>
+
+      <div class="habitaciones-stack">
+        @if (habitacionLoading()) {
+          <div class="loading-state">Cargando habitaciones...</div>
+        } @else {
+          @for (h of habitacionesList(); track h.sk_habitacion_id) {
+            <div class="habitacion-row-card" (click)="verDetalleHabitacion(h)">
+              <div class="h-row-icon">
+                <svg [lucideIcon]="getDeviceIcon(getHabitacionIcon(h.nombre_habitacion))" [size]="24"></svg>
+              </div>
+              <div class="h-row-info">
+                <h3 class="h-row-name">{{ h.nombre_habitacion }}</h3>
+                <span class="h-row-count">{{ h.dispositivos.length || 0 }} dispositivos</span>
+              </div>
+
+              <div class="options-container">
+                <button class="btn-options-vertical" (click)="toggleHabitacionMenu($event, h.sk_habitacion_id)">
+                  <svg [lucideIcon]="getDeviceIcon('ellipsis')" [size]="18"></svg>
+                </button>
+
+                @if (activeHabitacionMenuId() === h.sk_habitacion_id) {
+                  <div class="dropdown-menu-options" (click)="$event.stopPropagation()">
+                    <button class="dropdown-item" (click)="openEditHabitacion(h); closeMenus()">
+                      <svg [lucideIcon]="getDeviceIcon('edit')" [size]="14"></svg>
+                      Editar nombre
+                    </button>
+                    <button class="dropdown-item danger" (click)="deleteHabitacion(h); closeMenus()">
+                      <svg [lucideIcon]="getDeviceIcon('trash-2')" [size]="14"></svg>
+                      Eliminar habitación
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-detail-state">
+              <p>Esta casa no tiene habitaciones registradas aún.</p>
+            </div>
+          }
+        }
+      </div>
+    } @else {
+      <div class="unselected-state-new">
+        <svg [lucideIcon]="getDeviceIcon('home')" [size]="64" style="opacity: 0.1; margin-bottom: 1.5rem;"></svg>
+        <h3>Selecciona una casa para ver sus habitaciones</h3>
+      </div>
+    }
+  </main>
+
+  @if (selectedHabitacion(); as currentH) {
+    @let h = (habitacionesList() | findById:currentH.sk_habitacion_id:'sk_habitacion_id') || currentH;
+    <div class="modal-backdrop-gesto" (click)="cerrarDetalleHabitacion()">
+      <div class="modal-detail-container-gesto" (click)="$event.stopPropagation()">
+
+        <header class="modal-header-gesto">
+          <div class="header-titles-gesto">
+            <h2 class="modal-main-title-gesto">Detalles de la habitación</h2>
+            <p class="modal-main-subtitle-gesto">Gestiona la estancia y los dispositivos vinculados.</p>
+          </div>
+          <button class="btn-close-modal-gesto" aria-label="Cerrar" (click)="cerrarDetalleHabitacion()">✕</button>
+        </header>
+
+        <div class="modal-body-gesto">
+          <div class="detail-layout-gesto-single">
+
+            <div class="detail-main-gesto-full">
+              <section class="card-gesto hero-info-card-gesto">
+                <div class="hero-header-gesto">
+                  <div class="hero-icon-box-gesto">
+                    <svg [lucideIcon]="getDeviceIcon(getHabitacionIcon(h.nombre_habitacion))" [size]="44"></svg>
+                  </div>
+                  <div class="hero-titles-gesto">
+                    <div class="h-name-edit-row">
+                      <h2 class="hero-name-gesto">{{ h.nombre_habitacion }}</h2>
+                      <button class="btn-edit-inline-hero" (click)="openEditHabitacion(h)" title="Editar nombre">
+                        <svg [lucideIcon]="getDeviceIcon('edit')" [size]="18"></svg>
+                      </button>
+                    </div>
+                    <span class="status-indicator-gesto">
+                      <span class="dot-gesto"></span>
+                      Estancia Activa
+                    </span>
+                    <p class="hero-desc-gesto">
+                      <svg [lucideIcon]="getDeviceIcon('map-pin')" [size]="14" style="margin-right: 4px; vertical-align: middle;"></svg>
+                      Ubicada en {{ selectedCasa()?.nombre_casa }}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="section-container-gesto">
+                <div class="section-header-row">
+                  <h3 class="section-title-gesto">Dispositivos Vinculados</h3>
+                  <button class="btn-add-device-gesto" (click)="openLinkDevice(h)">
+                    <svg [lucideIcon]="getDeviceIcon('plus')" [size]="14"></svg>
+                    Vincular Nuevo
+                  </button>
+                </div>
+
+                <div class="devices-grid-gesto">
+                  @for (dev of h.dispositivos; track dev.sk_aparato_id) {
+                    <div class="device-item-gesto">
+                      <div class="dev-item-left">
+                        <div class="dev-item-icon">
+                          <svg [lucideIcon]="getDeviceIcon(dev.icono)" [size]="20"></svg>
+                        </div>
+                        <div class="dev-item-info">
+                          <strong>{{ dev.nombre_aparato }}</strong>
+                          <span>{{ dev.tipo_aparato }}</span>
+                        </div>
+                      </div>
+                      <button class="btn-unlink-gesto" (click)="$event.stopPropagation(); desvincularDispositivo(dev.sk_aparato_id)" title="Quitar de la habitación">
+                        <svg [lucideIcon]="getDeviceIcon('trash-2')" [size]="14"></svg>
+                      </button>
+                    </div>
+                  } @empty {
+                    <div class="no-devices-gesto">
+                      <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="32"></svg>
+                      <p>No hay dispositivos en esta habitación</p>
+                    </div>
+                  }
+                </div>
+              </section>
+
+              <div class="danger-zone-gesto">
+                <button class="btn-danger-text-gesto" (click)="deleteHabitacion(h)">
+                  <svg [lucideIcon]="getDeviceIcon('trash-2')" [size]="16"></svg>
+                  Eliminar permanentemente esta habitación
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  @if (showCasaModal()) {
+    <div class="modal-overlay" (click)="showCasaModal.set(false)">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-head">
+          <h3>{{ isEditing() ? 'Editar Casa' : 'Nueva Casa' }}</h3>
+          <button class="btn-close-modal-gesto" (click)="showCasaModal.set(false)">✕</button>
+        </header>
+        <div class="modal-body">
+          <label class="form-label">Nombre de la casa</label>
+          <input type="text" class="form-input" [(ngModel)]="casaForm.nombre_casa" placeholder="Ej: Casa de Playa">
+        </div>
+        <footer class="modal-foot">
+          <button class="btn-secondary" (click)="showCasaModal.set(false)">Cancelar</button>
+          <button class="btn-primary" (click)="saveCasa()">Guardar</button>
+        </footer>
+      </div>
+    </div>
+  }
+  @if (showHabitacionModal()) {
+    <div class="modal-overlay" (click)="showHabitacionModal.set(false)">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-head">
+          <h3>{{ isEditing() ? 'Editar Nombre' : 'Nueva Habitación' }}</h3>
+          <button class="btn-close-modal-gesto" (click)="showHabitacionModal.set(false)">✕</button>
+        </header>
+        <div class="modal-body">
+          <label class="form-label">Nombre de la habitación</label>
+          <input type="text" class="form-input" [(ngModel)]="habitacionForm.nombre_habitacion" placeholder="Ej: Sala">
+
+          @if (!isEditing()) {
+            <div style="margin-top: 1.5rem;">
+              <label class="form-label">Vincular Dispositivos (Opcional)</label>
+              <p class="form-subtitle">Selecciona dispositivos para esta nueva habitación</p>
+              <div class="device-select-list" style="max-height: 250px;">
+                @for (dev of availableDevices(); track dev.sk_aparato_id) {
+                  <div class="device-option"
+                       [class.selected]="selectedDeviceIds().includes(dev.sk_aparato_id)"
+                       (click)="toggleDeviceSelection(dev.sk_aparato_id)">
+                    <div class="dev-opt-info">
+                      <svg [lucideIcon]="getDeviceIcon(dev.icono)" [size]="18"></svg>
+                      <span>{{ dev.nombre_aparato }}</span>
+                    </div>
+                    <div class="check-circle" [class.checked]="selectedDeviceIds().includes(dev.sk_aparato_id)">
+                      @if (selectedDeviceIds().includes(dev.sk_aparato_id)) {
+                        <svg [lucideIcon]="getDeviceIcon('check')" [size]="12"></svg>
+                      }
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="empty-msg-box" style="padding: 1.5rem;">
+                    <p style="font-size: 0.8rem;">No hay dispositivos disponibles sin habitación.</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        <footer class="modal-foot">
+          <button class="btn-secondary" (click)="showHabitacionModal.set(false)">Cancelar</button>
+          <button class="btn-primary" (click)="saveHabitacion()">Guardar</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Vincular Dispositivo -->
+  @if (showDeviceLinkModal()) {
+    <div class="modal-overlay" (click)="showDeviceLinkModal.set(false)">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-head">
+          <h3>Vincular Dispositivos</h3>
+          <button class="btn-close-modal-gesto" (click)="showDeviceLinkModal.set(false)">✕</button>
+        </header>
+        <div class="modal-body">
+          <label class="form-label">Selecciona los dispositivos para esta habitación</label>
+          <p class="form-subtitle">Solo se muestran dispositivos que no tienen habitación asignada.</p>
+          <div class="device-select-list">
+            @for (dev of availableDevices(); track dev.sk_aparato_id) {
+              <div class="device-option"
+                   [class.selected]="selectedDeviceIds().includes(dev.sk_aparato_id)"
+                   (click)="toggleDeviceSelection(dev.sk_aparato_id)">
+                <div class="dev-opt-info">
+                  <svg [lucideIcon]="getDeviceIcon(dev.icono)" [size]="18"></svg>
+                  <span>{{ dev.nombre_aparato }}</span>
+                </div>
+                <div class="check-circle" [class.checked]="selectedDeviceIds().includes(dev.sk_aparato_id)">
+                  @if (selectedDeviceIds().includes(dev.sk_aparato_id)) {
+                    <svg [lucideIcon]="getDeviceIcon('check')" [size]="12"></svg>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-msg-box">
+                <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="32" style="opacity: 0.2;"></svg>
+                <p>Todos tus dispositivos ya están vinculados a una habitación.</p>
+              </div>
+            }
+          </div>
+        </div>
+        <footer class="modal-foot">
+          <span class="selection-count">{{ selectedDeviceIds().length }} seleccionado(s)</span>
+          <button class="btn-secondary" (click)="showDeviceLinkModal.set(false)">Cancelar</button>
+          <button class="btn-primary" [disabled]="selectedDeviceIds().length === 0" (click)="vincularDispositivo()">
+            Vincular Selección
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+</div>

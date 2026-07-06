@@ -9,6 +9,7 @@ import { Dispositivos } from './dispositivos/dispositivos';
 import { Gestos } from './gestos/gestos';
 import { Historial } from './historial/historial';
 import { Control } from './control/control';
+import { Casas } from './casas/casas';
 import { authChildGuard, authGuard } from './core/auth.guard';
 import { SesionExpirada } from './sesion-expirada/sesion-expirada';
 
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },
       { path: 'inicio', component: Inicio },
       { path: 'dispositivos', component: Dispositivos },
+      { path: 'casas', component: Casas },
       { path: 'ajustes', component: Ajustes },
       { path: 'cuenta', component: Cuenta },
       { path: 'gestos', component: Gestos },

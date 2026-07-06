@@ -1,9 +1,9 @@
 import { Injectable, inject, PLATFORM_ID, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { Router } from '@angular/router'; // Necesario para redirigir al cerrar sesión
+import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { APP_CONFIG } from '../core/config/app-config'; 
+import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
 import { LoaderService } from './loader.service';
 @Injectable({
@@ -12,13 +12,12 @@ import { LoaderService } from './loader.service';
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.auth}`;
-  private readonly sessionKeys = ['token', 'nombre', 'userId', 'token_exp'];
-  
+  private readonly sessionKeys = ['token', 'nombre', 'userId', 'token_exp', 'user_image', 'user_email'];
+
   readonly showLogoutModal = signal(false);
 
-  // En tu AuthService.ts
+
   constructor(private http: HttpClient, private router: Router, private loaderService: LoaderService) {
-    // Ejecuta la verificación cada 60 segundos automáticamente en el cliente
     if (isPlatformBrowser(this.platformId)) {
       setInterval(() => {
         this.checkTokenExpiration();
@@ -58,6 +57,16 @@ export class AuthService {
 
           if (userId) {
             localStorage.setItem('userId', String(userId));
+          }
+
+          const userEmail = data?.correo ?? payload?.correo ?? data?.email ?? payload?.email ?? correo;
+          if (userEmail) {
+            localStorage.setItem('user_email', userEmail);
+          }
+
+          const rutaImagen = data?.ruta_imagen ?? payload?.ruta_imagen ?? data?.user?.ruta_imagen ?? '';
+          if (rutaImagen) {
+            localStorage.setItem('user_image', rutaImagen);
           }
         }
       })

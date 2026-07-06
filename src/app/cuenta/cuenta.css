@@ -88,6 +88,13 @@
   display: grid;
   place-items: center;
   color: var(--white);
+  overflow: hidden; /* Para que la imagen no se salga */
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .avatar-circle svg {

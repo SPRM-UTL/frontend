@@ -1,8 +1,8 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { LoaderService } from '../../services/loader.service';
-import { AudioService }  from '../../services/audio.service';
+import { AudioService } from '../../services/audio.service';
 
 @Component({
   selector: 'app-loader',
@@ -11,30 +11,30 @@ import { AudioService }  from '../../services/audio.service';
   templateUrl: './loader.html',
   styleUrl: './loader.css'
 })
-export class LoaderComponent implements OnDestroy {
+export class LoaderComponent implements OnInit, OnDestroy {
+  public loaderService = inject(LoaderService);
+  private audioService = inject(AudioService);
 
-  public  loaderService = inject(LoaderService);
-  private audioService  = inject(AudioService);
-
-  private primeraVez   = true;
-  private sonidoReproducido = false;
+  private cargaActiva = false;
   private loaderSub!: Subscription;
 
-  constructor() {
-    this.loaderSub = this.loaderService.loading$.subscribe(cargando => {
-      if (this.primeraVez) {
-        this.primeraVez = false;
-        return;
-      }
-
-      if (cargando && !this.sonidoReproducido) {
-        this.sonidoReproducido = true;
-        this.audioService.play('cargando');
+  ngOnInit(): void {
+    this.loaderSub = combineLatest([
+      this.loaderService.loading$,
+      this.loaderService.playSound$
+    ]).subscribe(([cargando, conSonido]) => {
+      if (cargando && !this.cargaActiva) {
+        this.cargaActiva = true;
+        if (conSonido) {
+          this.audioService.play('cargando');
+        }
+      } else if (!cargando && this.cargaActiva) {
+        this.cargaActiva = false;
       }
     });
   }
 
   ngOnDestroy(): void {
-    this.loaderSub.unsubscribe();
+    this.loaderSub?.unsubscribe();
   }
 }

@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const alertService = inject(AlertNotificationService);
   const authService = inject(AuthService);
-  const isAuthRequest = /\/api\/auth\/(login|register)\b/i.test(req.url);
+  const isAuthRequest = /\/api\/Auth\/(login|register)\b/i.test(req.url);
 
   return next(req).pipe(
     catchError((err) => {
@@ -19,10 +19,25 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (err.status >= 500) {
         alertService.error('Error interno del servidor. Por favor, intenta más tarde.');
       } else if (err.status >= 400 && err.status < 500) {
-        // Mejorar manejo de errores 4xx extrayendo el mensaje del backend
-        const errorMessage = err.error?.message || err.error?.error || err.error || 'Ocurrió un error en la solicitud.';
-        const textMessage = typeof errorMessage === 'string' ? errorMessage : 'Datos de solicitud inválidos.';
-        alertService.error(textMessage);
+        // Manejo mejorado de errores para evitar mostrar [object Object]
+        let message = 'Ocurrió un error en la solicitud.';
+
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            message = err.error;
+          } else if (typeof err.error.message === 'string') {
+            message = err.error.message;
+          } else if (typeof err.error.data === 'string') {
+            message = err.error.data;
+          } else if (err.error.errors && typeof err.error.errors === 'object') {
+            // Manejo de errores de validación de ASP.NET Core
+            const firstErrorKey = Object.keys(err.error.errors)[0];
+            const firstError = err.error.errors[firstErrorKey];
+            message = Array.isArray(firstError) ? firstError[0] : (typeof firstError === 'string' ? firstError : message);
+          }
+        }
+
+        alertService.error(message);
       } else {
         alertService.error('Ocurrió un error inesperado.');
       }

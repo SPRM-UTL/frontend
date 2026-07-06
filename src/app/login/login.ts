@@ -100,7 +100,7 @@ export class Login {
       return;
     }
 
-    this.loaderService.show();
+    this.loaderService.show(true);
 
     this.authService.login(
       this.correo,
@@ -130,10 +130,10 @@ export class Login {
       error: (error) => {
 
         console.error(error);
-        
-        const errorMessage = error?.error?.message 
-          || error?.error?.data 
-          || error?.message 
+
+        const errorMessage = error?.error?.message
+          || error?.error?.data
+          || error?.message
           || 'Credenciales incorrectas. Por favor, intenta de nuevo.';
 
         this.toastService.error(errorMessage);

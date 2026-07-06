@@ -28,20 +28,11 @@ import { LucideDynamicIcon } from '@lucide/angular';
 import { getActivityIcon, getGestureIcon, getDeviceIcon } from '../shared/icon-map';
 import { UnifiedNotification } from './dashboard.types';
 
-import {
-  LucideX, LucideLayoutDashboard, LucideSmartphone, LucideHand,
-  LucideClock, LucidePencil, LucideBolt, LucideUser, LucideLogOut,
-  LucideMenu, LucideBell, LucideSun, LucideCalendarDays,
-  LucideChevronRight, LucideMapPin, LucideCheck, LucideCamera,
-  LucidePlay, LucideBluetooth, LucideHash, LucideZap,
-  LucidePause, LucideVolume2, LucideVolumeX, LucideRotateCcw, LucideRotateCw,
-  LucideSettings, LucideMaximize, LucideChevronLeft, LucideDownload, LucidePower,
-} from '@lucide/angular';
-
 // Mapa de rutas → títulos, evita la cadena de if/else
 const ROUTE_TITLES: Record<string, string> = {
   '/dashboard/inicio':     'Dashboard',
   '/dashboard/dispositivos': 'Dispositivos',
+  '/dashboard/casas': 'Casas y Habitaciones',
   '/dashboard/gestos':     'Gestos',
   '/dashboard/historial':  'Historial de actividad',
   '/dashboard/control':    'Control',
@@ -55,14 +46,6 @@ const ROUTE_TITLES: Record<string, string> = {
   imports: [
     RouterLink, RouterLinkActive, RouterOutlet, CommonModule,
     LucideDynamicIcon,
-    LucideX, LucideLayoutDashboard, LucideSmartphone, LucideHand,
-    LucideClock, LucidePencil, LucideBolt, LucideUser, LucideLogOut,
-    LucideMenu, LucideBell, LucideSun, LucideCalendarDays,
-    LucideChevronRight, LucideMapPin, LucideCheck, LucideCamera,
-    LucidePlay, LucideBluetooth, LucideHash, LucideZap,
-    LucidePause, LucideVolume2, LucideVolumeX, LucideRotateCcw, LucideRotateCw,
-    LucideSettings, LucideMaximize, LucideChevronLeft, LucideChevronRight,
-    LucideDownload, LucidePower,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -122,19 +105,6 @@ export class Dashboard implements OnDestroy {
   // ── Helpers públicos de íconos ────────────────────────────────────────────
   readonly getGestureIcon = getGestureIcon;
   readonly getDeviceIcon  = getDeviceIcon;
-
-  // Iconos para el visor multimedia
-  readonly LucidePause = LucidePause;
-  readonly LucideVolume2 = LucideVolume2;
-  readonly LucideVolumeX = LucideVolumeX;
-  readonly LucideRotateCcw = LucideRotateCcw;
-  readonly LucideRotateCw = LucideRotateCw;
-  readonly LucideSettings = LucideSettings;
-  readonly LucideMaximize = LucideMaximize;
-  readonly LucideChevronLeft = LucideChevronLeft;
-  readonly LucideChevronRight = LucideChevronRight;
-  readonly LucidePlay = LucidePlay;
-  readonly LucideDownload = LucideDownload;
 
   readonly userName = computed(() => this.cuentaService.userName() || 'Usuario');
 
@@ -323,7 +293,11 @@ export class Dashboard implements OnDestroy {
       this.dismissedIds.update(ids => {
         const next = [...ids, item.originalId];
         if (this.isBrowser) {
-          localStorage.setItem('dismissed_notifications', JSON.stringify(next));
+          try {
+            localStorage.setItem('dismissed_notifications', JSON.stringify(next));
+          } catch (e) {
+            console.error('Error saving to localStorage:', e);
+          }
         }
         return next;
       });
