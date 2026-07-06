@@ -7,13 +7,16 @@ import { BehaviorSubject } from 'rxjs';
 export class LoaderService {
 
   private loading = new BehaviorSubject<boolean>(false);
+  private playSound = new BehaviorSubject<boolean>(false);
   private requestCount = 0;
 
   loading$ = this.loading.asObservable();
+  playSound$ = this.playSound.asObservable();
 
-  show() {
+  show(withSound: boolean = false) {
     this.requestCount++;
     if (this.requestCount === 1) {
+      this.playSound.next(withSound);
       this.loading.next(true);
     }
   }
@@ -23,6 +26,7 @@ export class LoaderService {
     if (this.requestCount <= 0) {
       this.requestCount = 0;
       this.loading.next(false);
+      this.playSound.next(false);
     }
   }
 }

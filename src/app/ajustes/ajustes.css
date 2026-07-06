@@ -29,6 +29,7 @@
   grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
   gap: 1.5rem;
   max-width: 100%;
+  align-items: stretch;
   padding-bottom: 2rem;
   animation: slideUpFromBottom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -40,7 +41,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   overflow: hidden;
   transition: all 0.3s ease;
-  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .config-header {

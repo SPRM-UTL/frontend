@@ -8,6 +8,7 @@ import { Dispositivo } from './dispositivos.model';
 
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
+import { AudioService } from '../services/audio.service';
 interface ApiResponse {
   success: boolean;
   status: number;
@@ -20,6 +21,7 @@ interface ApiResponse {
 export class DispositivosService {
   private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
+  private audioService = inject(AudioService);
 
   //private readonly apiUrl = 'http://localhost:5295/api/aparatos';
   private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}`;
@@ -55,7 +57,9 @@ export class DispositivosService {
     this.loading.set(true);
     this.error.set(null);
 
-    this.http.get<any>(this.apiUrl, { headers: this.getHeaders() })
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.get<any>(this.apiUrl, { headers })
       .subscribe({
         next: (response: any) => {
           console.log('Respuesta cruda del servidor:', response);
@@ -193,15 +197,24 @@ export class DispositivosService {
         this.devices.update(list =>
           list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, accion_nombre: nuevoEstado } : d)
         );
-        
+
         // 2. Si el dispositivo modificado es el que está abierto en el modal, también lo actualizamos (Modal)
         if (this.selectedDevice()?.sk_aparato_id === device.sk_aparato_id) {
           this.selectedDevice.update(current => current ? { ...current, accion_nombre: nuevoEstado } : null);
         }
+
+        this.audioService.play('interruptor', (device.volumen ?? 50));
       },
       error: (err) => {
         console.error('Error toggling device:', err);
       }
     });
+  }
+
+  updateDeviceRoom(deviceId: number, roomId: number | null): Observable<any> {
+    const device = this.devices().find(d => d.sk_aparato_id === deviceId);
+    const body = { ...device, sk_habitacion_id: roomId };
+    const url = `${this.apiUrl}/${deviceId}`;
+    return this.http.put(url, body, { headers: this.getHeaders() });
   }
 }

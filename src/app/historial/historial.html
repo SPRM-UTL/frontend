@@ -82,11 +82,11 @@
           </thead>
           <tbody>
             @for (a of actividadesFiltradas(); track $index) {
-              <tr class="history-row">
+              <tr class="history-row" (click)="selectedId.set(a.id)" [class.is-selected]="selectedId() === a.id" style="cursor: pointer;">
                 <!-- Action / Event -->
                 <td class="action-cell">
                   <div class="action-content">
-                    <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#2bbfaa'" [style.background]="a.estado === 'Error' ? '#fef2f2' : '#e6f7f5'">
+                    <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#ffffff'" [style.background]="a.estado === 'Error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.15)'">
                       <svg [lucideIcon]="getActivityIcon(a.icono, a.estado, a.accion)" [size]="20"></svg>
                     </div>
                     <div class="event-details">

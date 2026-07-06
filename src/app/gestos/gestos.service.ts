@@ -6,6 +6,7 @@ import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { Gesto, GestoDetalle } from './gesto.model';
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
+import { AudioService } from '../services/audio.service';
 
 interface ApiResponse {
   success: boolean;
@@ -19,6 +20,7 @@ interface ApiResponse {
 export class GestosService {
   private platformId = inject(PLATFORM_ID);
   private http = inject(HttpClient);
+  private audioService = inject(AudioService);
 
   //private readonly apiUrl = 'http://localhost:5295/api/gestos';
   private readonly apiUrl = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.gestos}`;
@@ -51,7 +53,9 @@ export class GestosService {
     this.loading.set(true);
     this.error.set(null);
 
-    return this.http.get<ApiResponse>(this.apiUrl, { headers: this.getHeaders(token) }).pipe(
+    const headers = this.getHeaders(token).set('X-Skip-Loader', 'true');
+
+    return this.http.get<ApiResponse>(this.apiUrl, { headers }).pipe(
       map(response => {
         const data = response?.data ?? response;
         return Array.isArray(data) ? data : [];
@@ -70,7 +74,11 @@ export class GestosService {
    * Obtiene el detalle de un gesto específico por su ID
    */
   getGestoDetalle(id: number): Observable<GestoDetalle> {
-    return this.http.get<any>(`${this.apiUrl}/${id}/detalle`, { headers: this.getHeaders() }).pipe(
+    // Detener forzosamente cualquier sonido de carga que esté sonando
+    this.audioService.stop('cargando');
+
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+    return this.http.get<any>(`${this.apiUrl}/${id}/detalle`, { headers }).pipe(
       map(response => response?.data ?? response),
       catchError(err => {
         console.error(`Error cargando detalle del gesto ${id}:`, err);

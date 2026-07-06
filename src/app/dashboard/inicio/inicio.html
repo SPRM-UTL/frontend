@@ -2,7 +2,7 @@
   <section class="stats-grid card">
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideSmartphone></svg>
+        <svg [lucideIcon]="getDeviceIcon('smartphone')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Dispositivos</p>
@@ -11,9 +11,9 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--blue">
+    <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideHand></svg>
+        <svg [lucideIcon]="getDeviceIcon('hand')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Gestos</p>
@@ -22,9 +22,9 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--violet">
+    <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideBolt></svg>
+        <svg [lucideIcon]="getDeviceIcon('bolt')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Acciones realizadas</p>
@@ -33,9 +33,20 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--orange">
+    <article class="stat-card stat-card--teal">
       <span class="stat-ico">
-        <svg lucideLayoutDashboard></svg>
+        <svg [lucideIcon]="getDeviceIcon('home')"></svg>
+      </span>
+      <div class="stat-copy">
+        <p class="stat-label">Casas</p>
+        <p class="stat-number">{{ casasService.casas().length }}</p>
+        <p class="stat-sub">Ubicaciones</p>
+      </div>
+    </article>
+
+    <article class="stat-card stat-card--teal">
+      <span class="stat-ico">
+        <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
       </span>
       <div class="stat-copy">
         <p class="stat-label">Dispositivos activos</p>
@@ -49,14 +60,14 @@
     <article class="chart-card radial-box">
       <div class="chart-header">
         <div>
-          <h3 class="chart-title">Eficiencia del sistema</h3>
-          <p class="chart-subtitle">Rendimiento global</p>
+          <h3 class="chart-title">Carga del sistema</h3>
+          <p class="chart-subtitle">Consumo promedio actual</p>
         </div>
       </div>
       <div class="chart-body chart-body--radial">
         <app-dynamic-chart
           chartType="radialBar"
-          [series]="eficienciaSeries"
+          [series]="eficienciaSeries()"
           [labels]="eficienciaLabels"
           [colors]="eficienciaColors"
           [height]="300"
@@ -68,17 +79,17 @@
     <article class="chart-card chart-card--wide">
       <div class="chart-header chart-header--space">
         <div>
-          <h3 class="chart-title">Actividad semanal</h3>
-          <p class="chart-subtitle">Frecuencia de automatizaciones</p>
+          <h3 class="chart-title">Consumo semanal</h3>
+          <p class="chart-subtitle">Promedio de potencia (W) por día</p>
         </div>
         <button class="range-pill" type="button">Esta semana</button>
       </div>
       <div class="chart-body">
         <app-dynamic-chart
           chartType="area"
-          [series]="actividadSeries"
+          [series]="actividadSeries()"
           [categories]="actividadCategorias"
-          [colors]="['#3aafa9']"
+          [colors]="['#ffff','#ffff']"
           [height]="300"
           [additionalOptions]="{ stroke: { curve: 'smooth' }, fill: { opacity: 0.3 } }">
         </app-dynamic-chart>
@@ -87,11 +98,11 @@
   </section>
 
   <section class="content-grid card">
-    <article class="panel-card">
+    <article class="panel-card panel-card--device">
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
-            <svg lucideLayoutDashboard></svg>
+            <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
           </span>
           <div>
             <h3 class="panel-title">Dispositivos conectados</h3>
@@ -99,16 +110,16 @@
           </div>
         </div>
         <button class="text-link-box" type="button" routerLink="/dashboard/dispositivos">
-          <svg lucideLayoutDashboard [size]="14"></svg>
+          <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" [size]="14"></svg>
           Ver todos
         </button>
       </div>
 
       <div class="devices-strip">
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
-          <div class="device-chip-new" [ngClass]="getChipClass(device.tipo_aparato, i)" >
+          <div class="device-chip-new " >
             <div class="chip-ico-circle">
-              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)"></svg>
+              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" class="panel-icon-main"></svg>
             </div>
             <strong>{{ device.nombre_aparato }}</strong>
             <span>{{ device.tipo_aparato }}</span>
@@ -127,11 +138,11 @@
       </div>
     </article>
 
-    <article class="panel-card">
+    <article class="panel-card panel-card--dark">
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
-            <svg lucideHand></svg>
+            <svg [lucideIcon]="getGestureIcon('hand')"></svg>
           </span>
           <div>
             <h3 class="panel-title">Gestos</h3>
@@ -139,7 +150,7 @@
           </div>
         </div>
         <button class="text-link-box" type="button" routerLink="/dashboard/gestos">
-          <svg lucideHand [size]="14"></svg>
+          <svg [lucideIcon]="getGestureIcon('hand')" [size]="14"></svg>
           Ver todos
         </button>
       </div>

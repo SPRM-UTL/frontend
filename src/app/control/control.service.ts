@@ -1,9 +1,10 @@
-import { Injectable, signal, Inject, PLATFORM_ID, WritableSignal } from '@angular/core';
+import { Injectable, signal, Inject, PLATFORM_ID, WritableSignal, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DispositivoControl, AparatoTipo } from './control.model';
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
+import { AudioService } from '../services/audio.service';
 
 export interface ApiResponse {
   success: boolean;
@@ -19,6 +20,8 @@ export class ControlService {
 
   readonly loading = signal<boolean>(false);
   readonly error   = signal<string | null>(null);
+
+  private audioService = inject(AudioService);
 
   constructor(
     private http: HttpClient,
@@ -139,6 +142,7 @@ export class ControlService {
         this.todosLosDispositivos.update(list =>
           list.map(d => d.id === id ? { ...d, encendido: nuevoEstado } : d)
         );
+        this.audioService.play('interruptor', device.volumen ?? 50);
       },
       error: err => {
         console.error('Error toggling device:', err);
@@ -162,5 +166,9 @@ export class ControlService {
         console.error('Error updating device:', err);
       }
     });
+  }
+
+  playVolumeSound(volumen: number): void {
+    this.audioService.play('volumen', volumen);
   }
 }

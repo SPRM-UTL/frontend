@@ -43,7 +43,7 @@ import { getDeviceIcon } from '../shared/icon-map';
 })
 export class Dispositivos implements OnInit, OnDestroy {
 
-  private devicesService = inject(DispositivosService);
+  public devicesService = inject(DispositivosService);
   private route = inject(ActivatedRoute);
 
   activeNav = 'dispositivos';

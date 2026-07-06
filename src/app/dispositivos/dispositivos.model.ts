@@ -16,5 +16,9 @@ export interface Dispositivo {
 
   nombre_bluetooth: string;
 
+  volumen?: number;
+
+  sk_habitacion_id?: number | null;
+
   fecha_sincronizacion: string | null;
 }

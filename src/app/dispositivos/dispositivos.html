@@ -86,17 +86,20 @@
           </thead>
           <tbody>
             @for (device of filteredDevices(); track device.sk_aparato_id) {
-              <tr class="device-row" (click)="verDetalle(device)" style="cursor: pointer;">
+              <tr class="device-row"
+                  (click)="verDetalle(device)"
+                  [class.is-selected]="devicesService.selectedDevice()?.sk_aparato_id === device.sk_aparato_id"
+                  style="cursor: pointer;">
                 <td class="device-cell">
                  <div class="device-avatar">
                    <svg [lucideIcon]="getDeviceIcon(device.icono)" [size]="20"></svg>
                  </div>
                  <div class="device-info">
                    <span class="device-name">{{ device.nombre_aparato }}</span>
-                   <span class="status-online">
-                     <span class="dot" [class.offline]="!connectedDevices().includes(device.mac_bluetooth || '')"></span>
+                   <div class="status-pill-connection" [class.offline]="!connectedDevices().includes(device.mac_bluetooth || '')">
+                     <span class="dot"></span>
                      {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
-                   </span>
+                   </div>
                  </div>
                 </td>
 

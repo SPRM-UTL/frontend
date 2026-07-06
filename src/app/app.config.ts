@@ -7,6 +7,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { authInterceptor } from './core/auth.interceptor';
 import { tokenInterceptor } from './core/token.interceptor';
 import { loaderInterceptor } from './core/loader.interceptor';
+import { APP_CONFIG } from './core/config/app-config';
 
 export const appConfig: ApplicationConfig = {
   providers: [

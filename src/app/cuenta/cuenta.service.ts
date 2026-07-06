@@ -10,15 +10,6 @@ import { isPlatformBrowser } from '@angular/common';
 
 const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.cuenta}`;
 
-
-// Interfaz para el perfil del usuario desde /api/usuarios/{id}
-export interface UsuarioPerfil {
-  id: number;
-  nombre: string;
-  correo: string;
-  // otros campos que pueda devolver la API
-}
-
 @Injectable({ providedIn: 'root' })
 export class CuentaService {
 
@@ -26,26 +17,35 @@ export class CuentaService {
 
   readonly userName  = signal('');
   readonly userEmail = signal('');
+  readonly userImage = signal('');
 
   readonly loading = signal<boolean>(false);
   readonly error   = signal<string | null>(null);
 
+  constructor(private http: HttpClient) {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedImage = localStorage.getItem('user_image');
+      if (storedImage) this.userImage.set(storedImage);
 
-  constructor(private http: HttpClient) {}
+      const storedName = localStorage.getItem('nombre');
+      if (storedName) this.userName.set(storedName);
 
-  // Obtiene el ID del usuario desde localStorage
+      const storedEmail = localStorage.getItem('user_email');
+      if (storedEmail) this.userEmail.set(storedEmail);
+    }
+  }
+
   private getUserId(): number | null {
     if (!isPlatformBrowser(this.platformId)) return null;
     const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId, 10) : null;
   }
-  // Carga el perfil del usuario desde /api/usuarios/{id}
 
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
       if(isPlatformBrowser (this.platformId)){
-        this.error.set('No se encontr� el ID de usuario.');
+        this.error.set('No se encontró el ID de usuario.');
       }
       return;
     }
@@ -56,9 +56,22 @@ export class CuentaService {
     this.http.get<any>(`${BASE_URL}/${userId}`).subscribe({
       next: response => {
         const payload = response?.data ?? response;
-        // Manejamos tanto minúsculas como Mayúsculas por si la API cambia
-        this.userName.set(payload.nombre || payload.Nombre || '');
-        this.userEmail.set(payload.correo || payload.Correo || '');
+        const data = payload?.data ?? payload;
+
+        const nombre = data.nombre || data.Nombre || data.nombre_usuario || payload.nombre || payload.Nombre || '';
+        const correo = data.correo || data.Correo || data.email || data.Email || data.email_usuario || payload.correo || payload.Correo || payload.email || payload.Email || '';
+        const imagen = data.ruta_imagen || data.RutaImagen || data.rutaImagen || payload.ruta_imagen || payload.RutaImagen || payload.rutaImagen || '';
+
+        this.userName.set(nombre);
+        this.userEmail.set(correo);
+        this.userImage.set(imagen);
+
+        if (isPlatformBrowser(this.platformId)) {
+          if (nombre) localStorage.setItem('nombre', nombre);
+          if (correo) localStorage.setItem('user_email', correo);
+          if (imagen) localStorage.setItem('user_image', imagen);
+        }
+
         this.loading.set(false);
       },
       error: err => {
@@ -69,8 +82,7 @@ export class CuentaService {
     });
   }
 
-  // Método unificado para actualizar perfil según documentación (PUT con llaves en Mayúsculas)
-  updatePerfil(datos: { Nombre?: string, Correo?: string, Contrasenia?: string }): Observable<any> {
+  updatePerfil(datos: { Nombre?: string, Correo?: string, Contrasenia?: string, RutaImagen?: string }): Observable<any> {
     const userId = this.getUserId();
     if (!userId) {
       return new Observable(observer => observer.error(new Error('No hay ID de usuario')));
@@ -79,6 +91,7 @@ export class CuentaService {
     const payload = {
       Nombre: datos.Nombre || this.userName(),
       Correo: datos.Correo || this.userEmail(),
+      RutaImagen: datos.RutaImagen !== undefined ? datos.RutaImagen : this.userImage(),
       Contrasenia: datos.Contrasenia || ''
     };
 
@@ -92,22 +105,28 @@ export class CuentaService {
         }
         if (datos.Correo) {
           this.userEmail.set(datos.Correo);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('user_email', datos.Correo);
+          }
+        }
+        if (datos.RutaImagen !== undefined) {
+          this.userImage.set(datos.RutaImagen);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('user_image', datos.RutaImagen);
+          }
         }
       })
     );
   }
 
-  // Actualiza el nombre del usuario
   updateNombre(nombre: string): Observable<void> {
     return this.updatePerfil({ Nombre: nombre });
   }
 
-  // Actualiza el correo del usuario
   updateEmail(email: string): Observable<void> {
     return this.updatePerfil({ Correo: email });
   }
 
-  // Actualiza la contraseña
   updatePassword(password: string): Observable<void> {
     return this.updatePerfil({ Contrasenia: password });
   }

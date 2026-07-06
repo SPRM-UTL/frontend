@@ -7,6 +7,7 @@ export interface UltimoGesto {
   timestamp?: string;
 }
 
+
 // Esta se queda porque calcula un agregado ('veces_utilizado') que no viene en la BD de Device
 export interface AparatoUtilizado {
   sk_aparato_id: number;

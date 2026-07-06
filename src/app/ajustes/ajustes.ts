@@ -51,28 +51,64 @@ export class Ajustes {
   readonly totalDevices = computed(() => this.dispositivosService.devices().length);
   readonly totalGestos = computed(() => this.gestosService.gestos().length);
 
+  constructor() {
+    this.loadSettings();
+  }
+
+  private loadSettings() {
+    try {
+      const raw = localStorage.getItem('user_settings');
+      if (raw) {
+        const settings = JSON.parse(raw);
+        if (settings.language) this.language.set(settings.language);
+        if (settings.mode) this.mode.set(settings.mode);
+        if (typeof settings.notifications === 'boolean') this.notifications.set(settings.notifications);
+        if (typeof settings.autoUpdate === 'boolean') this.autoUpdate.set(settings.autoUpdate);
+        if (typeof settings.twoStepAuth === 'boolean') this.twoStepAuth.set(settings.twoStepAuth);
+      }
+    } catch (e) {
+      console.error('Error loading settings:', e);
+    }
+  }
+
   cycleLanguage() {
     const langs = ['Español', 'Inglés', 'Francés'];
     const currentIdx = langs.indexOf(this.language());
     this.language.set(langs[(currentIdx + 1) % langs.length]);
+    this.saveSettings();
   }
 
   cycleMode() {
     const modes = ['Automático', 'Claro', 'Oscuro'];
     const currentIdx = modes.indexOf(this.mode());
     this.mode.set(modes[(currentIdx + 1) % modes.length]);
+    this.saveSettings();
   }
 
   toggleNotifications() {
     this.notifications.update(v => !v);
+    this.saveSettings();
   }
 
   toggleAutoUpdate() {
     this.autoUpdate.update(v => !v);
+    this.saveSettings();
   }
 
   toggleTwoStep() {
     this.twoStepAuth.update(v => !v);
+    this.saveSettings();
+  }
+
+  private saveSettings() {
+    const settings = {
+      language: this.language(),
+      mode: this.mode(),
+      notifications: this.notifications(),
+      autoUpdate: this.autoUpdate(),
+      twoStepAuth: this.twoStepAuth()
+    };
+    localStorage.setItem('user_settings', JSON.stringify(settings));
   }
 
   resetSettings() {
@@ -82,6 +118,7 @@ export class Ajustes {
       this.notifications.set(true);
       this.autoUpdate.set(true);
       this.twoStepAuth.set(true);
+      localStorage.removeItem('user_settings');
     }
   }
 }
