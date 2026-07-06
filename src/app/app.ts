@@ -29,7 +29,7 @@ export class App implements OnInit, OnDestroy {
   private routerSub: Subscription;
   private safetyTimer?: any;
   private readonly loaderSafetyTimeoutMs = 8000;
-  private readonly loaderHideDelayMs = 3400;
+  private readonly loaderHideDelayMs = 1800;
 
   private mousedownHandler = (event: MouseEvent) => this.handleGlobalInteraction(event);
 
