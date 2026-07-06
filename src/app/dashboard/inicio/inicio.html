@@ -117,15 +117,15 @@
 
       <div class="devices-strip">
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
-          <div class="device-chip-new " >
+          <div class="device-chip-new">
             <div class="chip-ico-circle">
               <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" class="panel-icon-main"></svg>
             </div>
             <strong>{{ device.nombre_aparato }}</strong>
             <span>{{ device.tipo_aparato }}</span>
-            <div class="status-pill-on">
+            <div class="status-pill" [class.on]="connectedDevices().includes(device.mac_bluetooth || '')">
               <span class="dot"></span>
-              {{device.accion_nombre}}
+              {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
             </div>
           </div>
         }

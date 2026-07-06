@@ -18,11 +18,8 @@ export class AuthService {
 
 
   constructor(private http: HttpClient, private router: Router, private loaderService: LoaderService) {
-    if (isPlatformBrowser(this.platformId)) {
-      setInterval(() => {
-        this.checkTokenExpiration();
-      }, 60000);
-    }
+    // No navegamos automáticamente a /sesion-expirada solo por la expiración local del token.
+    // El backend debe devolver 401 cuando la sesión ya no es válida y entonces se muestra la pantalla.
   }
   // En tu AuthService.ts
   login(correo: string, contrasenia: string): Observable<any> {

@@ -226,7 +226,6 @@ body {
   color: #ffffff;
 }
 
-/* ✅ ESTADO ACTIVO */
 .nav-item.active {
   color: var(--cafe-dark) !important;
   font-weight: 600;

@@ -59,7 +59,7 @@ export class InicioService {
       dispositivos: this.devicesService.getDevicesObservable(),
       gestos: this.gestosService.loadGestos(token),
       historial: this.historialService.getHistorialObservable(),
-      consumos: this.consumosService.getAparatosConsumoHistorico()
+      consumos: this.consumosService.getAparatosConsumoHistoricoPorUsuario(id)
     }).pipe(
       map(({ dispositivos, gestos, historial, consumos }) => {
         const dispositivosData = Array.isArray(dispositivos) ? dispositivos : [];
