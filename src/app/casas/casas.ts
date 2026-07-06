@@ -129,6 +129,18 @@ export class Casas implements OnInit {
       this.casasService.updateCasa(this.casaForm.id, { nombre_casa: this.casaForm.nombre_casa }).subscribe({
         next: () => {
           this.toastService.success('Casa actualizada');
+
+          if (this.selectedCasa()?.sk_casa_id === this.casaForm.id) {
+            this.selectedCasa.update(casa =>
+              casa
+                ? {
+                    ...casa,
+                    nombre_casa: this.casaForm.nombre_casa
+                  }
+                : null
+            );
+          }
+
           this.showCasaModal.set(false);
         },
         error: () => this.toastService.error('Error al actualizar casa')
