@@ -1,6 +1,6 @@
 // cuenta.ts
 
-import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -33,13 +33,14 @@ import { ToastService } from '../services/toast.service';
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
 })
-export class Cuenta implements OnInit {
+export class Cuenta implements OnInit, OnDestroy {
 
   private cuentaService = inject(CuentaService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('cropCanvas') cropCanvas?: ElementRef<HTMLCanvasElement>;
 
   readonly userName  = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
@@ -48,12 +49,31 @@ export class Cuenta implements OnInit {
   editingField = signal<string | null>(null);
   editValue = '';
   isSaving = signal(false);
+  isUploadingImage = signal(false);
+  showCropper = signal(false);
+  cropZoom = signal(1);
+  cropImageName = signal('perfil');
+
+  private cropImage: HTMLImageElement | null = null;
+  private cropImageObjectUrl = '';
+  private cropOffsetX = 0;
+  private cropOffsetY = 0;
+  private isDraggingCrop = false;
+  private dragStartX = 0;
+  private dragStartY = 0;
+  private dragBaseOffsetX = 0;
+  private dragBaseOffsetY = 0;
 
   ngOnInit(): void {
     this.cuentaService.loadPerfil();
   }
 
+  ngOnDestroy(): void {
+    this.revokeCropObjectUrl();
+  }
+
   onEditAvatar(): void {
+    if (this.isSaving() || this.isUploadingImage()) return;
     this.fileInput.nativeElement.click();
   }
 
@@ -62,33 +82,142 @@ export class Cuenta implements OnInit {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
-    const fileName = file.name;
+    input.value = '';
 
-    this.isSaving.set(true);
-    this.toastService.loading('Actualizando ruta de imagen...');
+    if (!file.type.startsWith('image/')) {
+      this.toastService.warning('Selecciona un archivo de imagen.');
+      return;
+    }
 
-    // Solo guardamos la ruta (el nombre o enlace) en la base de datos
-    this.cuentaService.updatePerfil({
-      RutaImagen: fileName
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Ruta de imagen actualizada correctamente');
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      this.toastService.warning('Solo se permiten imágenes JPG o PNG.');
+      return;
+    }
 
-        // Previsualización local inmediata para feedback visual
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.cuentaService.userImage.set(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+    this.openCropper(file);
+  }
 
-        this.isSaving.set(false);
-      },
-      error: (err) => {
-        console.error('Error al guardar ruta', err);
-        this.toastService.error('Error al actualizar la ruta de la imagen');
-        this.isSaving.set(false);
+  private openCropper(file: File): void {
+    this.revokeCropObjectUrl();
+
+    const cleanName = file.name.replace(/\.[^.]+$/, '').trim();
+    this.cropImageName.set(cleanName || 'perfil');
+    this.cropZoom.set(1);
+    this.cropOffsetX = 0;
+    this.cropOffsetY = 0;
+    this.showCropper.set(true);
+
+    this.cropImageObjectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => setTimeout(() => this.drawCropCanvas());
+    image.src = this.cropImageObjectUrl;
+    this.cropImage = image;
+  }
+
+  setCropZoom(value: string | number): void {
+    const numericValue = Number(value);
+    this.cropZoom.set(Number.isFinite(numericValue) ? numericValue : 1);
+    this.drawCropCanvas();
+  }
+
+  startCropDrag(event: PointerEvent): void {
+    event.preventDefault();
+    this.isDraggingCrop = true;
+    this.dragStartX = event.clientX;
+    this.dragStartY = event.clientY;
+    this.dragBaseOffsetX = this.cropOffsetX;
+    this.dragBaseOffsetY = this.cropOffsetY;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  moveCropDrag(event: PointerEvent): void {
+    if (!this.isDraggingCrop) return;
+
+    this.cropOffsetX = this.dragBaseOffsetX + event.clientX - this.dragStartX;
+    this.cropOffsetY = this.dragBaseOffsetY + event.clientY - this.dragStartY;
+    this.drawCropCanvas();
+  }
+
+  endCropDrag(event: PointerEvent): void {
+    if (!this.isDraggingCrop) return;
+    this.isDraggingCrop = false;
+    (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+  }
+
+  cancelImageCrop(): void {
+    if (this.isUploadingImage()) return;
+    this.closeCropper();
+  }
+
+  confirmImageCrop(): void {
+    const canvas = this.cropCanvas?.nativeElement;
+    if (!canvas || this.isUploadingImage()) return;
+
+    this.isUploadingImage.set(true);
+    this.toastService.loading('Subiendo imagen...');
+
+    canvas.toBlob(blob => {
+      if (!blob) {
+        this.toastService.error('No se pudo preparar la imagen.');
+        this.isUploadingImage.set(false);
+        return;
       }
-    });
+
+      const imageFile = new File([blob], `${this.cropImageName()}-perfil.jpg`, { type: 'image/jpeg' });
+      this.cuentaService.uploadProfileImage(imageFile).subscribe({
+        next: () => {
+          this.toastService.success('Imagen actualizada correctamente');
+          this.closeCropper();
+          this.isUploadingImage.set(false);
+        },
+        error: (err) => {
+          console.error('Error al subir imagen', err);
+          this.toastService.error('Error al subir la imagen');
+          this.isUploadingImage.set(false);
+        }
+      });
+    }, 'image/jpeg', 0.9);
+  }
+
+  private drawCropCanvas(): void {
+    const canvas = this.cropCanvas?.nativeElement;
+    const image = this.cropImage;
+    if (!canvas || !image || !image.complete || !image.naturalWidth) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight) * this.cropZoom();
+    const drawWidth = image.naturalWidth * scale;
+    const drawHeight = image.naturalHeight * scale;
+
+    const maxOffsetX = Math.max(0, (drawWidth - width) / 2);
+    const maxOffsetY = Math.max(0, (drawHeight - height) / 2);
+    this.cropOffsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, this.cropOffsetX));
+    this.cropOffsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, this.cropOffsetY));
+
+    const x = (width - drawWidth) / 2 + this.cropOffsetX;
+    const y = (height - drawHeight) / 2 + this.cropOffsetY;
+
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#f8fafc';
+    context.fillRect(0, 0, width, height);
+    context.drawImage(image, x, y, drawWidth, drawHeight);
+  }
+
+  private closeCropper(): void {
+    this.showCropper.set(false);
+    this.isDraggingCrop = false;
+    this.revokeCropObjectUrl();
+  }
+
+  private revokeCropObjectUrl(): void {
+    if (this.cropImageObjectUrl) {
+      URL.revokeObjectURL(this.cropImageObjectUrl);
+      this.cropImageObjectUrl = '';
+    }
   }
 
   onImageError(): void {

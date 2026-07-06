@@ -41,6 +41,18 @@ export class CuentaService {
     return userId ? parseInt(userId, 10) : null;
   }
 
+  private resolveImageUrl(value: string | null | undefined): string {
+    if (!value) return '';
+
+    if (/^(https?:\/\/|data:|blob:)/i.test(value)) {
+      return value;
+    }
+
+    const apiBase = APP_CONFIG.apiBaseUrl.replace(/\/$/, '');
+    const path = value.startsWith('/') ? value : `/${value}`;
+    return `${apiBase}${path}`;
+  }
+
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
@@ -60,7 +72,7 @@ export class CuentaService {
 
         const nombre = data.nombre || data.Nombre || data.nombre_usuario || payload.nombre || payload.Nombre || '';
         const correo = data.correo || data.Correo || data.email || data.Email || data.email_usuario || payload.correo || payload.Correo || payload.email || payload.Email || '';
-        const imagen = data.ruta_imagen || data.RutaImagen || data.rutaImagen || payload.ruta_imagen || payload.RutaImagen || payload.rutaImagen || '';
+        const imagen = this.resolveImageUrl(data.ruta_imagen || data.RutaImagen || data.rutaImagen || payload.ruta_imagen || payload.RutaImagen || payload.rutaImagen || '');
 
         this.userName.set(nombre);
         this.userEmail.set(correo);
@@ -88,12 +100,20 @@ export class CuentaService {
       return new Observable(observer => observer.error(new Error('No hay ID de usuario')));
     }
 
-    const payload = {
+    const payload: {
+      Nombre: string;
+      Correo: string;
+      Contrasenia: string;
+      RutaImagen?: string;
+    } = {
       Nombre: datos.Nombre || this.userName(),
       Correo: datos.Correo || this.userEmail(),
-      RutaImagen: datos.RutaImagen !== undefined ? datos.RutaImagen : this.userImage(),
       Contrasenia: datos.Contrasenia || ''
     };
+
+    if (datos.RutaImagen !== undefined) {
+      payload.RutaImagen = datos.RutaImagen;
+    }
 
     return this.http.put<any>(`${BASE_URL}/${userId}`, payload).pipe(
       tap(() => {
@@ -129,5 +149,39 @@ export class CuentaService {
 
   updatePassword(password: string): Observable<void> {
     return this.updatePerfil({ Contrasenia: password });
+  }
+
+  uploadProfileImage(file: File): Observable<any> {
+    const userId = this.getUserId();
+    if (!userId) {
+      return new Observable(observer => observer.error(new Error('No hay ID de usuario')));
+    }
+
+    const formData = new FormData();
+    formData.append('imagen', file);
+    formData.append('usuarioId', String(userId));
+
+    return this.http.post<any>(`${BASE_URL}/perfil/imagen`, formData).pipe(
+      tap(response => {
+        const payload = response?.data ?? response;
+        const data = payload?.data ?? payload;
+        const uploadedImage = this.resolveImageUrl(
+          data?.url_imagen ||
+          data?.UrlImagen ||
+          data?.urlImagen ||
+          data?.ruta_imagen ||
+          data?.RutaImagen ||
+          data?.rutaImagen ||
+          ''
+        );
+
+        if (uploadedImage) {
+          this.userImage.set(uploadedImage);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('user_image', uploadedImage);
+          }
+        }
+      })
+    );
   }
 }
