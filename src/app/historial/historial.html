@@ -46,7 +46,6 @@
           <h2 class="section-title">Actividad Reciente</h2>
           <p class="section-sub">{{ actividadesFiltradas().length }} registros encontrados</p>
         </div>
-        <svg lucideChevronDown class="section-arrow" [size]="20" style="transform: rotate(-90deg);"></svg>
       </div>
     </div>
 
@@ -128,9 +127,11 @@
             } @empty {
               @if (!loading()) {
                 <tr>
-                  <td [attr.colspan]="showActions() ? 4 : 3" class="empty-state">
-                    <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
-                    <p>No se encontraron registros en el historial</p>
+                  <td [attr.colspan]="showActions() ? 5 : 4">
+                    <div class="empty-state">
+                      <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                      <p>No se encontraron registros en el historial</p>
+                    </div>
                   </td>
                 </tr>
               }
