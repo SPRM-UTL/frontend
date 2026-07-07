@@ -510,24 +510,35 @@ app-dynamic-chart {
   text-overflow: ellipsis;
 }
 
-.status-pill-on {
+.status-pill {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: #f0fdf4;
-  color: #16a34a;
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
   margin-top: 0.5rem;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-.status-pill-on .dot {
+.status-pill.on {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+.status-pill .dot {
   width: 6px;
   height: 6px;
-  background: #22c55e;
+  background: #94a3b8;
   border-radius: 50%;
+}
+
+.status-pill.on .dot {
+  background: #22c55e;
 }
 
 

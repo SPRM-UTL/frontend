@@ -37,7 +37,12 @@ export class Inicio {
   readonly error = this.inicioService.error;
 
   readonly displayedDevices = computed(() => {
-    return this.devicesService.devices().slice(0, 4);
+    const devices = this.devicesService.devices();
+    const connected = this.connectedDevices();
+
+    return devices
+      .filter(device => connected.includes(device.mac_bluetooth || ''))
+      .slice(0, 4);
   });
 
   readonly displayedGestos = computed(() => {
@@ -48,6 +53,7 @@ export class Inicio {
     return this.casasService.casas().slice(0, 3);
   });
 
+  readonly connectedDevices = this.devicesService.connectedDevices;
 
   getChipClass(tipo: string, index: number = 0): string {
     const colorClasses = [

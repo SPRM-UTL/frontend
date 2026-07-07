@@ -1,7 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 
 import {
   AparatosConsumoHistorico,
@@ -43,16 +43,42 @@ export class ConsumosService {
   /**
    * Obtiene el historial de consumos
    */
-  getAparatosConsumoHistorico(): Observable<AparatosConsumoHistorico[]> {
+  private normalizeConsumoResponse(response: any): AparatosConsumoHistorico[] {
+    const data = response?.data ?? response;
+    return Array.isArray(data) ? data : [];
+  }
 
+  getAparatosConsumoHistorico(): Observable<AparatosConsumoHistorico[]> {
     return this.http
       .get<ApiResponseConsumo>(this.apiUrl, {
         headers: this.getHeaders()
       })
       .pipe(
-        map(response => response.data ?? [])
+        map(response => this.normalizeConsumoResponse(response)),
+        catchError((err) => {
+          if (err.status === 404) {
+            return of([]);
+          }
+          throw err;
+        })
       );
+  }
 
+  getAparatosConsumoHistoricoPorUsuario(userId: number): Observable<AparatosConsumoHistorico[]> {
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/${userId}/consumo_historico`;
+    return this.http
+      .get<ApiResponseConsumo>(url, {
+        headers: this.getHeaders()
+      })
+      .pipe(
+        map(response => this.normalizeConsumoResponse(response)),
+        catchError((err) => {
+          if (err.status === 404) {
+            return of([]);
+          }
+          throw err;
+        })
+      );
   }
 
 }
