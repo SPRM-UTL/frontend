@@ -176,9 +176,13 @@ export class CuentaService {
         );
 
         if (uploadedImage) {
-          this.userImage.set(uploadedImage);
+          const timestamp = new Date().getTime();
+          const separator = uploadedImage.includes('?') ? '&' : '?';
+          const cacheBustedUrl = `${uploadedImage}${separator}t=${timestamp}`;
+
+          this.userImage.set(cacheBustedUrl);
           if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('user_image', uploadedImage);
+            localStorage.setItem('user_image', cacheBustedUrl);
           }
         }
       })

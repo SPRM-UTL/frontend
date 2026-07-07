@@ -184,14 +184,13 @@ export class DispositivosService {
   }
 
   toggleDevice(device: Dispositivo): void {
-    const nuevoEstado = device.accion_nombre === 'Encendido' ? 'Apagado' : 'Encendido';
-    const body = {
-      ...device,
-      accion_nombre: nuevoEstado
-    };
-    const url = `${this.apiUrl}/${device.sk_aparato_id}`;
+    const isEncendido = device.accion_nombre === 'Encendido';
+    const nuevoEstado = isEncendido ? 'Apagado' : 'Encendido';
+    const estadoBool = !isEncendido;
+    
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}?estado=${estadoBool}`;
 
-    this.http.put(url, body, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
+    this.http.post(url, {}, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
       next: () => {
         // 1. Actualizamos la lista principal (Tabla)
         this.devices.update(list =>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ControlService } from './control.service';
+import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { DispositivoControl, AparatoTipo } from './control.model';
 
 import {
@@ -62,11 +63,18 @@ export class Control implements OnInit {
     );
   });
 
+  private dispositivosService = inject(DispositivosService);
+
   dispositivosFiltrados = computed(() => {
     const seleccion = this.tipoSeleccionado();
     const all = this.dispositivos();
-    if (seleccion === 'Todos los tipos') return all;
-    return all.filter(d => (d.tipo_aparato || '').toLowerCase() === seleccion.toLowerCase());
+    const connectedMacs = this.dispositivosService.connectedDevices();
+
+    // Solo mantener dispositivos conectados (cuya MAC esté en la lista)
+    const conectados = all.filter(d => d.mac_bluetooth && connectedMacs.includes(d.mac_bluetooth));
+
+    if (seleccion === 'Todos los tipos') return conectados;
+    return conectados.filter(d => (d.tipo_aparato || '').toLowerCase() === seleccion.toLowerCase());
   });
 
   ngOnInit(): void {

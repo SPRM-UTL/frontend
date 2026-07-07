@@ -132,12 +132,11 @@ export class ControlService {
     if (!device) return;
 
     const nuevoEstado = !device.encendido;
-    const body = this.mapToBackend(device, nuevoEstado);
-    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}/${device.id}`;
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}?estado=${nuevoEstado}`;
 
     const headers = this.getHeaders().set('X-Skip-Loader', 'true');
 
-    this.http.put(url, body, { headers }).subscribe({
+    this.http.post(url, {}, { headers }).subscribe({
       next: () => {
         this.todosLosDispositivos.update(list =>
           list.map(d => d.id === id ? { ...d, encendido: nuevoEstado } : d)

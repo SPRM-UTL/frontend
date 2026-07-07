@@ -80,8 +80,8 @@
             </tr>
           </thead>
           <tbody>
-            @for (a of actividadesFiltradas(); track $index) {
-              <tr class="history-row" (click)="selectedId.set(a.id)" [class.is-selected]="selectedId() === a.id" style="cursor: pointer;">
+            @for (a of actividadesPaginadas(); track $index) {
+              <tr class="history-row" (click)="openModal(a); selectedId.set(a.id)" [class.is-selected]="selectedId() === a.id" style="cursor: pointer;">
                 <!-- Action / Event -->
                 <td class="action-cell">
                   <div class="action-content">
@@ -112,7 +112,7 @@
 
                 <!-- Time -->
                 <td class="time-cell">
-                  <span class="time-text">{{ formatHora($any(a).hora_periodo ?? a.hora) }}</span>
+                  <span class="time-text">{{ a.hora }}</span>
                 </td>
 
                 <!-- Actions -->
@@ -143,12 +143,86 @@
 
     <!-- Pagination -->
     <footer class="table-footer">
-      <p class="results-count">Mostrando 1 a {{ actividadesFiltradas().length }} de {{ actividadesFiltradas().length }} registros</p>
+      <p class="results-count">Mostrando {{ startIndex() }} a {{ endIndex() }} de {{ actividadesFiltradas().length }} registros</p>
       <div class="pagination">
-        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg></button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(-90deg);"></svg></button>
+        <button class="page-btn" (click)="prevPage()" [disabled]="currentPage() === 1" [class.disabled]="currentPage() === 1">
+          <svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg>
+        </button>
+        <button class="page-btn active">{{ currentPage() }}</button>
+        <span class="page-text">de {{ totalPages() }}</span>
+        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()" [class.disabled]="currentPage() === totalPages()">
+          <svg lucideChevronDown [size]="12" style="transform: rotate(-90deg);"></svg>
+        </button>
       </div>
     </footer>
   </div>
 </div>
+
+<!-- ── Modal: detalle de actividad ──────────────────────────────────────── -->
+@if (isModalOpen() && selectedActividad()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-detail-container" (click)="$event.stopPropagation()">
+
+      <header class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-main-title">Detalle de Actividad</h2>
+          <p class="modal-main-subtitle">Información del evento registrado en el historial.</p>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar" (click)="closeModal()">✕</button>
+      </header>
+
+      <div class="modal-body">
+        <div class="detail-layout">
+
+          <div class="detail-main">
+            <section class="card hero-info-card">
+              <div class="hero-header">
+                <div class="hero-icon-box">
+                  <svg [lucideIcon]="getActivityIcon(selectedActividad().icono, selectedActividad().estado, selectedActividad().accion)" [size]="44" class="gesto-hero-img"></svg>
+                </div>
+                <div class="hero-titles">
+                  <h2 class="hero-name">{{ selectedActividad().accion }}</h2>
+                  <span class="status-indicator">
+                    <span class="dot" [class.offline]="selectedActividad().estado === 'Error'"></span>
+                    {{ selectedActividad().estado }}
+                  </span>
+                  <p class="hero-desc">Este evento fue originado mediante {{ selectedActividad().metodo | lowercase }} y afectó al dispositivo {{ selectedActividad().dispositivo }}.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="detail-sidebar">
+            <div class="sidebar-info-card">
+              <h3 class="sidebar-card-title">Información del Evento</h3>
+              <div class="info-rows">
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg lucideClock class="info-icon"></svg>
+                    <span>Fecha y Hora</span>
+                  </div>
+                  <span class="info-row-val">{{ selectedActividad().hora }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg lucideSmartphone class="info-icon"></svg>
+                    <span>Dispositivo</span>
+                  </div>
+                  <span class="info-row-val">{{ selectedActividad().dispositivo }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg lucideHand class="info-icon"></svg>
+                    <span>Método</span>
+                  </div>
+                  <span class="info-row-val">{{ selectedActividad().metodo }}</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+  </div>
+}
