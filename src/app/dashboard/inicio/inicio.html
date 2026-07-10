@@ -77,21 +77,57 @@
     </article>
 
     <article class="chart-card chart-card--wide">
-      <div class="chart-header chart-header--space">
+      <div class="chart-header chart-header--space" style="align-items: flex-start;">
         <div>
-          <h3 class="chart-title">Consumo semanal</h3>
-          <p class="chart-subtitle">Promedio de potencia (W) por día</p>
+          <h3 class="chart-title">Consumo Histórico</h3>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'hoy'" (click)="setPeriodo('hoy')" type="button">Hoy</button>
+            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'semana'" (click)="setPeriodo('semana')" type="button">Semana</button>
+            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'mes'" (click)="setPeriodo('mes')" type="button">Mes</button>
+            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'año'" (click)="setPeriodo('año')" type="button">Año</button>
+          </div>
         </div>
-        <button class="range-pill" type="button">Esta semana</button>
+        <div style="text-align: right;">
+          <h3 style="font-size: 1.5rem; font-weight: bold; margin: 0;">{{ yAxisFormatter(consumoTotalKwh()) }} kWh</h3>
+          <p style="opacity: 0.8; font-size: 0.9rem; margin: 0; margin-top: 0.2rem;">&approx; {{ costoTotal() | currency:'MXN':'symbol':(costoTotal() < 0.01 && costoTotal() > 0 ? '1.4-4' : '1.2-2') }}</p>
+        </div>
       </div>
-      <div class="chart-body">
+      <div class="chart-body" style="padding-bottom: 1rem;">
         <app-dynamic-chart
-          chartType="area"
+          chartType="bar"
           [series]="actividadSeries()"
-          [categories]="actividadCategorias"
-          [colors]="['#ffff','#ffff']"
+          [categories]="actividadCategorias()"
+          [colors]="['#ffffff']"
           [height]="300"
-          [additionalOptions]="{ stroke: { curve: 'smooth' }, fill: { opacity: 0.3 } }">
+          [additionalOptions]="{
+            plotOptions: { bar: { borderRadius: 4, columnWidth: '40%' } },
+            dataLabels: { enabled: false },
+            yaxis: {
+              labels: {
+                style: { colors: ['rgba(255,255,255,0.8)'] },
+                formatter: yAxisFormatter
+              },
+              forceNiceScale: true,
+              decimalsInFloat: 4,
+              min: 0,
+              max: consumoTotalKwh() === 0 ? 1 : undefined
+            },
+            xaxis: {
+              categories: actividadCategorias(),
+              labels: { style: { colors: 'rgba(255,255,255,0.8)' } }
+            },
+            grid: {
+              show: true,
+              borderColor: 'rgba(255,255,255,0.16)',
+              strokeDashArray: 0,
+              position: 'back',
+              xaxis: { lines: { show: false } },
+              yaxis: { lines: { show: true } }
+            },
+            tooltip: {
+              y: { formatter: tooltipFormatter }
+            }
+          }">
         </app-dynamic-chart>
       </div>
     </article>
