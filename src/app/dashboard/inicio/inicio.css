@@ -346,6 +346,41 @@
   font-size: 0.8rem;
   font-family: var(--font-body);
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.range-pill:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.range-pill.active-pill {
+  background: #ffffff;
+  color: var(--cafe-primary, #1e3a35);
+  font-weight: 700;
+  border-color: #ffffff;
+}
+
+.period-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.period-tab:hover {
+  color: white;
+}
+
+.period-tab.active {
+  background-color: var(--teal-500, #36a79b);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .text-link {

@@ -5,7 +5,8 @@ import { Observable, map, catchError, of } from 'rxjs';
 
 import {
   AparatosConsumoHistorico,
-  ApiResponseConsumo
+  ApiResponseConsumo,
+  ApiResponseConsumoResumen
 } from './consumo.model';
 
 import { APP_CONFIG } from '../core/config/app-config';
@@ -79,6 +80,22 @@ export class ConsumosService {
           throw err;
         })
       );
+  }
+
+  getResumenGlobal(granularidad: string, desde?: string, hasta?: string): Observable<ApiResponseConsumoResumen> {
+    // apiUrl is already /api/AparatosConsumoHistorico/todos_los_consumos
+    // We just need to append /resumen to it.
+    const url = `${this.apiUrl}/resumen`;
+    
+    let params: Record<string, string> = { granularidad };
+    if (desde) params['desde'] = desde;
+    if (hasta) params['hasta'] = hasta;
+
+    return this.http
+      .get<ApiResponseConsumoResumen>(url, {
+        headers: this.getHeaders(),
+        params
+      });
   }
 
 }
