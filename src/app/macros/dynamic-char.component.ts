@@ -52,8 +52,8 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
   @Input() height: number = 300;
   @Input() additionalOptions?: any;
 
-  @Input() valueFormatKind?: 'percentage' | 'currency';
-  @Input() valueFormatter?: (value: number, kind: 'percentage' | 'currency') => string;
+  @Input() valueFormatKind?: 'percentage' | 'currency' | 'kwh';
+  @Input() valueFormatter?: (value: number, kind: 'percentage' | 'currency' | 'kwh') => string;
 
   chartConfig: any = null;
   private resizeObserver?: ResizeObserver;
@@ -100,6 +100,11 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
         maximumFractionDigits: 2,
         minimumFractionDigits: 0
       }).format(num);
+    }
+    if (this.valueFormatKind === 'kwh') {
+      const num = typeof value === 'number' ? value : Number(value);
+      if (Number.isNaN(num)) return String(value);
+      return `${num.toFixed(5)} kWh`;
     }
     return `${value}%`;
   }
@@ -153,8 +158,11 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
         position: 'bottom',
         horizontalAlign: 'center',
         markers: { width: 12, height: 12, radius: 12 },
-        formatter: (_seriesName: string, opts: any) => {
+        formatter: (seriesName: string, opts: any) => {
           const idx = opts?.seriesIndex;
+          if (this.chartType === 'pie' || this.chartType === 'donut') {
+            return this.labels?.[idx] || seriesName;
+          }
           return this.seriesNameList[idx] || `Serie ${idx + 1}`;
         },
         itemMargin: { horizontal: 10, vertical: 4 },
@@ -163,13 +171,43 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
       tooltip: {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }: any) => {
-          const name = this.seriesNameList[seriesIndex] || '';
-          const value = Array.isArray(series) && series[seriesIndex] ? series[seriesIndex] : undefined;
-          const raw = typeof value === 'number' ? value : (Array.isArray(value) ? value[0] : w?.globals?.series?.[seriesIndex]);
-          const formatted = this.formatNumber(Number(raw));
-          return `<div class="apex-tooltip-custom">
-            ${name ? `<div class="apex-tooltip-title">${name}</div>` : ''}
-            <div class="apex-tooltip-value">${formatted}</div>
+          let name = '';
+          let raw = 0;
+          let percentText = '';
+          const isPieOrDonut = w.config.chart.type === 'pie' || w.config.chart.type === 'donut';
+          
+          if (isPieOrDonut) {
+            name = w.globals.labels[dataPointIndex] || '';
+            raw = w.globals.series[dataPointIndex] || 0;
+            if (w.globals && Array.isArray(w.globals.seriesPercent) && w.globals.seriesPercent[dataPointIndex] !== undefined) {
+              const pct = w.globals.seriesPercent[dataPointIndex];
+              const cost = raw * 0.95;
+              const costText = cost < 0.01 && cost > 0 ? cost.toFixed(4) : cost.toFixed(2);
+              percentText = ` (${pct.toFixed(1)}% | $${costText})`;
+            } else if (w.globals && Array.isArray(w.globals.series)) {
+              const total = w.globals.series.reduce((a: number, b: number) => a + b, 0);
+              if (total > 0) {
+                const pct = (raw / total) * 100;
+                const cost = raw * 0.95;
+                const costText = cost < 0.01 && cost > 0 ? cost.toFixed(4) : cost.toFixed(2);
+                percentText = ` (${pct.toFixed(1)}% | $${costText})`;
+              }
+            }
+          } else {
+            name = this.seriesNameList[seriesIndex] || '';
+            const value = Array.isArray(series) && series[seriesIndex] ? series[seriesIndex] : undefined;
+            raw = typeof value === 'number' ? value : (Array.isArray(value) ? value[0] : w?.globals?.series?.[seriesIndex]);
+          }
+          
+          const formatted = this.formatNumber(Number(raw)) + percentText;
+          const color = w.config.colors[isPieOrDonut ? dataPointIndex : seriesIndex] || '#fff';
+          
+          return `<div class="apex-tooltip-custom" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(30, 30, 30, 0.95); border: 1px solid #444; border-radius: 6px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.35);">
+            <span class="apex-tooltip-marker" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; flex-shrink: 0;"></span>
+            <div style="display: flex; flex-direction: column;">
+              ${name ? `<span class="apex-tooltip-title" style="font-size: 11px; opacity: 0.8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: #bbb;">${name}</span>` : ''}
+              <span class="apex-tooltip-value" style="font-size: 13px; font-weight: 700; margin-top: 2px; color: #fff;">${formatted}</span>
+            </div>
           </div>`;
         }
       },
@@ -246,7 +284,14 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
     }
 
     if (this.additionalOptions) {
-      Object.assign(config, this.additionalOptions);
+      for (const key of Object.keys(this.additionalOptions)) {
+        if (key === 'chart') continue; // chart is already merged above
+        if (config[key] && typeof config[key] === 'object' && typeof this.additionalOptions[key] === 'object' && !Array.isArray(config[key])) {
+          config[key] = { ...config[key], ...this.additionalOptions[key] };
+        } else {
+          config[key] = this.additionalOptions[key];
+        }
+      }
     }
 
     this.chartConfig = config;
