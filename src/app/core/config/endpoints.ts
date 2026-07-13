@@ -20,6 +20,8 @@ export const ENDPOINTS = {
 
   casas: '/api/Casas',
 
-  habitaciones: '/api/Habitaciones'
+  habitaciones: '/api/Habitaciones',
+
+  camaraWs: '/ws/camera/view'
 
 };
