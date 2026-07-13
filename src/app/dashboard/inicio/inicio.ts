@@ -80,6 +80,28 @@ export class Inicio {
   /** Funciones de formateo expuestas para usarse en additionalOptions del template */
   readonly yAxisFormatter = yAxisFormatterFn;
   readonly tooltipFormatter = tooltipFormatterFn;
+  readonly donutTotalFormatter = (w: any) => {
+    if (this.donaRaw().length === 0) return '0.00000 kWh';
+    const total = w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0);
+    return total.toFixed(5) + ' kWh';
+  };
+  readonly donutValueFormatter = (val: string) => {
+    const num = Number(val);
+    if (Number.isNaN(num)) return val;
+    return num.toFixed(5) + ' kWh';
+  };
+  readonly donutNameFormatter = (val: string) => {
+    if (val === 'Total') return 'Total';
+    const datos = this.donaRaw();
+    const totalWh = datos.reduce((acc, d) => acc + d.totalEnergiaWh, 0);
+    const deviceData = datos.find(d => d.aparato === val);
+    if (!deviceData || totalWh === 0) return val;
+    const pct = (deviceData.totalEnergiaWh / totalWh) * 100;
+    const kwh = deviceData.totalEnergiaWh / 1000;
+    const costo = kwh * COSTO_POR_KWH;
+    const costoTexto = costo < 0.01 && costo > 0 ? costo.toFixed(4) : costo.toFixed(2);
+    return `${pct.toFixed(1)}% ($${costoTexto})`;
+  };
 
   // ── Estado de la gráfica de consumo ─────────────────────────────────────
   periodoSeleccionado = signal<'hoy' | 'semana' | 'mes' | 'año'>('semana');
@@ -113,16 +135,39 @@ export class Inicio {
     return '';
   });
 
-  // Gráfica radial de eficiencia
+// ── Modificación para la gráfica circular (Donut) ────────────────────────
+
+  /** Datos crudos del endpoint resumen_dona */
+  private donaRaw = signal<{ aparato: string; totalEnergiaWh: number }[]>([]);
+
+  /** Series para la dona: energía en kWh por dispositivo */
   readonly eficienciaSeries = computed(() => {
-    const puntos = this.puntosResumen();
-    if (puntos.length === 0) return [0];
-    const avg = puntos.reduce((acc, p) => acc + p.potencia_promedio_w, 0) / puntos.length;
-    return [Math.min(100, Math.round((avg / 200) * 100))];
+    const datos = this.donaRaw();
+    if (datos.length === 0) return [1]; // dona vacía con un segmento gris
+    return datos.map(d => Number((d.totalEnergiaWh / 1000).toFixed(6)));
   });
 
-  eficienciaLabels = ['Carga del sistema'];
-  eficienciaColors = ['#ffffff'];
+  /** Etiquetas: nombres de los dispositivos */
+  readonly eficienciaLabels = computed(() => {
+    const datos = this.donaRaw();
+    if (datos.length === 0) return ['Sin datos'];
+    return datos.map(d => d.aparato);
+  });
+
+  /** Total kWh de la dona */
+  readonly donaTotalKwh = computed(() =>
+    this.donaRaw().reduce((acc, d) => acc + d.totalEnergiaWh / 1000, 0)
+  );
+
+  /** Paleta de colores atractiva */
+  readonly eficienciaColors = ['#00a896', '#028090', '#02c39a', '#f0f3bd', '#05668d', '#00e5ff', '#ff6b6b', '#ffd93d'];
+
+  /** Label del período seleccionado para mostrar en la dona */
+  readonly donaLabelPeriodo = computed(() => {
+    const p = this.periodoSeleccionado();
+    const map: Record<string, string> = { hoy: 'Hoy', semana: 'Semana', mes: 'Mes', año: 'Año' };
+    return map[p] || p;
+  });
 
   // ── Cambio de período desde los botones ─────────────────────────────────
   setPeriodo(periodo: 'hoy' | 'semana' | 'mes' | 'año') {
@@ -135,6 +180,8 @@ export class Inicio {
     if (!isPlatformBrowser(this.platformId)) return;
     const token = localStorage.getItem('token') ?? '';
     if (!token) return;
+
+    const userId = Number(localStorage.getItem('userId') ?? '0');
 
     const ahora = new Date();
     const hasta = ahora.toISOString();
@@ -151,20 +198,20 @@ export class Inicio {
       case 'semana': {
         const d = new Date(ahora.getTime() - 7 * 24 * 60 * 60 * 1000);
         desde = d.toISOString();
-        granularidad = 'dia';
+        granularidad = 'mes'; // Groups by Day
         break;
       }
       case 'mes': {
         const d = new Date(ahora.getTime() - 30 * 24 * 60 * 60 * 1000);
         desde = d.toISOString();
-        granularidad = 'dia';
+        granularidad = 'mes'; // Groups by Day
         break;
       }
       case 'año': {
         const d = new Date(ahora);
         d.setFullYear(d.getFullYear() - 1);
         desde = d.toISOString();
-        granularidad = 'mes';
+        granularidad = 'año'; // Groups by Month
         break;
       }
       default: {
@@ -176,9 +223,9 @@ export class Inicio {
 
     this.cargandoConsumo.set(true);
 
+    // Cargar gráfica de barras (resumen global)
     this.consumosService.getResumenGlobal(granularidad, desde, hasta).subscribe({
       next: (resp: any) => {
-        // El backend puede devolver { data: { puntos: [...] } } o { puntos: [...] }
         const puntos: AparatoConsumoPunto[] = resp?.data?.puntos ?? resp?.puntos ?? [];
         this.puntosResumen.set(puntos);
         this.cargandoConsumo.set(false);
@@ -188,6 +235,19 @@ export class Inicio {
         this.cargandoConsumo.set(false);
       }
     });
+
+    // Cargar gráfica de dona (consumo por dispositivo)
+    if (userId > 0) {
+      this.consumosService.getConsumoDona(userId, desde, hasta).subscribe({
+        next: (resp: any) => {
+          const datos = Array.isArray(resp?.data) ? resp.data : Array.isArray(resp) ? resp : [];
+          this.donaRaw.set(datos);
+        },
+        error: () => {
+          this.donaRaw.set([]);
+        }
+      });
+    }
   }
 
   /** Formatea el ISO string del periodo según el tab activo */

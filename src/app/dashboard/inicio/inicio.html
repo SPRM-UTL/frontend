@@ -58,20 +58,64 @@
 
   <section class="charts-grid card">
     <article class="chart-card radial-box">
-      <div class="chart-header">
+      <div class="chart-header chart-header--space">
         <div>
-          <h3 class="chart-title">Carga del sistema</h3>
-          <p class="chart-subtitle">Consumo promedio actual</p>
+          <h3 class="chart-title">Consumo por Dispositivo</h3>
+          <p class="chart-subtitle">Distribución de energía</p>
         </div>
+        <span class="range-pill active-pill" style="pointer-events: none; font-size: 0.75rem; padding: 0.4rem 0.7rem;">
+          {{ donaLabelPeriodo() }}
+        </span>
       </div>
       <div class="chart-body chart-body--radial">
         <app-dynamic-chart
-          chartType="radialBar"
+          chartType="donut"
           [series]="eficienciaSeries()"
-          [labels]="eficienciaLabels"
+          [labels]="eficienciaLabels()"
           [colors]="eficienciaColors"
-          [height]="300"
-          valueFormatKind="percentage">
+          [height]="280"
+          valueFormatKind="kwh"
+          [additionalOptions]="{
+            plotOptions: {
+              pie: {
+                donut: {
+                  size: '60%',
+                  labels: {
+                    show: true,
+                     name: {
+                      show: true,
+                      fontSize: '14px',
+                      color: '#ffffff',
+                      formatter: donutNameFormatter
+                    },
+                    value: {
+                      show: true,
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      formatter: donutValueFormatter
+                    },
+                    total: {
+                      show: true,
+                      label: 'Total',
+                      color: '#ffffff',
+                      fontSize: '13px',
+                      formatter: donutTotalFormatter
+                    }
+                  }
+                }
+              }
+            },
+            legend: {
+              show: true,
+              position: 'bottom',
+              horizontalAlign: 'center',
+              labels: { colors: '#ffffff' },
+              markers: { width: 10, height: 10, radius: 10 },
+              itemMargin: { horizontal: 8, vertical: 4 }
+            },
+            dataLabels: { enabled: false }
+          }">
         </app-dynamic-chart>
       </div>
     </article>
