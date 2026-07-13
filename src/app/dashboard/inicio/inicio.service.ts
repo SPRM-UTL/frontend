@@ -28,7 +28,8 @@ export class InicioService {
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
   readonly consumos = signal<AparatosConsumoHistorico[]>([]);
-
+  readonly datosDona = signal<{ aparato: string, totalEnergiaWh: number }[]>([]);
+  
   loadInicio(id: number, token: string): void {
     this.loading.set(true);
     this.error.set(null);
@@ -92,6 +93,24 @@ export class InicioService {
           aparatosUtilizados,
           actividadReciente: actividades.slice(0, 5)
         };
+        
+        // Dentro de loadInicio()...
+        forkJoin({
+          dispositivos: this.devicesService.getDevicesObservable(),
+          gestos: this.gestosService.loadGestos(token),
+          historial: this.historialService.getHistorialObservable(),
+          consumos: this.consumosService.getAparatosConsumoHistoricoPorUsuario(id),
+          donaInicial: this.consumosService.getConsumoDona(id) // <--- Nueva petición inicial
+        }).pipe(
+          map(({ dispositivos, gestos, historial, consumos, donaInicial }) => {
+            // ... todo tu código de mapeo actual ...
+
+            this.datosDona.set(donaInicial); // <--- Guardamos los datos de la dona
+            this.consumos.set(consumoData);
+            this.acciones.set(aparatosUtilizados);
+            return stats;
+          })
+        )
 
         this.consumos.set(consumoData)
         this.acciones.set(aparatosUtilizados);
@@ -107,6 +126,49 @@ export class InicioService {
     ).subscribe({
       next: (stats) => {
         this.stats.set(stats);
+      }
+    });
+  }
+  loadConsumosPorRango(usuarioId: number, rango: 'hoy' | 'semana' | 'mes' | 'ano'): void {
+    this.loading.set(true);
+    
+    const hoy = new Date();
+    let desde = new Date();
+
+    // Configuración de rangos (Alineado a tus datos de prueba de Julio 2026)
+    if (rango === 'hoy') {
+      desde.setHours(0, 0, 0, 0);
+    } else if (rango === 'semana') {
+      desde.setDate(hoy.getDate() - 7);
+    } else if (rango === 'mes') {
+      desde.setMonth(hoy.getMonth() - 1);
+    } else if (rango === 'ano') {
+      desde.setFullYear(hoy.getFullYear() - 1);
+    }
+
+    const desdeStr = desde.toISOString();
+    const hastaStr = hoy.toISOString();
+
+    // Definimos la granularidad que requiere tu endpoint "todos_los_consumos/resumen"
+    const granularidad = rango === 'hoy' ? 'envivo' : rango === 'mes' ? 'mes' : 'dia';
+
+    forkJoin({
+      datosDona: this.consumosService.getConsumoDona(usuarioId, desdeStr, hastaStr),
+      // SE CORRIGIÓ AQUÍ: De "getConsumoResumenGlobal" a "getResumenGlobal"
+      datosBarras: this.consumosService.getResumenGlobal(granularidad, desdeStr, hastaStr)
+    }).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: ({ datosDona, datosBarras }) => {
+        // 1. Actualizamos la señal de la dona con los nuevos dispositivos y valores
+        this.datosDona.set(Array.isArray(datosDona) ? datosDona : []);
+        
+        // 2. TODO: Aquí actualizas la señal o variable que use tu componente 
+        // para renderizar el gráfico histórico de barras con "datosBarras"
+      },
+      error: (err) => {
+        console.error('Error al actualizar rangos del dashboard:', err);
+        this.error.set('No se pudieron filtrar los datos de consumo.');
       }
     });
   }
@@ -184,4 +246,5 @@ export class InicioService {
   private contarAccionesHoy(actividades: Actividad[]): number {
     return actividades.length;
   }
+  
 }

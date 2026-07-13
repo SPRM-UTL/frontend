@@ -15,6 +15,7 @@ import {
   LucideDynamicIcon
 } from '@lucide/angular';
 import { getDeviceIcon } from '../shared/icon-map';
+import { CamaraComponent } from '../camara/camara.component';
 
 @Component({
   selector: 'app-control',
@@ -28,7 +29,8 @@ import { getDeviceIcon } from '../shared/icon-map';
     LucideLayoutDashboard,
     LucideChevronDown,
     LucidePower,
-    LucideDynamicIcon
+    LucideDynamicIcon,
+    CamaraComponent
   ],
   templateUrl: './control.html',
   styleUrl: './control.css'
