@@ -424,3 +424,114 @@
 @media (max-width: 768px) {
   .devices-grid { grid-template-columns: 1fr; }
 }
+
+/* MULTISOCKET */
+.multisocket-panel {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.multisocket-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+.multisocket-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+
+.socket-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0.75rem 0.5rem;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.socket-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cafe-primary);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  border-radius: inherit;
+}
+
+.socket-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border-color: var(--cafe-primary);
+  color: var(--cafe-primary);
+}
+
+.socket-btn:active {
+  transform: scale(0.96);
+}
+
+/* Estado ON */
+.socket-btn.socket-on {
+  background: var(--cafe-primary);
+  border-color: var(--cafe-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(43, 191, 170, 0.35);
+}
+
+.socket-btn.socket-on:hover {
+  background: #24d4b8;
+  border-color: #24d4b8;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(43, 191, 170, 0.45);
+}
+
+.socket-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.12);
+  transition: background 0.25s ease;
+}
+
+.socket-btn.socket-on .socket-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.socket-number {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  transition: color 0.25s ease;
+}
+
+.socket-state-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+}
+
+.socket-btn.socket-on .socket-state-label {
+  opacity: 0.9;
+}

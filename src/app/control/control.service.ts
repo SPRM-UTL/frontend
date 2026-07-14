@@ -170,4 +170,65 @@ export class ControlService {
   playVolumeSound(volumen: number): void {
     this.audioService.play('volumen', volumen);
   }
+
+  /**
+   * Carga el estado real de los 4 contactos del MultiSocket desde el backend.
+   * Se llama al mostrar la tarjeta de un dispositivo de tipo MultiSocket.
+   */
+  loadMultisocketState(device: DispositivoControl): void {
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/state/${device.id}`;
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.get<any>(url, { headers }).subscribe({
+      next: (res) => {
+        this.todosLosDispositivos.update(list =>
+          list.map(d => {
+            if (d.id !== device.id) return d;
+            return {
+              ...d,
+              estado_contacto_1: res.estado_encendido   ?? false,
+              estado_contacto_2: res.estado_encendido_2 ?? false,
+              estado_contacto_3: res.estado_encendido_3 ?? false,
+              estado_contacto_4: res.estado_encendido_4 ?? false,
+            };
+          })
+        );
+      },
+      error: (err) => console.error('Error cargando estado MultiSocket:', err)
+    });
+  }
+
+  /**
+   * Enciende o apaga un contacto específico (1–4) de un MultiSocket.
+   * Llama a POST /ws/toggle/{id}/contacto/{contacto}?estado={bool}
+   */
+  toggleContacto(device: DispositivoControl, contacto: 1 | 2 | 3 | 4, nuevoEstado: boolean): void {
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}/contacto/${contacto}?estado=${nuevoEstado}`;
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.post(url, {}, { headers }).subscribe({
+      next: () => {
+        this.todosLosDispositivos.update(list =>
+          list.map(d => {
+            if (d.id !== device.id) return d;
+            const patch: Partial<DispositivoControl> = {};
+            if (contacto === 1) patch.estado_contacto_1 = nuevoEstado;
+            if (contacto === 2) patch.estado_contacto_2 = nuevoEstado;
+            if (contacto === 3) patch.estado_contacto_3 = nuevoEstado;
+            if (contacto === 4) patch.estado_contacto_4 = nuevoEstado;
+            // encendido refleja si AL MENOS un contacto está activo
+            const merged = { ...d, ...patch };
+            merged.encendido =
+              (merged.estado_contacto_1 || false) ||
+              (merged.estado_contacto_2 || false) ||
+              (merged.estado_contacto_3 || false) ||
+              (merged.estado_contacto_4 || false);
+            return merged;
+          })
+        );
+        this.audioService.play('interruptor', device.volumen ?? 50);
+      },
+      error: (err) => console.error(`Error toggling contacto ${contacto}:`, err)
+    });
+  }
 }
