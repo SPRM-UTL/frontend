@@ -26,6 +26,12 @@ export interface DispositivoControl {
   velocidad?: number;
   tono?: 'warm' | 'cool';
   reproduciendo?: string;
+
+  // Estados independientes para MultiSocket
+  estado_contacto_1?: boolean;
+  estado_contacto_2?: boolean;
+  estado_contacto_3?: boolean;
+  estado_contacto_4?: boolean;
 }
 
 // Mantener los anteriores por compatibilidad si es necesario,

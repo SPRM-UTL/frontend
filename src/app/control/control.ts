@@ -81,6 +81,20 @@ export class Control implements OnInit {
 
   ngOnInit(): void {
     this.controlService.loadControl();
+    // Cuando los dispositivos carguen, pre-cargamos el estado de los MultiSocket
+    const sub = this.controlService.todosLosDispositivos;
+    // Observamos la señal para cargar estados cuando haya datos
+    setTimeout(() => {
+      const msDevices = this.controlService.todosLosDispositivos()
+        .filter(d => this.isMultisocketByTipo(d.tipo_aparato));
+      msDevices.forEach(d => this.controlService.loadMultisocketState(d));
+    }, 1500);
+  }
+
+  private isMultisocketByTipo(tipo: string | undefined): boolean {
+    if (!tipo) return false;
+    const t = tipo.toLowerCase();
+    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket');
   }
 
   selectTipo(tipo: string): void {
@@ -95,6 +109,28 @@ export class Control implements OnInit {
 
   toggleDevice(device: DispositivoControl): void {
     this.controlService.toggleDevice(device.id);
+  }
+
+  /** Devuelve true si el dispositivo es un MultiSocket */
+  isMultisocket(device: DispositivoControl): boolean {
+    const tipo = (device.tipo_aparato || '').toLowerCase();
+    return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
+  }
+
+  /** Alterna un contacto individual (1–4) del MultiSocket */
+  toggleContacto(device: DispositivoControl, contacto: 1 | 2 | 3 | 4): void {
+    const estadoActual = this.getContactoEstado(device, contacto);
+    this.controlService.toggleContacto(device, contacto, !estadoActual);
+  }
+
+  /** Lee el estado booleano de un contacto específico */
+  getContactoEstado(device: DispositivoControl, contacto: 1 | 2 | 3 | 4): boolean {
+    switch (contacto) {
+      case 1: return device.estado_contacto_1 ?? false;
+      case 2: return device.estado_contacto_2 ?? false;
+      case 3: return device.estado_contacto_3 ?? false;
+      case 4: return device.estado_contacto_4 ?? false;
+    }
   }
 
   onBrilloChange(device: DispositivoControl, value: number): void {

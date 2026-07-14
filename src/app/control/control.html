@@ -106,6 +106,34 @@
                        <app-camara [deviceKey]="d.mac_bluetooth || ''"></app-camara>
                     </div>
                   }
+
+                  <!-- MULTISOCKET -->
+                  @if (isMultisocket(d)) {
+                    <div class="multisocket-panel">
+                      <p class="multisocket-label">Contactos independientes</p>
+                      <div class="multisocket-grid">
+
+                        @for (contacto of [1, 2, 3, 4]; track contacto) {
+                          <button
+                            class="socket-btn"
+                            [class.socket-on]="getContactoEstado(d, $any(contacto))"
+                            (click)="toggleContacto(d, $any(contacto))"
+                            [id]="'socket-' + d.id + '-contacto-' + contacto"
+                            [attr.aria-label]="'Contacto ' + contacto + (getContactoEstado(d, $any(contacto)) ? ' encendido' : ' apagado')">
+
+                            <span class="socket-icon">
+                              <svg lucidePower [size]="16"></svg>
+                            </span>
+                            <span class="socket-number">C{{ contacto }}</span>
+                            <span class="socket-state-label">
+                              {{ getContactoEstado(d, $any(contacto)) ? 'ON' : 'OFF' }}
+                            </span>
+                          </button>
+                        }
+
+                      </div>
+                    </div>
+                  }
                 </div>
 
                 <div class="device-card-footer">
