@@ -10,7 +10,28 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+
+/**
+ * Confía en el reverse proxy de Render para que Express lea correctamente
+ * los headers x-forwarded-for, x-forwarded-host.
+ */
+app.set('trust proxy', true);
+
+/**
+ * Angular SSR v19+ valida el header "host" y rechaza peticiones con
+ * hosts no registrados. Se deben incluir todos los dominios de producción
+ * y opcionalmente localhost para desarrollo.
+ */
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: [
+    'manordomo-frontend.onrender.com',
+    'localhost',
+    '127.0.0.1',
+  ],
+  // Permite que Angular SSR confíe en los headers X-Forwarded-* del reverse proxy de Render.
+  // Sin esto se muestra el warning: "Received x-forwarded-for header but trustProxyHeaders was not set up".
+  trustProxyHeaders: true,
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
