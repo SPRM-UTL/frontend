@@ -102,14 +102,21 @@
 
                 <td class="type-cell">{{ device.tipo_aparato }}</td>
 
-                <td class="power-cell">
-                  <div class="action-btn-status" 
-                       [class.on]="device.accion_nombre === 'Encendido'"
-                       (click)="onToggleDevice(device); $event.stopPropagation()">
-                    <svg lucidePower [size]="14"></svg>
-                    <span>{{ device.accion_nombre }}</span>
-                  </div>
-                </td>
+                 <td class="power-cell">
+                   @if (isMultisocket(device)) {
+                     <div class="multisocket-status-badge">
+                       <span class="ms-dot" [class.ms-dot--on]="getMultisocketActiveCount(device) > 0"></span>
+                       <span class="ms-label">{{ getMultisocketActiveCount(device) }}/4 activos</span>
+                     </div>
+                   } @else {
+                     <div class="action-btn-status"
+                          [class.on]="device.accion_nombre === 'Encendido'"
+                          (click)="onToggleDevice(device); $event.stopPropagation()">
+                       <svg lucidePower [size]="14"></svg>
+                       <span>{{ device.accion_nombre }}</span>
+                     </div>
+                   }
+                 </td>
 
                 <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
 

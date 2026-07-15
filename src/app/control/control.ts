@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -35,11 +35,12 @@ import { CamaraComponent } from '../camara/camara.component';
   templateUrl: './control.html',
   styleUrl: './control.css'
 })
-export class Control implements OnInit {
+export class Control implements OnInit, OnDestroy {
 
   private controlService = inject(ControlService);
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private isIncrementing = false;
+  private syncPollingId: ReturnType<typeof setInterval> | null = null;
 
   // Expose icon objects to template
   readonly LucideSun = LucideSun;
@@ -81,14 +82,30 @@ export class Control implements OnInit {
 
   ngOnInit(): void {
     this.controlService.loadControl();
-    // Cuando los dispositivos carguen, pre-cargamos el estado de los MultiSocket
-    const sub = this.controlService.todosLosDispositivos;
-    // Observamos la señal para cargar estados cuando haya datos
+    // Carga inicial del estado de los MultiSocket
     setTimeout(() => {
       const msDevices = this.controlService.todosLosDispositivos()
         .filter(d => this.isMultisocketByTipo(d.tipo_aparato));
       msDevices.forEach(d => this.controlService.loadMultisocketState(d));
     }, 1500);
+
+    // Polling de sincronización cada 5 segundos.
+    this.syncPollingId = setInterval(() => {
+      // 1. Refresca estados generales de todos los dispositivos (encendido/apagado)
+      this.controlService.refreshAllDeviceStates();
+      // 2. Refresca estados individuales de los contactos MultiSocket
+      const msDevices = this.controlService.todosLosDispositivos()
+        .filter(d => this.isMultisocketByTipo(d.tipo_aparato));
+      msDevices.forEach(d => this.controlService.loadMultisocketState(d));
+    }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.syncPollingId) {
+      clearInterval(this.syncPollingId);
+      this.syncPollingId = null;
+    }
+    this.stopVolumeLoop();
   }
 
   private isMultisocketByTipo(tipo: string | undefined): boolean {
@@ -117,6 +134,13 @@ export class Control implements OnInit {
     return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
   }
 
+  isDeviceOn(device: DispositivoControl): boolean {
+    if (this.isMultisocket(device)) {
+      return this.getActiveContactCount(device) > 0;
+    }
+    return device.encendido;
+  }
+
   /** Alterna un contacto individual (1–4) del MultiSocket */
   toggleContacto(device: DispositivoControl, contacto: 1 | 2 | 3 | 4): void {
     const estadoActual = this.getContactoEstado(device, contacto);
@@ -131,6 +155,16 @@ export class Control implements OnInit {
       case 3: return device.estado_contacto_3 ?? false;
       case 4: return device.estado_contacto_4 ?? false;
     }
+  }
+
+  /** Retorna cuántos contactos del MultiSocket están actualmente encendidos (0–4) */
+  getActiveContactCount(device: DispositivoControl): number {
+    return [
+      device.estado_contacto_1,
+      device.estado_contacto_2,
+      device.estado_contacto_3,
+      device.estado_contacto_4
+    ].filter(Boolean).length;
   }
 
   onBrilloChange(device: DispositivoControl, value: number): void {

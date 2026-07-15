@@ -92,6 +92,39 @@ export class ControlService {
     return body;
   }
 
+  /**
+   * Refresca el estado encendido/apagado de todos los dispositivos.
+   * Preserva los estados de contacto del MultiSocket ya cargados.
+   * Se llama desde el polling de 5 segundos para sincronizar cambios del móvil a web.
+   */
+  refreshAllDeviceStates(): void {
+    const urlDispositivos = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.dispositivos}`;
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.get<ApiResponse>(urlDispositivos, { headers }).subscribe({
+      next: response => {
+        const data = response?.data || response;
+        if (!Array.isArray(data)) return;
+
+        this.todosLosDispositivos.update(list =>
+          list.map(existing => {
+            const fresh = data.find((d: any) =>
+              (d.sk_aparato_id || d.id) === existing.id
+            );
+            if (!fresh) return existing;
+
+            const nuevoEncendido =
+              fresh.accion_nombre === 'Encendido' || fresh.encendido === true;
+
+            if (existing.encendido === nuevoEncendido) return existing;
+            return { ...existing, encendido: nuevoEncendido };
+          })
+        );
+      },
+      error: err => console.error('Error refreshing device states:', err)
+    });
+  }
+
   loadControl(): void {
     this.loading.set(true);
     this.error.set(null);

@@ -116,6 +116,11 @@ export class Dispositivos implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.devicesService.loadDevices();
     this.devicesService.startGlobalPolling();
+    setTimeout(() => {
+      this.devices()
+        .filter(d => this.isMultisocket(d))
+        .forEach(d => this.devicesService.loadMultisocketStateById(d.sk_aparato_id));
+    }, 1500);
   }
 
   ngOnDestroy(): void {
@@ -152,5 +157,14 @@ export class Dispositivos implements OnInit, OnDestroy {
 
   onToggleDevice(device: Dispositivo): void {
     this.devicesService.toggleDevice(device);
+  }
+
+  isMultisocket(device: Dispositivo): boolean {
+    const tipo = (device.tipo_aparato || '').toLowerCase();
+    return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
+  }
+
+  getMultisocketActiveCount(device: Dispositivo): number {
+    return this.devicesService.getActiveContactCount(device.sk_aparato_id);
   }
 }
