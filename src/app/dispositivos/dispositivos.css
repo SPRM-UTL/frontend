@@ -549,3 +549,36 @@
 .device-row:hover .device-name {
   color: #ffffff;
 }
+
+.multisocket-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.ms-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.ms-dot--on {
+  background: #2bbfaa;
+  box-shadow: 0 0 6px rgba(43, 191, 170, 0.7);
+}
+
+.ms-label {
+  font-variant-numeric: tabular-nums;
+}

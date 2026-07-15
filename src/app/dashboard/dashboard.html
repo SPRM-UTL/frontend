@@ -415,13 +415,23 @@
                     <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
                   </div>
 
-                  <div class="action-btn-status"
-                       [class.on]="device.accion_nombre === 'Encendido'"
-                       (click)="dispositivosService.toggleDevice(device); $event.stopPropagation()"
-                       style="position: absolute; right: 24px; top: 24px; z-index: 10;">
-                    <svg [lucideIcon]="getDeviceIcon('power')" [size]="14"></svg>
-                    <span>{{ device.accion_nombre }}</span>
-                  </div>
+                  @if (!isMultisocket(device.tipo_aparato)) {
+                    <div class="action-btn-status"
+                         [class.on]="device.accion_nombre === 'Encendido'"
+                         (click)="dispositivosService.toggleDevice(device); $event.stopPropagation()"
+                         style="position: absolute; right: 24px; top: 24px; z-index: 10;">
+                      <svg [lucideIcon]="getDeviceIcon('power')" [size]="14"></svg>
+                      <span>{{ device.accion_nombre }}</span>
+                    </div>
+                  }
+
+                  @if (isMultisocket(device.tipo_aparato)) {
+                    <div class="modal-multisocket-panel">
+                      <p class="modal-ms-label">
+                        Contactos • {{ getActiveContactCountDetalle() }}/4 activos
+                      </p>
+                    </div>
+                  }
                 </div>
               </section>
 

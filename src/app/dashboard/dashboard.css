@@ -1886,3 +1886,70 @@ body {
 .action-btn-status.on svg {
   transform: scale(1.1);
 }
+
+/* ===== MULTISOCKET PANEL (modal de detalle) ===== */
+.modal-multisocket-panel {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 10;
+}
+
+.modal-ms-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.modal-ms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.modal-ms-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: inherit;
+  min-width: 44px;
+}
+
+.modal-ms-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--cafe-primary, #2bbfaa);
+  color: var(--cafe-primary, #2bbfaa);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.modal-ms-btn:active {
+  transform: scale(0.95);
+}
+
+.modal-ms-btn--on {
+  background: var(--cafe-primary, #2bbfaa);
+  border-color: var(--cafe-primary, #2bbfaa);
+  color: #ffffff;
+  box-shadow: 0 3px 12px rgba(43, 191, 170, 0.35);
+}
+
+.modal-ms-btn--on:hover {
+  background: #24d4b8;
+  border-color: #24d4b8;
+  color: #fff;
+}

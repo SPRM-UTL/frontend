@@ -413,4 +413,29 @@ export class Dashboard implements OnDestroy {
       .replace(/\./g, '')
       .toUpperCase();
   }
+
+  /** Detecta si el dispositivo seleccionado es un MultiSocket */
+  isMultisocket(tipo?: string): boolean {
+    if (!tipo) return false;
+    const t = tipo.toLowerCase();
+    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket');
+  }
+
+  /** Retorna true si el contacto N del MultiSocket en el detalle está encendido */
+  getContactoEstadoDetalle(contacto: 1 | 2 | 3 | 4): boolean {
+    const id = this.dispositivosService.selectedDevice()?.sk_aparato_id;
+    return id ? this.dispositivosService.getContactoEstado(id, contacto) : false;
+  }
+
+  getActiveContactCountDetalle(): number {
+    const id = this.dispositivosService.selectedDevice()?.sk_aparato_id;
+    return id ? this.dispositivosService.getActiveContactCount(id) : 0;
+  }
+
+  toggleContactoDetalle(contacto: 1 | 2 | 3 | 4): void {
+    const device = this.dispositivosService.selectedDevice();
+    if (device) {
+      this.dispositivosService.toggleContacto(device, contacto);
+    }
+  }
 }

@@ -35,6 +35,8 @@ export class DispositivosService {
   public connectedDevices = signal<string[]>([]);
   private globalPollingInterval: any;
 
+  public multisocketContactStates = signal<Record<number, boolean[]>>({});
+
   /**
    * Obtiene los headers con el token de localStorage de forma segura para SSR
    */
@@ -167,6 +169,7 @@ export class DispositivosService {
   }
 
   private fetchGlobalStatus() {
+    // 1. Polling de estado de conexión (En línea / Desconectado)
     this.http.get<any>(`${APP_CONFIG.apiBaseUrl}/ws/status/all`, {
       headers: new HttpHeaders({ 'X-Skip-Loader': 'true' })
     }).subscribe({
@@ -177,10 +180,109 @@ export class DispositivosService {
         this.connectedDevices.set([]);
       }
     });
+
+    // 2. Polling silencioso de estados de dispositivos (Móvil → Web)
+    this.http.get<any>(this.apiUrl, { headers: this.getHeaders().set('X-Skip-Loader', 'true') })
+      .subscribe({
+        next: (response: any) => {
+          const data = response?.data || response;
+          if (Array.isArray(data)) {
+            // Actualizamos la señal con los nuevos datos pero conservando la referencia
+            this.devices.update(list => {
+              return list.map(existing => {
+                const fresh = data.find((d: any) => d.sk_aparato_id === existing.sk_aparato_id);
+                if (!fresh) return existing;
+                if (existing.accion_nombre !== fresh.accion_nombre) {
+                  return { ...existing, accion_nombre: fresh.accion_nombre };
+                }
+                return existing;
+              });
+            });
+
+            // Actualizamos los estados de contacto de los MultiSocket
+            data.forEach(d => {
+              const tipo = (d.tipo_aparato || '').toLowerCase();
+              if (tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket')) {
+                this.loadMultisocketStateById(d.sk_aparato_id);
+              }
+            });
+          }
+        },
+        error: (err) => console.error('Error en polling silencioso de dispositivos:', err)
+      });
   }
 
   cerrarDetalle() {
     this.verDetalle(null);
+  }
+
+  /**
+   * Carga los estados individuales de un MultiSocket desde /ws/state/{id}
+   * y los guarda en multisocketContactStates.
+   */
+  loadMultisocketStateById(id: number): void {
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/state/${id}`;
+    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+
+    this.http.get<any>(url, { headers }).subscribe({
+      next: (res) => {
+        const states = [
+          res.estado_encendido   ?? false,
+          res.estado_encendido_2 ?? false,
+          res.estado_encendido_3 ?? false,
+          res.estado_encendido_4 ?? false,
+        ];
+        this.multisocketContactStates.update(map => ({ ...map, [id]: states }));
+      },
+      error: () => {
+        // Si falla, inicializamos todos en false
+        this.multisocketContactStates.update(map => ({ ...map, [id]: [false, false, false, false] }));
+      }
+    });
+  }
+
+  /** Retorna true si el contacto N (1-4) del MultiSocket está encendido */
+  getContactoEstado(deviceId: number, contacto: 1 | 2 | 3 | 4): boolean {
+    const states = this.multisocketContactStates()[deviceId];
+    return states ? (states[contacto - 1] ?? false) : false;
+  }
+
+  /** Retorna cuántos contactos del MultiSocket están activos */
+  getActiveContactCount(deviceId: number): number {
+    const states = this.multisocketContactStates()[deviceId];
+    return states ? states.filter(Boolean).length : 0;
+  }
+
+  /** Envía el comando de toggle para un contacto específico (1-4) del MultiSocket */
+  toggleContacto(device: Dispositivo, contacto: 1 | 2 | 3 | 4): void {
+    const estadoActual = this.getContactoEstado(device.sk_aparato_id, contacto);
+    const nuevoEstado = !estadoActual;
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}/contacto/${contacto}?estado=${nuevoEstado}`;
+
+    this.http.post(url, {}, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
+      next: () => {
+        // Actualizar la señal de contactos
+        this.multisocketContactStates.update(map => {
+          const current = map[device.sk_aparato_id] ?? [false, false, false, false];
+          const updated = [...current];
+          updated[contacto - 1] = nuevoEstado;
+          // Actualizar accion_nombre según si algún contacto está activo
+          const anyOn = updated.some(Boolean);
+          this.devices.update(list =>
+            list.map(d => d.sk_aparato_id === device.sk_aparato_id
+              ? { ...d, accion_nombre: anyOn ? 'Encendido' : 'Apagado' }
+              : d
+            )
+          );
+          if (this.selectedDevice()?.sk_aparato_id === device.sk_aparato_id) {
+            this.selectedDevice.update(d => d ? { ...d, accion_nombre: anyOn ? 'Encendido' : 'Apagado' } : null);
+          }
+          return { ...map, [device.sk_aparato_id]: updated };
+        });
+        this.audioService.play('interruptor', 50);
+      },
+      error: (err) => console.error(`Error toggling contacto ${contacto}:`, err)
+    });
   }
 
   toggleDevice(device: Dispositivo): void {
