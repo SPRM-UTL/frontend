@@ -44,8 +44,8 @@
 }
 
 .category-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--cafe-primary);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   padding: 1.25rem;
   display: flex;
@@ -53,12 +53,34 @@
   gap: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 15px rgba(43, 191, 170, 0.15);
+}
+
+.category-card:hover {
+  background: #23a895; /* Un verde más fuerte/oscuro al hacer hover */
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 .category-card.is-active {
-  border-color: var(--cafe-primary);
-  background: rgba(43, 191, 170, 0.02);
+  background: #1e9282; /* Aún más oscuro cuando está activo */
+  border-color: #ffffff;
+  box-shadow: 0 8px 25px rgba(43, 191, 170, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Forzar que todos los textos e íconos dentro de la categoría verde sean blancos */
+.category-card .category-info h3 {
+  color: #ffffff;
+}
+
+.category-card .category-info p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.category-card .category-arrow-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .category-icon-circle {
@@ -67,6 +89,9 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
+  /* Fondo unificado para que se vea bien sobre el verde */
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
 }
 
 /* Colores Dinámicos Categorías */
@@ -89,12 +114,10 @@
 .category-info h3 {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--cafe-dark);
 }
 
 .category-info p {
   font-size: 0.8rem;
-  color: #94a3b8;
 }
 
 .category-arrow-btn {
@@ -102,25 +125,23 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f8fafc;
   border: none;
   display: grid;
   place-items: center;
-  color: #64748b;
 }
 
 /* DETALLE */
 .detail-panel {
-  background: #ffffff;
+  background: var(--cafe-primary);
   border-radius: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(43, 191, 170, 0.2);
   overflow: hidden;
 }
 
 .detail-header {
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -137,33 +158,37 @@
   height: 10px;
   border-radius: 50%;
   box-shadow: 0 0 8px currentColor;
+  background: #ffffff !important;
+  color: #ffffff !important;
 }
-
-.status-dot.asistente { background: #db2777; color: #db2777; }
-.status-dot.audífonos { background: #16a34a; color: #16a34a; }
-.status-dot.bocinas { background: #8b5cf6; color: #8b5cf6; }
-.status-dot.focos { background: #d97706; color: #d97706; }
-.status-dot.luces { background: #f97316; color: #f97316; }
-.status-dot.sockets-inteligentes { background: #0891b2; color: #0891b2; }
-.status-dot.televisión { background: #dc2626; color: #dc2626; }
-.status-dot.ventilador { background: #3b82f6; color: #3b82f6; }
 
 .detail-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--cafe-dark);
+  color: #ffffff;
 }
 
 .detail-subtitle {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .ver-todo-link {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--cafe-primary);
+  color: #ffffff;
   text-decoration: none;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.3s ease;
+}
+
+.ver-todo-link:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* GRID DISPOSITIVOS */
@@ -427,11 +452,12 @@
 
 /* MULTISOCKET */
 .multisocket-panel {
-  margin-top: 0.75rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: #f1f5f9;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .multisocket-label {
@@ -454,17 +480,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 0.75rem 0.5rem;
-  border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
+  gap: 6px;
+  padding: 1rem 0.5rem;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
   background: #ffffff;
-  color: #94a3b8;
+  color: #64748b;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
   font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .socket-btn::before {
@@ -507,21 +534,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(148, 163, 184, 0.12);
-  transition: background 0.25s ease;
+  background: #f1f5f9;
+  color: #94a3b8;
+  transition: all 0.25s ease;
+}
+
+.socket-btn:hover .socket-icon {
+  color: var(--cafe-primary);
+  background: rgba(43, 191, 170, 0.1);
 }
 
 .socket-btn.socket-on .socket-icon {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
 
 .socket-number {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.02em;
+  color: var(--cafe-dark);
   transition: color 0.25s ease;
 }
 
