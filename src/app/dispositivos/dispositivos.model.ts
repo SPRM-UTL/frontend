@@ -21,4 +21,6 @@ export interface Dispositivo {
   sk_habitacion_id?: number | null;
 
   fecha_sincronizacion: string | null;
+
+  estado_encendido?: boolean;
 }
