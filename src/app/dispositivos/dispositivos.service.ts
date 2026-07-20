@@ -286,22 +286,22 @@ export class DispositivosService {
   }
 
   toggleDevice(device: Dispositivo): void {
-    const isEncendido = device.accion_nombre === 'Encendido';
-    const nuevoEstado = isEncendido ? 'Apagado' : 'Encendido';
-    const estadoBool = !isEncendido;
+    // Si estado_encendido no existe, asumimos falso por seguridad
+    const isEncendido = device.estado_encendido === true;
+    const nuevoEstadoBool = !isEncendido;
     
-    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}?estado=${estadoBool}`;
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}?estado=${nuevoEstadoBool}`;
 
     this.http.post(url, {}, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
       next: () => {
         // 1. Actualizamos la lista principal (Tabla)
         this.devices.update(list =>
-          list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, accion_nombre: nuevoEstado } : d)
+          list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, estado_encendido: nuevoEstadoBool } : d)
         );
 
         // 2. Si el dispositivo modificado es el que está abierto en el modal, también lo actualizamos (Modal)
         if (this.selectedDevice()?.sk_aparato_id === device.sk_aparato_id) {
-          this.selectedDevice.update(current => current ? { ...current, accion_nombre: nuevoEstado } : null);
+          this.selectedDevice.update(current => current ? { ...current, estado_encendido: nuevoEstadoBool } : null);
         }
 
         this.audioService.play('interruptor', (device.volumen ?? 50));
