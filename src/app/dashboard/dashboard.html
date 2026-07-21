@@ -409,8 +409,8 @@
                   <div class="hero-titles">
                     <h2 class="hero-name">{{ device.nombre_aparato }}</h2>
                     <span class="status-indicator">
-                      <span class="dot" [class.offline]="!dispositivosService.selectedDeviceOnline()"></span>
-                      {{ dispositivosService.selectedDeviceOnline() ? 'En línea' : 'Desconectado' }}
+                      <span class="dot" [class.offline]="!dispositivosService.connectedDevices().includes(device.mac_bluetooth || '')"></span>
+                      {{ dispositivosService.connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
                     </span>
                     <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
                   </div>

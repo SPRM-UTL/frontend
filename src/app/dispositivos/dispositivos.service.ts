@@ -294,14 +294,16 @@ export class DispositivosService {
 
     this.http.post(url, {}, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
       next: () => {
+        const nuevoAccionNombre = nuevoEstadoBool ? 'Encendido' : 'Apagado';
+
         // 1. Actualizamos la lista principal (Tabla)
         this.devices.update(list =>
-          list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, estado_encendido: nuevoEstadoBool } : d)
+          list.map(d => d.sk_aparato_id === device.sk_aparato_id ? { ...d, estado_encendido: nuevoEstadoBool, accion_nombre: nuevoAccionNombre } : d)
         );
 
         // 2. Si el dispositivo modificado es el que está abierto en el modal, también lo actualizamos (Modal)
         if (this.selectedDevice()?.sk_aparato_id === device.sk_aparato_id) {
-          this.selectedDevice.update(current => current ? { ...current, estado_encendido: nuevoEstadoBool } : null);
+          this.selectedDevice.update(current => current ? { ...current, estado_encendido: nuevoEstadoBool, accion_nombre: nuevoAccionNombre } : null);
         }
 
         this.audioService.play('interruptor', (device.volumen ?? 50));
