@@ -265,9 +265,7 @@
 }
 
 .history-row:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
-  transform: scale(1.002) translateX(2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.2) !important; /* Tono más oscuro al pasar el cursor */
 }
 
 .history-row:hover .action-text {

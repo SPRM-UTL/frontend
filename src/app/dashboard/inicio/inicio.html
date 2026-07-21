@@ -128,7 +128,7 @@
             <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'hoy'" (click)="setPeriodo('hoy')" type="button">Hoy</button>
             <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'semana'" (click)="setPeriodo('semana')" type="button">Semana</button>
             <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'mes'" (click)="setPeriodo('mes')" type="button">Mes</button>
-            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'año'" (click)="setPeriodo('año')" type="button">Año</button>
+            <button class="range-pill" [class.active-pill]="periodoSeleccionado() === 'ano'" (click)="setPeriodo('ano')" type="button">Año</button>
           </div>
         </div>
         <div style="text-align: right;">
@@ -175,6 +175,39 @@
         </app-dynamic-chart>
       </div>
     </article>
+  </section>
+
+  <section class="insights-section card">
+    <div class="insights-head">
+      <div class="panel-head-left">
+        <span class="panel-icon-main">
+          <svg [lucideIcon]="getDeviceIcon('info')"></svg>
+        </span>
+        <div>
+          <h3 class="panel-title">Interpretación de consumo</h3>
+          <p class="panel-subtitle">Análisis automático del consumo seleccionado</p>
+        </div>
+      </div>
+      <span class="range-pill active-pill">{{ labelPeriodo() }}</span>
+    </div>
+
+    <div class="insights-grid">
+      @for (insight of insights(); track insight.title) {
+        <article
+          class="insight-card"
+          [class.insight-card--success]="insight.type === 'success'"
+          [class.insight-card--warning]="insight.type === 'warning'"
+          [class.insight-card--info]="insight.type === 'info'">
+          <span class="insight-icon">
+            <svg [lucideIcon]="getDeviceIcon(insight.type === 'warning' ? 'warning' : insight.type === 'success' ? 'check-circle' : 'info')"></svg>
+          </span>
+          <div class="insight-copy">
+            <h4>{{ insight.title }}</h4>
+            <p [innerHTML]="insight.description"></p>
+          </div>
+        </article>
+      }
+    </div>
   </section>
 
   <section class="content-grid card">
