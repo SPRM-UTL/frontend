@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
@@ -26,6 +26,9 @@ export type ChartType =
         [plotOptions]="chartConfig.plotOptions"
         [labels]="chartConfig.labels"
         [legend]="chartConfig.legend"
+        [yaxis]="chartConfig.yaxis"
+        [grid]="chartConfig.grid"
+        [tooltip]="chartConfig.tooltip"
         [states]="chartConfig.states">
       </apx-chart>
     </div>
@@ -54,6 +57,13 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
 
   @Input() valueFormatKind?: 'percentage' | 'currency' | 'kwh';
   @Input() valueFormatter?: (value: number, kind: 'percentage' | 'currency' | 'kwh') => string;
+  @Output() dataPointSelected = new EventEmitter<{
+    seriesIndex: number;
+    dataPointIndex: number;
+    label: string;
+    value: number;
+    color: string;
+  }>();
 
   chartConfig: any = null;
   private resizeObserver?: ResizeObserver;
@@ -143,13 +153,23 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
       }
     }
 
+    const additionalChartOptions = this.additionalOptions?.chart || {};
+    const additionalChartEvents = additionalChartOptions?.events || {};
+
     const config: any = {
       series: this.series,
       chart: {
         type: this.chartType,
         height: this.height,
         toolbar: { show: false },
-        ...(this.additionalOptions?.chart || {})
+        ...additionalChartOptions,
+        events: {
+          ...additionalChartEvents,
+          dataPointSelection: (event: any, chartContext: any, opts: any) => {
+            additionalChartEvents?.dataPointSelection?.(event, chartContext, opts);
+            this.emitSelection(opts);
+          }
+        }
       },
       colors: finalColors,
       dataLabels: { enabled: false },
@@ -175,12 +195,13 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
           let raw = 0;
           let percentText = '';
           const isPieOrDonut = w.config.chart.type === 'pie' || w.config.chart.type === 'donut';
-          
+
           if (isPieOrDonut) {
-            name = w.globals.labels[dataPointIndex] || '';
-            raw = w.globals.series[dataPointIndex] || 0;
-            if (w.globals && Array.isArray(w.globals.seriesPercent) && w.globals.seriesPercent[dataPointIndex] !== undefined) {
-              const pct = w.globals.seriesPercent[dataPointIndex];
+            const idx = this.resolvePointIndex(seriesIndex, dataPointIndex);
+            name = w.globals.labels[idx] || '';
+            raw = Number(w.globals.series[idx] || 0);
+            if (w.globals && Array.isArray(w.globals.seriesPercent) && w.globals.seriesPercent[idx] !== undefined) {
+              const pct = w.globals.seriesPercent[idx];
               const cost = raw * 0.95;
               const costText = cost < 0.01 && cost > 0 ? cost.toFixed(4) : cost.toFixed(2);
               percentText = ` (${pct.toFixed(1)}% | $${costText})`;
@@ -196,12 +217,17 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
           } else {
             name = this.seriesNameList[seriesIndex] || '';
             const value = Array.isArray(series) && series[seriesIndex] ? series[seriesIndex] : undefined;
-            raw = typeof value === 'number' ? value : (Array.isArray(value) ? value[0] : w?.globals?.series?.[seriesIndex]);
+            raw = typeof value === 'number'
+              ? value
+              : (Array.isArray(value) ? value[dataPointIndex] : w?.globals?.series?.[seriesIndex]?.[dataPointIndex]);
           }
-          
-          const formatted = this.formatNumber(Number(raw)) + percentText;
-          const color = w.config.colors[isPieOrDonut ? dataPointIndex : seriesIndex] || '#fff';
-          
+
+          const formatted = isPieOrDonut && this.valueFormatKind === 'kwh'
+            ? `${raw.toFixed(5)} kWh (${(raw * 1000).toFixed(2)} Wh)${percentText}`
+            : this.formatNumber(Number(raw)) + percentText;
+          const colorIndex = isPieOrDonut ? this.resolvePointIndex(seriesIndex, dataPointIndex) : seriesIndex;
+          const color = w.config.colors[colorIndex] || '#fff';
+
           return `<div class="apex-tooltip-custom" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(30, 30, 30, 0.95); border: 1px solid #444; border-radius: 6px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.35);">
             <span class="apex-tooltip-marker" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${color}; flex-shrink: 0;"></span>
             <div style="display: flex; flex-direction: column;">
@@ -313,6 +339,38 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
       }
     }
     this.seriesNameList = names;
+  }
+
+  private resolvePointIndex(seriesIndex: any, dataPointIndex: any): number {
+    const dataIndex = Number(dataPointIndex);
+    if (Number.isFinite(dataIndex) && dataIndex >= 0) {
+      return dataIndex;
+    }
+
+    const fallbackIndex = Number(seriesIndex);
+    return Number.isFinite(fallbackIndex) && fallbackIndex >= 0 ? fallbackIndex : 0;
+  }
+
+  private emitSelection(opts: any): void {
+    const isPieLike = this.chartType === 'pie' || this.chartType === 'donut' || this.chartType === 'polarArea';
+    const pointIndex = this.resolvePointIndex(opts?.seriesIndex, opts?.dataPointIndex);
+    const seriesIndex = Number.isFinite(Number(opts?.seriesIndex)) ? Number(opts?.seriesIndex) : 0;
+    const globals = opts?.w?.globals;
+    const colors = opts?.w?.config?.colors ?? this.colors;
+
+    const value = isPieLike
+      ? Number(globals?.series?.[pointIndex] ?? this.series?.[pointIndex] ?? 0)
+      : Number(globals?.series?.[seriesIndex]?.[pointIndex] ?? this.series?.[seriesIndex]?.data?.[pointIndex] ?? 0);
+
+    this.dataPointSelected.emit({
+      seriesIndex,
+      dataPointIndex: pointIndex,
+      label: isPieLike
+        ? String(globals?.labels?.[pointIndex] ?? this.labels?.[pointIndex] ?? '')
+        : String(this.categories?.[pointIndex] ?? ''),
+      value: Number.isNaN(value) ? 0 : value,
+      color: String(colors?.[isPieLike ? pointIndex : seriesIndex] ?? '')
+    });
   }
 
   private getDefaultColors(count: number): string[] {

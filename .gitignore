@@ -10,6 +10,8 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+*.log
+*.err
 
 # IDEs and editors
 .idea/
@@ -39,6 +41,8 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+repomix-output.xml
+*.xml
 
 # System files
 .DS_Store
@@ -48,3 +52,14 @@ node_modules/
 
 .artifacts
 .agents/
+# Local env files
+.env
+.env.local
+
+# Build outputs
+/dist/
+dist-ssr/
+
+# Local error file
+frontend-dev.err
+
