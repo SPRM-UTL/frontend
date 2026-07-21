@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import {
   LucideUser,
   LucidePencil,
-  LucideChevronRight,
   LucideLock,
   LucideLogOut,
   LucideArrowRight,
@@ -24,7 +23,6 @@ import { ToastService } from '../services/toast.service';
     FormsModule,
     LucideUser,
     LucidePencil,
-    LucideChevronRight,
     LucideLock,
     LucideLogOut,
     LucideArrowRight,

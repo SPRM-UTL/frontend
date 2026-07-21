@@ -25,6 +25,7 @@ app.set('trust proxy', true);
 const angularApp = new AngularNodeAppEngine({
   allowedHosts: [
     'manordomo-frontend.onrender.com',
+    'manordomo-web.onrender.com',
     'localhost',
     '127.0.0.1',
   ],

@@ -42,7 +42,10 @@ export class ControlService {
   private mapDevice(d: any): DispositivoControl {
     const id = d.sk_aparato_id || d.id;
     const tipo = (d.tipo_aparato || '').toLowerCase();
-    const esEncendido = d.accion_nombre === 'Encendido' || d.encendido === true;
+    
+    // Verificamos el estado real del socket (estado_encendido).
+    // Si no está definido, usamos accion_nombre por compatibilidad hacia atrás.
+    const esEncendido = d.estado_encendido === true || (d.estado_encendido == null && d.accion_nombre === 'Encendido');
 
     const base: DispositivoControl = {
       id: id,
