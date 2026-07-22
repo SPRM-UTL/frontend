@@ -68,7 +68,7 @@
             <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
             <div class="info-group">
               <p class="info-label">DISPOSITIVO</p>
-              <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}</p>
+              <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
             </div>
             <div class="info-group">
               <p class="info-label">ESTADO</p>

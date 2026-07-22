@@ -20,6 +20,11 @@ export interface AparatoConsumoPunto {
   energia_consumida_wh: number;
 }
 
+export interface ConsumoPorDispositivo {
+  aparato: string;
+  totalEnergiaWh: number;
+}
+
 export interface AparatoConsumoResumen {
   granularidad: string;
   desde: string;

@@ -23,6 +23,7 @@ export interface Gesto {
   nivel_confianza_minimo: number;
   tipo_disparador_nombre: string;
   sk_aparato_id: number | null;
+  contacto_outlet?: number | null;
 
   estado?: 'Activo' | 'Pausado';
   activo?: boolean;

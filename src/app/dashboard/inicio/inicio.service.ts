@@ -1,7 +1,6 @@
 
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { Dispositivo } from '../../dispositivos/dispositivos.model';
 import { Gesto } from '../../gestos/gesto.model';
@@ -17,11 +16,11 @@ import { DashboardStats, UltimoGesto, AparatoUtilizado } from './inicio.model';
 
 @Injectable({ providedIn: 'root' })
 export class InicioService {
-  private platformId = inject(PLATFORM_ID);
-  private devicesService = inject(DispositivosService);
-  private gestosService = inject(GestosService);
-  private historialService = inject(HistorialService);
-  private consumosService = inject(ConsumosService)
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly devicesService = inject(DispositivosService);
+  private readonly gestosService = inject(GestosService);
+  private readonly historialService = inject(HistorialService);
+  private readonly consumosService = inject(ConsumosService);
 
   readonly stats = signal<DashboardStats | null>(null);
   readonly acciones = signal<AparatoUtilizado[]>([]);
@@ -56,19 +55,22 @@ export class InicioService {
       actividadReciente: []
     };
 
-    const headers = new HttpHeaders().set('X-Show-Loader', 'true');
+    const desdeHistorico = new Date();
+    desdeHistorico.setMonth(desdeHistorico.getMonth() - 3);
+    const hastaHistorico = new Date();
 
     forkJoin({
       dispositivos: this.devicesService.getDevicesObservable(),
       gestos: this.gestosService.loadGestos(token),
       historial: this.historialService.getHistorialObservable(),
-      consumos: this.consumosService.getAparatosConsumoHistoricoPorUsuario(id)
+      consumos: this.consumosService.getAparatosConsumoHistoricoPorUsuario(id, desdeHistorico, hastaHistorico)
     }).pipe(
       map(({ dispositivos, gestos, historial, consumos }) => {
         const dispositivosData = Array.isArray(dispositivos) ? dispositivos : [];
         const gestosData = Array.isArray(gestos) ? gestos : [];
         const actividades = Array.isArray(historial) ? historial : [];
-        const consumoData = Array.isArray(consumos)? consumos : [];
+        const consumoData = Array.isArray(consumos) ? consumos : [];
+        // datosDona se carga en cargarResumen() con el período correcto
 
         const userName = isBrowser
           ? localStorage.getItem('nombre') ?? fallbackName
@@ -95,26 +97,8 @@ export class InicioService {
           aparatosUtilizados,
           actividadReciente: actividades.slice(0, 5)
         };
-        
-        // Dentro de loadInicio()...
-        forkJoin({
-          dispositivos: this.devicesService.getDevicesObservable(),
-          gestos: this.gestosService.loadGestos(token),
-          historial: this.historialService.getHistorialObservable(),
-          consumos: this.consumosService.getAparatosConsumoHistoricoPorUsuario(id),
-          donaInicial: this.consumosService.getConsumoDona(id) // <--- Nueva petición inicial
-        }).pipe(
-          map(({ dispositivos, gestos, historial, consumos, donaInicial }) => {
-            // ... todo tu código de mapeo actual ...
 
-            this.datosDona.set(donaInicial); // <--- Guardamos los datos de la dona
-            this.consumos.set(consumoData);
-            this.acciones.set(aparatosUtilizados);
-            return stats;
-          })
-        )
-
-        this.consumos.set(consumoData)
+        this.consumos.set(consumoData);
         this.acciones.set(aparatosUtilizados);
         return stats;
       }),
@@ -148,32 +132,36 @@ export class InicioService {
     if (rango === 'hoy') {
       desde.setHours(0, 0, 0, 0);
     } else if (rango === 'semana') {
-      desde.setDate(hoy.getDate() - 7);
+      desde.setDate(hoy.getDate() - 6);
+      desde.setHours(0, 0, 0, 0);
     } else if (rango === 'mes') {
-      desde.setMonth(hoy.getMonth() - 1);
+      desde.setDate(hoy.getDate() - 29);
+      desde.setHours(0, 0, 0, 0);
     } else if (rango === 'ano') {
-      desde.setFullYear(hoy.getFullYear() - 1);
+      desde.setMonth(hoy.getMonth() - 11, 1);
+      desde.setHours(0, 0, 0, 0);
     }
 
-    const desdeStr = desde.toISOString();
-    const hastaStr = hoy.toISOString();
-
     // Definimos la granularidad que requiere tu endpoint "todos_los_consumos/resumen"
-    const granularidad = rango === 'hoy' ? 'envivo' : rango === 'mes' ? 'mes' : 'dia';
+    let granularidad = 'dia';
+    if (rango === 'hoy') {
+      granularidad = 'hora';
+    } else if (rango === 'semana') {
+      granularidad = 'dia';
+    } else if (rango === 'mes') {
+      granularidad = 'dia';
+    } else if (rango === 'ano') {
+      granularidad = 'ano';
+    }
 
     forkJoin({
-      datosDona: this.consumosService.getConsumoDona(usuarioId, desdeStr, hastaStr),
-      // SE CORRIGIÓ AQUÍ: De "getConsumoResumenGlobal" a "getResumenGlobal"
-      datosBarras: this.consumosService.getResumenGlobal(granularidad, desdeStr, hastaStr)
+      datosDona: this.consumosService.getConsumoDona(usuarioId, desde, hoy),
+      datosBarras: this.consumosService.getResumenGlobal(granularidad, desde, hoy)
     }).pipe(
       finalize(() => this.loading.set(false))
     ).subscribe({
       next: ({ datosDona, datosBarras }) => {
-        // 1. Actualizamos la señal de la dona con los nuevos dispositivos y valores
         this.datosDona.set(Array.isArray(datosDona) ? datosDona : []);
-        
-        // 2. TODO: Aquí actualizas la señal o variable que use tu componente 
-        // para renderizar el gráfico histórico de barras con "datosBarras"
       },
       error: (err) => {
         console.error('Error al actualizar rangos del dashboard:', err);
