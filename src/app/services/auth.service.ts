@@ -139,15 +139,5 @@ export class AuthService {
     }
   }
 
-  // 3. TU MÉTODO DE VERIFICACIÓN
-  checkTokenExpiration() {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    const token = this.getToken();
-    const isProtectedRoute = this.router.url.startsWith('/dashboard');
-
-    if ((token || isProtectedRoute) && !this.isAuthenticated()) {
-      this.expireSession();
-    }
-  }
+  
 }

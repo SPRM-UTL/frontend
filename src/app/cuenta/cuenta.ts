@@ -14,6 +14,7 @@ import {
 import { CuentaService } from './cuenta.service';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-cuenta',
@@ -26,7 +27,8 @@ import { ToastService } from '../services/toast.service';
     LucideLock,
     LucideLogOut,
     LucideArrowRight,
-    LucideCamera
+    LucideCamera,
+    SkeletonComponent
   ],
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
@@ -43,6 +45,7 @@ export class Cuenta implements OnInit, OnDestroy {
   readonly userName  = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
   readonly userImage = this.cuentaService.userImage;
+  readonly loading = this.cuentaService.loading;
 
   editingField = signal<string | null>(null);
   editValue = '';

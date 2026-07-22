@@ -34,6 +34,8 @@ export class InicioService {
     this.loading.set(true);
     this.error.set(null);
 
+    const startTime = Date.now();
+
     const isBrowser = isPlatformBrowser(this.platformId);
     const fallbackName = isBrowser
       ? localStorage.getItem('nombre') ?? 'Usuario'
@@ -122,7 +124,14 @@ export class InicioService {
         this.acciones.set([]);
         return of(fallbackStats);
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 2000 - elapsed);
+
+        setTimeout(() => {
+          this.loading.set(false);
+        }, remaining);
+      })
     ).subscribe({
       next: (stats) => {
         this.stats.set(stats);

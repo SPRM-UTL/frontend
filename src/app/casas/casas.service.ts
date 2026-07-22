@@ -41,13 +41,26 @@ export class CasasService {
     this.loading.set(true);
     this.error.set(null);
 
+    // Momento en que inicia la carga
+    const startTime = Date.now();
+
     const headers = this.getHeaders().set('X-Skip-Loader', 'true');
 
     this.http.get<ApiResponse<Casa[]>>(this.apiUrl, { headers })
       .subscribe({
         next: (response) => {
+
+          // Tiempo que tardó la petición
+          const elapsed = Date.now() - startTime;
+
+          // Queremos que el skeleton dure al menos 2 segundos
+          const remaining = Math.max(0, 2000 - elapsed);
+
+          setTimeout(() => {
           this.casas.set(response.data || []);
           this.loading.set(false);
+        }, remaining);
+          
         },
         error: (err) => {
           console.error('Error en loadCasas:', err);

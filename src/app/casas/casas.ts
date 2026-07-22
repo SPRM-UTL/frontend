@@ -16,6 +16,7 @@ import { CountDevicesPipe } from '../shared/pipes/count-devices.pipe';
 import {
   LucideDynamicIcon
 } from '@lucide/angular';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-casas',
@@ -25,7 +26,8 @@ import {
     FormsModule,
     FindByIdPipe,
     CountDevicesPipe,
-    LucideDynamicIcon
+    LucideDynamicIcon,
+    SkeletonComponent
   ],
   templateUrl: './casas.html',
   styleUrl: './casas.css'

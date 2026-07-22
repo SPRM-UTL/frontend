@@ -13,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err) => {
       if (err.status === 401 && !isAuthRequest) {
-        authService.expireSession();
+        //authService.expireSession();
       } else if (err.status === 0) {
         alertService.error('No se pudo establecer conexión con el servidor.');
       } else if (err.status >= 500) {

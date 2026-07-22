@@ -1,5 +1,12 @@
+
 <div class="inicio-page">
   <section class="stats-grid card">
+
+    <boneyard-skeleton
+    name="inicio-dispositivos"
+    class="arriba"
+    [loading]="loading()">
+
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('smartphone')"></svg>
@@ -10,6 +17,12 @@
         <p class="stat-sub">{{ inicioService.stats()?.devicesOnline ?? 0 }} conectados</p>
       </div>
     </article>
+    </boneyard-skeleton>
+
+    <boneyard-skeleton
+    name="inicio-gestos"
+    class="arriba"
+    [loading]="loading()">
 
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
@@ -21,7 +34,12 @@
         <p class="stat-sub">{{ inicioService.stats()?.automatizaciones ?? 0 }} activos</p>
       </div>
     </article>
+    </boneyard-skeleton>
 
+    <boneyard-skeleton
+    name="inicio-acciones"
+    class="arriba"
+    [loading]="loading()">
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('bolt')"></svg>
@@ -32,6 +50,12 @@
         <p class="stat-sub">Hoy</p>
       </div>
     </article>
+    </boneyard-skeleton>
+
+    <boneyard-skeleton
+    name="inicio-casas"
+    class="arriba"
+    [loading]="loading()">
 
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
@@ -43,7 +67,12 @@
         <p class="stat-sub">Ubicaciones</p>
       </div>
     </article>
+    </boneyard-skeleton>
 
+    <boneyard-skeleton
+    name="inicio-activos"
+    
+    [loading]="loading()">
     <article class="stat-card stat-card--teal">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
@@ -54,9 +83,15 @@
         <p class="stat-sub">Últimas 2 horas</p>
       </div>
     </article>
+    </boneyard-skeleton>
   </section>
 
   <section class="charts-grid card">
+
+    <boneyard-skeleton
+    name="inicio-consumo"
+    [loading]="loading()">
+
     <article class="chart-card radial-box">
       <div class="chart-header chart-header--space">
         <div>
@@ -119,7 +154,11 @@
         </app-dynamic-chart>
       </div>
     </article>
+    </boneyard-skeleton>
 
+    <boneyard-skeleton
+    name="inicio-historico"
+    [loading]="loading()">
     <article class="chart-card chart-card--wide">
       <div class="chart-header chart-header--space" style="align-items: flex-start;">
         <div>
@@ -175,9 +214,13 @@
         </app-dynamic-chart>
       </div>
     </article>
+    </boneyard-skeleton>
   </section>
 
   <section class="content-grid card">
+    <boneyard-skeleton
+    name="inicio-dis-conectados"
+    [loading]="loading()">
     <article class="panel-card panel-card--device">
       <div class="panel-head">
         <div class="panel-head-left">
@@ -217,7 +260,11 @@
         }
       </div>
     </article>
+    </boneyard-skeleton>
 
+    <boneyard-skeleton
+    name="inicio-ges-vin"
+    [loading]="loading()">
     <article class="panel-card panel-card--dark">
       <div class="panel-head">
         <div class="panel-head-left">
@@ -249,6 +296,7 @@
         }
       </div>
     </article>
+    </boneyard-skeleton>
   </section>
 
 

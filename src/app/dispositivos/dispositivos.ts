@@ -19,6 +19,7 @@ import {
 } from '@lucide/angular';
 
 import { getDeviceIcon } from '../shared/icon-map';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-dispositivos',
@@ -36,6 +37,7 @@ import { getDeviceIcon } from '../shared/icon-map';
     LucideBolt,
     LucidePower,
     LucideDynamicIcon,
+    SkeletonComponent
   ],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.css'

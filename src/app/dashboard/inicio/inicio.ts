@@ -11,6 +11,7 @@ import { AparatoConsumoPunto } from '../../aparatosConsumo/consumo.model';
 
 import { LucideDynamicIcon } from '@lucide/angular';
 import { getDeviceIcon, getGestureIcon } from '../../shared/icon-map';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 const COSTO_POR_KWH = 0.95;
 
@@ -35,7 +36,8 @@ function pad(n: number): string {
     CommonModule,
     DynamicChartComponent,
     RouterLink,
-    LucideDynamicIcon
+    LucideDynamicIcon,
+    SkeletonComponent
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'

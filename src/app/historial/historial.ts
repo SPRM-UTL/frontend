@@ -16,6 +16,7 @@ import {
   LucideDynamicIcon,
 } from '@lucide/angular';
 import { getActivityIcon, getDeviceIcon } from '../shared/icon-map';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-historial',
@@ -32,6 +33,7 @@ import { getActivityIcon, getDeviceIcon } from '../shared/icon-map';
     LucideSmartphone,
     LucideHand,
     LucideDynamicIcon,
+    SkeletonComponent
   ],
   templateUrl: './historial.html',
   styleUrl: './historial.css'

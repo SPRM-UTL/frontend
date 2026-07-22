@@ -152,9 +152,14 @@
   gap: 1rem;
 }
 
+:host ::ng-deep boneyard-skeleton div:not([class]) {
+  height: 100%;
+}
+
 .stat-card {
   display: flex;
   align-items: center;
+  height: 100%;
   gap: 1rem;
   min-width: 0;
   background: var(--cafe-primary);
@@ -213,6 +218,7 @@
 }
 .chart-card {
   background: var(--cafe-primary);
+  height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
   padding: 1rem 1rem;
@@ -225,6 +231,7 @@
   background: var(--cafe-primary);
   border: 1px solid #e5edf5;
   border-radius: 24px;
+  height: 100%;
   padding: 1rem 1rem;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
   min-width: 0;

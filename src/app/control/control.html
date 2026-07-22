@@ -16,6 +16,9 @@
   }
 
   @if (!loading() && !error()) {
+    <boneyard-skeleton
+    name="control-asociado"
+    [loading]="loading()">
     <section class="asociados-section">
       <div class="asociados-head">
         <h2 class="section-title-main">Dispositivos Asociados</h2>
@@ -61,6 +64,7 @@
         }
       </div>
     </section>
+    </boneyard-skeleton>
 
     <!-- PANEL DE DETALLE -->
     <section class="detail-panel">

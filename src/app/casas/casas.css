@@ -10,6 +10,7 @@
 /* SIDEBAR NEW */
 .sidebar-casas-new {
   width: 340px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -166,10 +167,19 @@
   border-color: #cbd5e1;
 }
 
+:host ::ng-deep boneyard-skeleton div:not([class]) {
+  height: 100%;
+}
+
+boneyard-skeleton.seleccionada-casas{
+  width: 100%;
+}
+
 /* CONTENT AREA NEW */
 .habitaciones-content-new {
   flex: 1;
   display: flex;
+  height: 100%;
   flex-direction: column;
   gap: 2.5rem;
   overflow-y: auto;

@@ -19,7 +19,7 @@ export class CuentaService {
   readonly userEmail = signal('');
   readonly userImage = signal('');
 
-  readonly loading = signal<boolean>(false);
+  public loading = signal<boolean>(true);
   readonly error   = signal<string | null>(null);
 
   constructor(private http: HttpClient) {
@@ -56,35 +56,49 @@ export class CuentaService {
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
-      if(isPlatformBrowser (this.platformId)){
-        this.error.set('No se encontró el ID de usuario.');
-      }
-      return;
+
+        if(isPlatformBrowser(this.platformId)){
+            this.error.set('No se encontró el ID de usuario.');
+        }
+
+        this.loading.set(false);
+
+        return;
     }
 
     this.loading.set(true);
     this.error.set(null);
+
+    // Momento en que inicia la carga
+    const startTime = Date.now();
 
     this.http.get<any>(`${BASE_URL}/${userId}`).subscribe({
       next: response => {
         const payload = response?.data ?? response;
         const data = payload?.data ?? payload;
 
-        const nombre = data.nombre || data.Nombre || data.nombre_usuario || payload.nombre || payload.Nombre || '';
-        const correo = data.correo || data.Correo || data.email || data.Email || data.email_usuario || payload.correo || payload.Correo || payload.email || payload.Email || '';
-        const imagen = this.resolveImageUrl(data.ruta_imagen || data.RutaImagen || data.rutaImagen || payload.ruta_imagen || payload.RutaImagen || payload.rutaImagen || '');
+        // Tiempo que tardó la petición
+        const elapsed = Date.now() - startTime;
 
-        this.userName.set(nombre);
-        this.userEmail.set(correo);
-        this.userImage.set(imagen);
+        // Queremos que el skeleton dure al menos 2 segundos
+        const remaining = Math.max(0, 2000 - elapsed);
 
-        if (isPlatformBrowser(this.platformId)) {
-          if (nombre) localStorage.setItem('nombre', nombre);
-          if (correo) localStorage.setItem('user_email', correo);
-          if (imagen) localStorage.setItem('user_image', imagen);
-        }
+        setTimeout(() => {
+          const nombre = data.nombre || data.Nombre || data.nombre_usuario || payload.nombre || payload.Nombre || '';
+          const correo = data.correo || data.Correo || data.email || data.Email || data.email_usuario || payload.correo || payload.Correo || payload.email || payload.Email || '';
+          const imagen = this.resolveImageUrl(data.ruta_imagen || data.RutaImagen || data.rutaImagen || payload.ruta_imagen || payload.RutaImagen || payload.rutaImagen || '');
 
-        this.loading.set(false);
+          this.userName.set(nombre);
+          this.userEmail.set(correo);
+          this.userImage.set(imagen);
+
+          if (isPlatformBrowser(this.platformId)) {
+            if (nombre) localStorage.setItem('nombre', nombre);
+            if (correo) localStorage.setItem('user_email', correo);
+            if (imagen) localStorage.setItem('user_image', imagen);
+          }
+          this.loading.set(false);
+        }, remaining);
       },
       error: err => {
         this.error.set('No se pudo cargar el perfil.');

@@ -15,6 +15,7 @@ import {
 } from '@lucide/angular';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { GestosService } from '../gestos/gestos.service';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-ajustes',
@@ -31,7 +32,8 @@ import { GestosService } from '../gestos/gestos.service';
     LucideBell,
     LucideSearch,
     LucideHand,
-    LucideSparkles
+    LucideSparkles,
+    SkeletonComponent
   ],
   templateUrl: './ajustes.html',
   styleUrl: './ajustes.css',
@@ -46,6 +48,7 @@ export class Ajustes {
   readonly notifications = signal(true);
   readonly autoUpdate = signal(true);
   readonly twoStepAuth = signal(true);
+  readonly loading = signal(true);
 
   // Dynamic Stats from services
   readonly totalDevices = computed(() => this.dispositivosService.devices().length);
@@ -56,10 +59,13 @@ export class Ajustes {
   }
 
   private loadSettings() {
+    // Momento en que inicia la carga
+      const startTime = Date.now();
     try {
       const raw = localStorage.getItem('user_settings');
       if (raw) {
         const settings = JSON.parse(raw);
+
         if (settings.language) this.language.set(settings.language);
         if (settings.mode) this.mode.set(settings.mode);
         if (typeof settings.notifications === 'boolean') this.notifications.set(settings.notifications);
@@ -68,7 +74,17 @@ export class Ajustes {
       }
     } catch (e) {
       console.error('Error loading settings:', e);
-    }
+    }finally {
+
+    // simulamos carga mínima de skeleton
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, 2000 - elapsed);
+
+    setTimeout(() => {
+      this.loading.set(false);
+    }, remaining);
+
+  }
   }
 
   cycleLanguage() {

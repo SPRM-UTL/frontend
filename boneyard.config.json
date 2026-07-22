@@ -1,0 +1,12 @@
+{
+  "routes": [
+    "/dashboard/dispositivos",
+    "/dashboard/inicio",
+    "/dashboard/casas",
+    "/dashboard/gestos",
+    "/dashboard/historial",
+    "/dashboard/control",
+    "/dashboard/ajustes",
+    "/dashboard/cuenta"
+  ]
+}

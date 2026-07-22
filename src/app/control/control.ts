@@ -16,6 +16,7 @@ import {
 } from '@lucide/angular';
 import { getDeviceIcon } from '../shared/icon-map';
 import { CamaraComponent } from '../camara/camara.component';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-control',
@@ -30,7 +31,8 @@ import { CamaraComponent } from '../camara/camara.component';
     LucideChevronDown,
     LucidePower,
     LucideDynamicIcon,
-    CamaraComponent
+    CamaraComponent,
+    SkeletonComponent
   ],
   templateUrl: './control.html',
   styleUrl: './control.css'

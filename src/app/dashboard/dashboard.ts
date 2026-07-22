@@ -45,12 +45,21 @@ const ROUTE_TITLES: Record<string, string> = {
   standalone: true,
   imports: [
     RouterLink, RouterLinkActive, RouterOutlet, CommonModule,
-    LucideDynamicIcon,
+    LucideDynamicIcon
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnDestroy {
+
+  loading = true;
+
+  ngOnInit() {
+    // Simulación de carga
+    setTimeout(() => {
+      this.loading = false;
+    }, 2000);
+  }
 
   // ── DI ────────────────────────────────────────────────────────────────────
   private platformId           = inject(PLATFORM_ID);

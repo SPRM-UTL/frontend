@@ -146,14 +146,26 @@ export class ControlService {
       error: err => console.error('Error loading types:', err)
     });
 
+    // Momento en que inicia la carga
+    const startTime = Date.now();
     // Cargar dispositivos
     this.http.get<ApiResponse>(urlDispositivos, { headers: this.getHeaders() }).subscribe({
       next: response => {
         const data = response?.data || response;
-        if (Array.isArray(data)) {
-          this.todosLosDispositivos.set(data.map(d => this.mapDevice(d)));
-        }
-        this.loading.set(false);
+
+        // Tiempo que tardó la petición
+        const elapsed = Date.now() - startTime;
+
+        // Queremos que el skeleton dure al menos 2 segundos
+        const remaining = Math.max(0, 2000 - elapsed);
+
+        setTimeout(() => {
+          if (Array.isArray(data)) {
+            this.todosLosDispositivos.set(data.map(d => this.mapDevice(d)));
+          }
+          this.loading.set(false);
+        }, remaining);
+        
       },
       error: err => {
         console.error('Error loading devices:', err);

@@ -18,6 +18,7 @@ import { getGestureIcon } from '../shared/icon-map';
 import { ToastService } from '../services/toast.service';
 import { Gesto } from './gesto.model';
 import { GestosService } from './gestos.service';
+import { SkeletonComponent } from 'boneyard-js/angular';
 
 @Component({
   selector: 'app-gestos',
@@ -33,6 +34,7 @@ import { GestosService } from './gestos.service';
     LucideSun,
     LucideTriangleAlert,
     LucideDynamicIcon,
+    SkeletonComponent
   ],
   templateUrl: './gestos.html',
   styleUrl: './gestos.css'

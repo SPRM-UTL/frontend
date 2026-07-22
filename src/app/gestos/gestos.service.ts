@@ -53,6 +53,9 @@ export class GestosService {
     this.loading.set(true);
     this.error.set(null);
 
+    // Momento en que inicia la carga
+    const startTime = Date.now();
+
     const headers = this.getHeaders(token).set('X-Skip-Loader', 'true');
 
     return this.http.get<ApiResponse>(this.apiUrl, { headers }).pipe(
@@ -66,7 +69,14 @@ export class GestosService {
         this.error.set('Error al cargar gestos');
         return throwError(() => err);
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 2000 - elapsed);
+
+        setTimeout(() => {
+          this.loading.set(false);
+        }, remaining);
+      })
     );
   }
 

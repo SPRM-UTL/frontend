@@ -1,4 +1,9 @@
 <div class="main-layout" (click)="closeMenus()">
+
+  <boneyard-skeleton
+    name="barra-casas"
+    [loading]="loading()">
+
   <aside class="sidebar-casas-new">
     <div class="section-head-new">
       <h2 class="section-title-new">Mis casas</h2>
@@ -57,7 +62,12 @@
       }
     </div>
   </aside>
+  </boneyard-skeleton>
 
+  <boneyard-skeleton
+    name="seleccionada-casas"
+    class="seleccionada-casas"
+    [loading]="loading()">
   <main class="habitaciones-content-new">
     @if (selectedCasa(); as casa) {
       <div class="casa-hero-card">
@@ -136,7 +146,7 @@
       </div>
     }
   </main>
-
+  </boneyard-skeleton>
   @if (selectedHabitacion(); as currentH) {
     @let h = (habitacionesList() | findById:currentH.sk_habitacion_id:'sk_habitacion_id') || currentH;
     <div class="modal-backdrop-gesto" (click)="cerrarDetalleHabitacion()">

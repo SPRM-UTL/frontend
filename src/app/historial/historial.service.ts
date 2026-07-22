@@ -50,14 +50,25 @@ export class HistorialService {
     this.loading.set(true);
     this.error.set(null);
 
+    // Momento en que inicia la carga
+    const startTime = Date.now();
+
     this.http.get<ApiResponse>(this.apiUrl, { headers: this.getHeaders() })
       .pipe(
         map(response => response?.data || response)
       )
       .subscribe({
         next: (data: any) => {
+          // Tiempo que tardó la petición
+          const elapsed = Date.now() - startTime;
+
+          // Queremos que el skeleton dure al menos 2 segundos
+          const remaining = Math.max(0, 2000 - elapsed);
+
+          setTimeout(() => {
           this.actividades.set(Array.isArray(data) ? data : []);
           this.loading.set(false);
+        }, remaining);
         },
         error: (err) => {
           console.error(err);

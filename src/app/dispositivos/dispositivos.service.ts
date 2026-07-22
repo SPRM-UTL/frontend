@@ -56,28 +56,45 @@ export class DispositivosService {
    * Carga los dispositivos mediante suscripción interna directa (Void) - Para tu vista
    */
   loadDevices(): void {
-    this.loading.set(true);
-    this.error.set(null);
+  this.loading.set(true);
+  this.error.set(null);
 
-    const headers = this.getHeaders().set('X-Skip-Loader', 'true');
+  // Momento en que inicia la carga
+  const startTime = Date.now();
 
-    this.http.get<any>(this.apiUrl, { headers })
-      .subscribe({
-        next: (response: any) => {
-          console.log('Respuesta cruda del servidor:', response);
+  const headers = this.getHeaders().set('X-Skip-Loader', 'true');
 
-          const data = response?.data || response;
+  this.http.get<any>(this.apiUrl, { headers })
+    .subscribe({
+      next: (response: any) => {
+
+        const data = response?.data || response;
+
+        // Tiempo que tardó la petición
+        const elapsed = Date.now() - startTime;
+
+        // Queremos que el skeleton dure al menos 2 segundos
+        const remaining = Math.max(0, 2000 - elapsed);
+
+        setTimeout(() => {
           this.devices.set(Array.isArray(data) ? data : []);
-
           this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error en loadDevices:', err);
+        }, remaining);
+      },
+
+      error: (err) => {
+        console.error('Error en loadDevices:', err);
+
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 2000 - elapsed);
+
+        setTimeout(() => {
           this.error.set('No se pudieron cargar los dispositivos.');
           this.loading.set(false);
-        }
-      });
-  }
+        }, remaining);
+      }
+    });
+}
 
     /**
    * Obtiene los dispositivo por identificador

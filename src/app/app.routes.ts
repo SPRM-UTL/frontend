@@ -21,8 +21,8 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard],
-    canActivateChild: [authChildGuard],
+    //canActivate: [authGuard],
+    //canActivateChild: [authChildGuard],
     children: [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },
       { path: 'inicio', component: Inicio },

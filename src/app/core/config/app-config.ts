@@ -1,3 +1,3 @@
 export const APP_CONFIG = {
-  apiBaseUrl: 'https://backend-neao.onrender.com'
+  apiBaseUrl: 'https://manordomo-api.onrender.com'
 };
