@@ -12,6 +12,7 @@ import {
   LucideLayoutDashboard,
   LucideChevronDown,
   LucidePower,
+  LucideWind,
   LucideDynamicIcon
 } from '@lucide/angular';
 import { getDeviceIcon } from '../shared/icon-map';
@@ -29,6 +30,7 @@ import { CamaraComponent } from '../camara/camara.component';
     LucideLayoutDashboard,
     LucideChevronDown,
     LucidePower,
+    LucideWind,
     LucideDynamicIcon,
     CamaraComponent
   ],
@@ -48,6 +50,7 @@ export class Control implements OnInit, OnDestroy {
   readonly LucideLayoutDashboard = LucideLayoutDashboard;
   readonly LucideChevronDown = LucideChevronDown;
   readonly LucidePower = LucidePower;
+  readonly LucideWind = LucideWind;
 
   readonly tipos        = this.controlService.tiposDispositivos;
   readonly dispositivos = this.controlService.todosLosDispositivos;
@@ -111,7 +114,7 @@ export class Control implements OnInit, OnDestroy {
   private isMultisocketByTipo(tipo: string | undefined): boolean {
     if (!tipo) return false;
     const t = tipo.toLowerCase();
-    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket');
+    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket') || t.includes('ventilador');
   }
 
   selectTipo(tipo: string): void {
@@ -134,8 +137,14 @@ export class Control implements OnInit, OnDestroy {
     return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
   }
 
+  /** Devuelve true si el dispositivo es un Ventilador Inteligente */
+  isVentilador(device: DispositivoControl): boolean {
+    const tipo = (device.tipo_aparato || '').toLowerCase();
+    return tipo.includes('ventilador');
+  }
+
   isDeviceOn(device: DispositivoControl): boolean {
-    if (this.isMultisocket(device)) {
+    if (this.isMultisocket(device) || this.isVentilador(device)) {
       return this.getActiveContactCount(device) > 0;
     }
     return device.encendido;
@@ -145,6 +154,22 @@ export class Control implements OnInit, OnDestroy {
   toggleContacto(device: DispositivoControl, contacto: 1 | 2 | 3 | 4): void {
     const estadoActual = this.getContactoEstado(device, contacto);
     this.controlService.toggleContacto(device, contacto, !estadoActual);
+  }
+
+  /** Alterna velocidad del ventilador con exclusividad (solo una a la vez) */
+  toggleVelocidadExclusiva(device: DispositivoControl, velocidad: 1 | 2 | 3): void {
+    const estadoActual = this.getContactoEstado(device, velocidad);
+    if (estadoActual) {
+      this.controlService.toggleContacto(device, velocidad, false);
+    } else {
+      // Apagar las otras velocidades primero
+      for (let i = 1; i <= 3; i++) {
+        if (i !== velocidad && this.getContactoEstado(device, i as 1 | 2 | 3)) {
+          this.controlService.toggleContacto(device, i as 1 | 2 | 3, false);
+        }
+      }
+      this.controlService.toggleContacto(device, velocidad, true);
+    }
   }
 
   /** Lee el estado booleano de un contacto específico */
@@ -165,6 +190,14 @@ export class Control implements OnInit, OnDestroy {
       device.estado_contacto_3,
       device.estado_contacto_4
     ].filter(Boolean).length;
+  }
+
+  /** Retorna la velocidad activa del ventilador (1, 2, 3) o 0 si ninguna */
+  getActiveVelocidad(device: DispositivoControl): number {
+    if (device.estado_contacto_1) return 1;
+    if (device.estado_contacto_2) return 2;
+    if (device.estado_contacto_3) return 3;
+    return 0;
   }
 
   onBrilloChange(device: DispositivoControl, value: number): void {
@@ -220,17 +253,5 @@ export class Control implements OnInit, OnDestroy {
         }
       }
     }, 120);
-  }
-
-  incrementVelocidad(device: DispositivoControl): void {
-    if ((device.velocidad || 0) < 5) {
-      this.controlService.updateDevice({ ...device, velocidad: (device.velocidad || 0) + 1 });
-    }
-  }
-
-  decrementVelocidad(device: DispositivoControl): void {
-    if ((device.velocidad || 0) > 1) {
-      this.controlService.updateDevice({ ...device, velocidad: (device.velocidad || 0) - 1 });
-    }
   }
 }

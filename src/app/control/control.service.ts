@@ -66,8 +66,6 @@ export class ControlService {
     } else if (tipo.includes('luz') || tipo.includes('foco') || tipo.includes('ilumin')) {
       base.brillo = d.brillo !== undefined ? d.brillo : 100;
       base.tono = d.tono || 'warm';
-    } else if (tipo.includes('vent')) {
-      base.velocidad = d.velocidad !== undefined ? d.velocidad : 1;
     }
 
     return base;
@@ -89,7 +87,6 @@ export class ControlService {
 
     if (d.volumen !== undefined) body.volumen = d.volumen;
     if (d.brillo !== undefined) body.brillo = d.brillo;
-    if (d.velocidad !== undefined) body.velocidad = d.velocidad;
     if (d.tono) body.tono = d.tono;
 
     return body;
@@ -252,7 +249,6 @@ export class ControlService {
             if (contacto === 2) patch.estado_contacto_2 = nuevoEstado;
             if (contacto === 3) patch.estado_contacto_3 = nuevoEstado;
             if (contacto === 4) patch.estado_contacto_4 = nuevoEstado;
-            // encendido refleja si AL MENOS un contacto está activo
             const merged = { ...d, ...patch };
             merged.encendido =
               (merged.estado_contacto_1 || false) ||

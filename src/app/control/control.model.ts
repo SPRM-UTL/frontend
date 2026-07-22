@@ -23,7 +23,6 @@ export interface DispositivoControl {
   // Opcionales según tipo
   volumen?: number;
   brillo?: number;
-  velocidad?: number;
   tono?: 'warm' | 'cool';
   reproduciendo?: string;
 

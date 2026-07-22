@@ -137,6 +137,34 @@
                       </div>
                     </div>
                   }
+
+                  <!-- VENTILADOR INTELIGENTE -->
+                  @if (isVentilador(d)) {
+                    <div class="ventilador-panel">
+                      <p class="ventilador-label">Velocidades</p>
+                      <p class="ventilador-hint">Solo una velocidad activa a la vez</p>
+                      <div class="ventilador-grid">
+
+                        @for (vel of [1, 2, 3]; track vel) {
+                          <button
+                            class="velocidad-btn"
+                            [class.vel-on]="getContactoEstado(d, $any(vel))"
+                            (click)="toggleVelocidadExclusiva(d, $any(vel))"
+                            [attr.aria-label]="'Velocidad ' + vel + (getContactoEstado(d, $any(vel)) ? ' activa' : ' inactiva')">
+
+                            <span class="vel-icon">
+                              <svg lucideWind [size]="18"></svg>
+                            </span>
+                            <span class="vel-number">V{{ vel }}</span>
+                            <span class="vel-state-label">
+                              {{ getContactoEstado(d, $any(vel)) ? 'ON' : 'OFF' }}
+                            </span>
+                          </button>
+                        }
+
+                      </div>
+                    </div>
+                  }
                 </div>
 
                 <div class="device-card-footer">
@@ -145,6 +173,15 @@
                     <div class="status-pill" [class.on]="isDeviceOn(d)">
                       <span class="dot"></span>
                       {{ getActiveContactCount(d) }}/4 ACTIVOS
+                    </div>
+                  } @else if (isVentilador(d)) {
+                    <div class="status-pill ventilador-pill" [class.on]="isDeviceOn(d)">
+                      <span class="dot"></span>
+                      @if (isDeviceOn(d)) {
+                        V{{ getActiveVelocidad(d) }} ACTIVA
+                      } @else {
+                        APAGADO
+                      }
                     </div>
                   } @else {
                     <div class="status-pill" [class.on]="d.encendido">
