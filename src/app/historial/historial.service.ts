@@ -61,7 +61,7 @@ export class HistorialService {
         },
         error: (err) => {
           console.error(err);
-          this.error.set('No se pudo cargar el historial.');
+          this.error.set('No se encontraron registros.');
           this.loading.set(false);
         }
       });

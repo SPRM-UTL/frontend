@@ -202,8 +202,10 @@
               </div>
             </div>
             <div class="empty-text-group">
-              <h3>No hay {{ tipoSeleccionado().toLowerCase() }} en línea</h3>
-              <p>Asegúrate de que estén vinculadas y conectadas a la corriente.</p>
+              <h3 class="empty-title">
+                {{ tipoSeleccionado() === 'Todos los tipos' ? 'No hay dispositivos en línea' : 'No hay ' + tipoSeleccionado().toLowerCase() + ' en línea' }}
+              </h3>
+              <p class="empty-subtitle">Asegúrate de que estén vinculadas y conectadas a la corriente.</p>
             </div>
           </div>
         }

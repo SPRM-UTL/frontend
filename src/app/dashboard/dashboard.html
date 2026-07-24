@@ -12,8 +12,10 @@
   <aside class="sidebar" [class.first-item-active]="isFirstItemActive()" (click)="$event.stopPropagation()">
 
     <div class="sidebar-logo">
-      <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
-      <span class="logo-name">Manordomo</span>
+      <a routerLink="/dashboard/inicio" class="logo-link" style="display: flex; align-items: center; text-decoration: none; color: inherit; cursor: pointer; outline: none;" (click)="closeMenu()">
+        <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
+        <span class="logo-text">Manordomo</span>
+      </a>
       <button class="mobile-close-btn" (click)="closeMenu()" aria-label="Cerrar menú">
         <svg [lucideIcon]="getDeviceIcon('x')"></svg>
       </button>
@@ -43,7 +45,7 @@
         <span class="nav-text">Historial de actividad</span>
       </a>
       <a class="nav-item" routerLink="/dashboard/control"     routerLinkActive="active" (click)="closeMenu()">
-        <svg [lucideIcon]="getDeviceIcon('pencil')" class="nav-icon-no-mask"></svg>
+        <svg [lucideIcon]="getDeviceIcon('sliders-horizontal')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Control</span>
       </a>
 
@@ -111,8 +113,6 @@
                 <span class="notif-spin"><svg [lucideIcon]="getDeviceIcon('sun')"></svg></span>
                 <p>Cargando notificaciones…</p>
               </div>
-            } @else if (panelError()) {
-              <div class="notif-empty"><p>{{ panelError() }}</p></div>
             } @else {
               <div class="notif-list">
                 @for (n of recentActivities(); track n.id) {
@@ -135,10 +135,19 @@
                     </button>
                   </article>
                 }
-                @if (recentActivities().length === 0) {
+                @if (recentActivities().length === 0 && !panelError()) {
                   <div class="notif-empty"><p>No hay actividad reciente</p></div>
                 }
+                @if (recentActivities().length === 0 && panelError()) {
+                  <div class="notif-empty"><p>No hay notificaciones</p></div>
+                }
               </div>
+              @if (panelError()) {
+                <div class="notif-error-note">
+                  <svg [lucideIcon]="getDeviceIcon('triangle-alert')" [size]="12"></svg>
+                  Historial no disponible temporalmente
+                </div>
+              }
             }
           </section>
         }

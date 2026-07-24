@@ -1,6 +1,7 @@
-<div class="page-header">
+<div class="module-header-container" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
   <div>
-    <p class="page-subtitle">Personaliza y configura tu sistema de forma local</p>
+    <h2 class="module-title-main">Configuración del Sistema</h2>
+    <p class="module-subtitle-main">Personaliza y configura tu sistema</p>
   </div>
   <button class="btn-reset" (click)="resetSettings()">
     <svg lucideRotateCcw [size]="18"></svg>
@@ -166,3 +167,21 @@
     </div>
   </section>
 </div>
+
+@if (showResetModal()) {
+  <div class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon-circle">
+        <svg lucideRotateCcw [size]="24"></svg>
+      </div>
+      <h3 class="modal-title">¿Estás seguro de que deseas restablecer?</h3>
+      <p class="modal-desc">
+        Tu configuración se restablecerá a sus valores predeterminados.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelReset()">Cancelar</button>
+        <button class="btn-confirm-danger" (click)="confirmReset()">Sí, restablecer</button>
+      </div>
+    </div>
+  </div>
+}
