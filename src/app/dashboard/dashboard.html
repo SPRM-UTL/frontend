@@ -157,8 +157,7 @@
           <button class="date-pill-btn" (click)="toggleDatePanel(); $event.stopPropagation()">
             <svg [lucideIcon]="getDeviceIcon('sun')" [size]="18" style="color:#f4b400"></svg>
             <div class="date-text-wrapper">
-              <strong>{{ dayLabel }}</strong>
-              <span>{{ timeLabel }}</span>
+              <strong>{{ dayLabel() }}</strong>
             </div>
           </button>
 
@@ -185,7 +184,7 @@
                 <div class="weather-calendar-badge">
                   <svg [lucideIcon]="getDeviceIcon('calendar-days')" [size]="28"></svg>
                 </div>
-                <strong>{{ dayLabel }}</strong>
+                <strong>{{ dayLabel() }}</strong>
 
                 @if (weatherService.info(); as w) {
                   <span>{{ w.summary }} · {{ w.temperature }}</span>
@@ -199,16 +198,7 @@
                 }
               </div>
 
-              <div class="weather-footer-row">
-                <span class="weather-footer-place">
-                  <svg [lucideIcon]="getDeviceIcon('map-pin')" [size]="16"></svg>
-                  {{ weatherService.info()?.place ?? 'Ubicación actual' }}
-                </span>
-                <span class="weather-footer-time">
-                  {{ weatherService.info()?.updatedAt ?? timeLabel }}
-                </span>
-                <svg [lucideIcon]="getDeviceIcon('chevron-right')" [size]="18" class="weather-footer-arrow"></svg>
-              </div>
+
 
             </div>
           }
@@ -327,6 +317,20 @@
               <div class="sidebar-info-card">
                 <h3 class="sidebar-card-title">Información rápida</h3>
                 <div class="info-rows">
+                  <div class="info-row">
+                    <div class="info-row-left">
+                      <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
+                      <span>Acción</span>
+                    </div>
+                    <span class="info-row-val">{{ gesto.tipo_disparador_nombre || 'Sin acción' }}</span>
+                  </div>
+                  <div class="info-row">
+                    <div class="info-row-left">
+                      <svg [lucideIcon]="getDeviceIcon('list')" class="info-icon"></svg>
+                      <span>Secuencia</span>
+                    </div>
+                    <span class="info-row-val">{{ gesto.nombre_gesto }}</span>
+                  </div>
                   <div class="info-row">
                     <div class="info-row-left">
                       <svg [lucideIcon]="getDeviceIcon('check')" class="info-icon"></svg>

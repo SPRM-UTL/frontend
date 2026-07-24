@@ -3,7 +3,7 @@
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10000; /* Asegurar que esté por encima de todo */
+  z-index: 999999; /* Asegurar que esté por encima de todo, incluidos los modales */
   display: flex;
   flex-direction: column;
   align-items: center;

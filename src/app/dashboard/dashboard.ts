@@ -76,14 +76,14 @@ export class Dashboard implements OnDestroy {
   readonly sidebarCollapsed    = signal(true);
 
   // ── Reloj ─────────────────────────────────────────────────────────────────
-  dayLabel  = '';
-  timeLabel = '';
+  dayLabel  = signal('');
+  timeLabel = signal('');
 
   readonly clockTime = computed(() =>
-    (this.timeLabel || '--:--').replace(/\s?(AM|PM)$/i, ''),
+    (this.timeLabel() || '--:--').replace(/\s?(AM|PM)$/i, ''),
   );
   readonly clockMeridiem = computed(() =>
-    (this.timeLabel || '').match(/(AM|PM)$/i)?.[1]?.toUpperCase() ?? '',
+    (this.timeLabel() || '').match(/(AM|PM)$/i)?.[1]?.toUpperCase() ?? '',
   );
 
   // ── Notificaciones ────────────────────────────────────────────────────────
@@ -211,6 +211,17 @@ export class Dashboard implements OnDestroy {
   videoPlayer = viewChild<ElementRef<HTMLVideoElement>>('videoPlayer');
 
   constructor() {
+    if (this.isBrowser) {
+      try {
+        const stored = localStorage.getItem('dismissed_notifications');
+        if (stored) {
+          this.dismissedIds.set(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error('Error loading dismissed from localStorage:', e);
+      }
+    }
+    
     this.updateClock();
     if (this.isBrowser) {
       this.timerId = setInterval(() => this.updateClock(), 1000);
@@ -275,7 +286,7 @@ export class Dashboard implements OnDestroy {
   toggleDatePanel(): void {
     if (!this.datePanelOpen()) {
       this.panelOpen.set(false);
-      this.weatherService.load(this.timeLabel);
+      this.weatherService.load(this.timeLabel());
     }
     this.datePanelOpen.update(v => !v);
   }
@@ -363,12 +374,12 @@ export class Dashboard implements OnDestroy {
     const label = now.toLocaleDateString('es-ES', {
       weekday: 'long', day: 'numeric', month: 'long',
     });
-    this.dayLabel  = label.charAt(0).toUpperCase() + label.slice(1);
+    this.dayLabel.set(label.charAt(0).toUpperCase() + label.slice(1));
 
-    this.timeLabel = now
+    this.timeLabel.set(now
       .toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true })
       .replace(/\./g, '')
-      .toUpperCase();
+      .toUpperCase());
   }
 
   private mapAlerts(): UnifiedNotification[] {
@@ -393,18 +404,24 @@ export class Dashboard implements OnDestroy {
     if (!Array.isArray(all)) return [];
 
     return all
-      .filter(a => !dismissed.includes(a.id))
-      .map(a => ({
-        id:         `act-${a.id}`,
-        type:       'activity' as const,
-        severity:   a.estado === 'Error' ? ('error' as const) : ('default' as const),
-        title:      a.accion,
-        subtitle:   a.dispositivo,
-        timeLabel:  a.hora,
-        icon:       getActivityIcon(a.icono, a.estado, a.accion),
-        statusText: a.estado,
-        originalId: a.id,
-      }));
+      .filter(a => {
+        const id = a.id ?? (a as any).Id ?? (a as any).sk_actividad_id;
+        return !dismissed.includes(id);
+      })
+      .map(a => {
+        const id = a.id ?? (a as any).Id ?? (a as any).sk_actividad_id;
+        return {
+          id:         `act-${id}`,
+          type:       'activity' as const,
+          severity:   a.estado === 'Error' ? ('error' as const) : ('default' as const),
+          title:      a.accion,
+          subtitle:   a.dispositivo,
+          timeLabel:  a.hora,
+          icon:       getActivityIcon(a.icono, a.estado, a.accion),
+          statusText: a.estado,
+          originalId: id,
+        };
+      });
   }
 
   private formatTime(date: Date): string {
@@ -418,7 +435,7 @@ export class Dashboard implements OnDestroy {
   isMultisocket(tipo?: string): boolean {
     if (!tipo) return false;
     const t = tipo.toLowerCase();
-    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket');
+    return t.includes('multisocket') || t.includes('multi socket');
   }
 
   /** Retorna true si el contacto N del MultiSocket en el detalle está encendido */

@@ -160,7 +160,7 @@ export class Dispositivos implements OnInit, OnDestroy {
 
   isMultisocket(device: Dispositivo): boolean {
     const tipo = (device.tipo_aparato || '').toLowerCase();
-    return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
+    return tipo.includes('multisocket') || tipo.includes('multi socket');
   }
 
   getMultisocketActiveCount(device: Dispositivo): number {
