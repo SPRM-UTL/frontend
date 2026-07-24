@@ -47,6 +47,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.module-header-container {
+  margin-bottom: 1.5rem;
+}
+
+.module-title-main {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--cafe-dark);
+  margin-bottom: 0.25rem;
+}
+
+.module-subtitle-main {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-title);
   font-weight: 700;

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, signal, inject, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -80,6 +80,15 @@ export class Casas implements OnInit {
     if (!q) return this.casas();
     return this.casas().filter(c => c.nombre_casa.toLowerCase().includes(q));
   });
+
+  constructor() {
+    effect(() => {
+      const casasList = this.filteredCasas();
+      if (casasList.length > 0 && !this.selectedCasa()) {
+        this.selectCasa(casasList[0]);
+      }
+    }, { allowSignalWrites: true });
+  }
 
   ngOnInit(): void {
     this.casasService.loadCasas();

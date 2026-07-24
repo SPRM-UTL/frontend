@@ -97,7 +97,7 @@ export class Gestos {
         },
         error: err => {
           console.error('Error al activar la peticion de gestos:', err);
-          this.toastService.error(err?.error?.data || 'Error al cargar los gestos');
+          this.toastService.error(err?.error?.data || 'No se encontraron registros');
         }
       });
     });

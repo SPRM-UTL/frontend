@@ -1,5 +1,5 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   LucideRotateCcw,
   LucideBolt,
@@ -11,7 +11,9 @@ import {
   LucideBell,
   LucideSearch,
   LucideHand,
-  LucideSparkles
+  LucideSparkles,
+  LucideTriangleAlert,
+  LucideX
 } from '@lucide/angular';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { GestosService } from '../gestos/gestos.service';
@@ -31,12 +33,15 @@ import { GestosService } from '../gestos/gestos.service';
     LucideBell,
     LucideSearch,
     LucideHand,
-    LucideSparkles
+    LucideSparkles,
+    LucideTriangleAlert,
+    LucideX
   ],
   templateUrl: './ajustes.html',
   styleUrl: './ajustes.css',
 })
 export class Ajustes {
+  private platformId = inject(PLATFORM_ID);
   private dispositivosService = inject(DispositivosService);
   private gestosService = inject(GestosService);
 
@@ -46,6 +51,8 @@ export class Ajustes {
   readonly notifications = signal(true);
   readonly autoUpdate = signal(true);
   readonly twoStepAuth = signal(true);
+
+  readonly showResetModal = signal(false);
 
   // Dynamic Stats from services
   readonly totalDevices = computed(() => this.dispositivosService.devices().length);
@@ -61,10 +68,10 @@ export class Ajustes {
       if (raw) {
         const settings = JSON.parse(raw);
         if (settings.language) this.language.set(settings.language);
-        if (settings.mode) this.mode.set(settings.mode);
+        if (settings.mode)     this.mode.set(settings.mode);
         if (typeof settings.notifications === 'boolean') this.notifications.set(settings.notifications);
-        if (typeof settings.autoUpdate === 'boolean') this.autoUpdate.set(settings.autoUpdate);
-        if (typeof settings.twoStepAuth === 'boolean') this.twoStepAuth.set(settings.twoStepAuth);
+        if (typeof settings.autoUpdate    === 'boolean') this.autoUpdate.set(settings.autoUpdate);
+        if (typeof settings.twoStepAuth   === 'boolean') this.twoStepAuth.set(settings.twoStepAuth);
       }
     } catch (e) {
       console.error('Error loading settings:', e);
@@ -81,7 +88,8 @@ export class Ajustes {
   cycleMode() {
     const modes = ['Automático', 'Claro', 'Oscuro'];
     const currentIdx = modes.indexOf(this.mode());
-    this.mode.set(modes[(currentIdx + 1) % modes.length]);
+    const next = modes[(currentIdx + 1) % modes.length];
+    this.mode.set(next);
     this.saveSettings();
   }
 
@@ -112,14 +120,20 @@ export class Ajustes {
   }
 
   resetSettings() {
-    if (confirm('¿Estás seguro de que deseas restablecer todas las preferencias locales?')) {
-      this.language.set('Español');
-      this.mode.set('Automático');
-      this.notifications.set(true);
-      this.autoUpdate.set(true);
-      this.twoStepAuth.set(true);
-      localStorage.removeItem('user_settings');
-    }
+    this.showResetModal.set(true);
+  }
+
+  confirmReset() {
+    this.language.set('Español');
+    this.mode.set('Automático');
+    this.notifications.set(true);
+    this.autoUpdate.set(true);
+    this.twoStepAuth.set(true);
+    localStorage.removeItem('user_settings');
+    this.showResetModal.set(false);
+  }
+
+  cancelReset() {
+    this.showResetModal.set(false);
   }
 }
-

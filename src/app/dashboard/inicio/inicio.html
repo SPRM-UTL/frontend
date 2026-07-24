@@ -1,6 +1,10 @@
 <div class="inicio-page">
+  <div class="module-header-container">
+    <h2 class="module-title-main">Resumen del Sistema</h2>
+    <p class="module-subtitle-main">Vista general de tu actividad y dispositivos</p>
+  </div>
   <section class="stats-grid card">
-    <article class="stat-card stat-card--teal">
+    <article class="stat-card stat-card--teal stat-card--link" routerLink="/dashboard/dispositivos">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('smartphone')"></svg>
       </span>
@@ -11,7 +15,7 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--teal">
+    <article class="stat-card stat-card--teal stat-card--link" routerLink="/dashboard/gestos">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('hand')"></svg>
       </span>
@@ -22,7 +26,7 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--teal">
+    <article class="stat-card stat-card--teal stat-card--link" routerLink="/dashboard/historial">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('bolt')"></svg>
       </span>
@@ -33,7 +37,7 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--teal">
+    <article class="stat-card stat-card--teal stat-card--link" routerLink="/dashboard/casas">
       <span class="stat-ico">
         <svg [lucideIcon]="getDeviceIcon('home')"></svg>
       </span>
@@ -44,16 +48,6 @@
       </div>
     </article>
 
-    <article class="stat-card stat-card--teal">
-      <span class="stat-ico">
-        <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
-      </span>
-      <div class="stat-copy">
-        <p class="stat-label">Dispositivos activos</p>
-        <p class="stat-number">{{ inicioService.stats()?.dispositivosActivos ?? 0 }}</p>
-        <p class="stat-sub">Últimas 2 horas</p>
-      </div>
-    </article>
   </section>
 
   <section class="charts-grid card">

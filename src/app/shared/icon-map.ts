@@ -63,7 +63,8 @@ import {
   LucideUtensils,
   LucideCar,
   LucideTreePine,
-  LucideImage
+  LucideImage,
+  LucideSlidersHorizontal
 } from '@lucide/angular';
 
 type LucideIcon = any;
@@ -155,7 +156,8 @@ const DEVICE_ICONS_BY_NAME: Record<string, LucideIcon> = {
   utensils: LucideUtensils,
   'utensils-crossed': LucideUtensils,
   car: LucideCar,
-  'tree-pine': LucideTreePine
+  'tree-pine': LucideTreePine,
+  'sliders-horizontal': LucideSlidersHorizontal
 };
 
 const TOAST_ICONS_BY_NAME: Record<string, LucideIcon> = {

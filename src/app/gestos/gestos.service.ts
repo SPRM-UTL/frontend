@@ -63,7 +63,7 @@ export class GestosService {
       tap(data => this.gestos.set(data)),
       catchError(err => {
         console.error('Error en loadGestos:', err);
-        this.error.set('Error al cargar gestos');
+        this.error.set('No se encontraron registros.');
         return throwError(() => err);
       }),
       finalize(() => this.loading.set(false))
