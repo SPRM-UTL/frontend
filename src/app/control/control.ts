@@ -114,7 +114,7 @@ export class Control implements OnInit, OnDestroy {
   private isMultisocketByTipo(tipo: string | undefined): boolean {
     if (!tipo) return false;
     const t = tipo.toLowerCase();
-    return t.includes('multisocket') || t.includes('multi socket') || t.includes('socket') || t.includes('ventilador');
+    return t.includes('multisocket') || t.includes('multi socket') || t.includes('ventilador');
   }
 
   selectTipo(tipo: string): void {
@@ -134,7 +134,7 @@ export class Control implements OnInit, OnDestroy {
   /** Devuelve true si el dispositivo es un MultiSocket */
   isMultisocket(device: DispositivoControl): boolean {
     const tipo = (device.tipo_aparato || '').toLowerCase();
-    return tipo.includes('multisocket') || tipo.includes('multi socket') || tipo.includes('socket');
+    return tipo.includes('multisocket') || tipo.includes('multi socket');
   }
 
   /** Devuelve true si el dispositivo es un Ventilador Inteligente */

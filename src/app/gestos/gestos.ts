@@ -169,8 +169,8 @@ export class Gestos {
         });
       },
       error: err => {
-        console.error('Error al cargar detalle real:', err);
-        this.toastService.error('Error al cargar el detalle del gesto');
+        console.warn('No se encontraron detalles adicionales (o error 404):', err);
+        // Eliminamos el toast de error porque es normal que no todos los gestos tengan detalle en la BD
       }
     });
   }
