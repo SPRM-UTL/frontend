@@ -1,5 +1,3 @@
-// cuenta.ts
-
 import { Component, OnDestroy, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +7,8 @@ import {
   LucideLock,
   LucideLogOut,
   LucideArrowRight,
-  LucideCamera
+  LucideCamera,
+  LucideMail
 } from '@lucide/angular';
 import { CuentaService } from './cuenta.service';
 import { AuthService } from '../services/auth.service';
@@ -26,7 +25,8 @@ import { ToastService } from '../services/toast.service';
     LucideLock,
     LucideLogOut,
     LucideArrowRight,
-    LucideCamera
+    LucideCamera,
+    LucideMail
   ],
   templateUrl: './cuenta.html',
   styleUrl: './cuenta.css'
@@ -40,7 +40,7 @@ export class Cuenta implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('cropCanvas') cropCanvas?: ElementRef<HTMLCanvasElement>;
 
-  readonly userName  = this.cuentaService.userName;
+  readonly userName = this.cuentaService.userName;
   readonly userEmail = this.cuentaService.userEmail;
   readonly userImage = this.cuentaService.userImage;
 
@@ -235,13 +235,11 @@ export class Cuenta implements OnInit, OnDestroy {
 
     const trimmedValue = this.editValue.trim();
 
-    // Validaciones de campos vacíos
     if (field !== 'password' && !trimmedValue) {
       this.toastService.warning(`El campo ${field} no puede estar vacío`);
       return;
     }
 
-    // Validaciones específicas
     if (field === 'correo') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(trimmedValue)) {

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 import {
   LucideChevronDown,
   LucideClock,
@@ -12,7 +11,6 @@ import {
   LucideSun,
   LucideTriangleAlert,
 } from '@lucide/angular';
-
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { getGestureIcon } from '../shared/icon-map';
 import { ToastService } from '../services/toast.service';
@@ -146,7 +144,7 @@ export class Gestos {
               // Mapeamos los campos del detalle a los que espera el template
               duracion_segundos: detalle.duracion_segundos,
               iluminacion_requerida: detalle.iluminacion_recomendada,
-              distancia_minima_m: undefined, // Usaremos la cadena descriptiva de la API
+              distancia_minima_m: undefined,
               distancia_maxima_m: undefined,
               precision_ia: 'Alta',
               recomendaciones: [
@@ -155,14 +153,13 @@ export class Gestos {
                 'Gesto claro por 1 seg.',
                 'Evitar obstrucciones.'
               ],
-              // Guardamos la lista completa de videos si hay más de uno
               videos: videos.map((v: any) => v.url_archivo),
               multimedia: {
                 fotos: fotos,
                 video_url: videos.length > 0 ? videos[0].url_archivo : undefined,
                 video_duracion: `${detalle.duracion_segundos} seg.`
               },
-              detalle: detalle // Guardamos el objeto detalle completo para el visor multimedia
+              detalle: detalle
             };
           }
           return current;
@@ -170,7 +167,6 @@ export class Gestos {
       },
       error: err => {
         console.warn('No se encontraron detalles adicionales (o error 404):', err);
-        // Eliminamos el toast de error porque es normal que no todos los gestos tengan detalle en la BD
       }
     });
   }
