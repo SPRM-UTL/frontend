@@ -3,7 +3,6 @@
   <!-- VISTA PRINCIPAL (GRID) - Siempre visible en el fondo -->
   <div class="main-grid-view">
 
-
     <!-- Search and Filter Bar -->
     <div class="search-filter-row">
       <div class="search-wrapper">
@@ -24,11 +23,11 @@
           </button>
 
           @if (isFilterOpen()) {
-            <div class="dropdown-menu">
-              <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
-              <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
-              <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
-            </div>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
+            <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
+            <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
+          </div>
           }
         </div>
       </div>
@@ -49,51 +48,51 @@
 
     <!-- Gestos grid -->
     @if (!loading() && gestosFiltrados().length > 0) {
-      <div class="gestos-grid">
-        @for (gesto of gestosFiltrados(); track gesto.sk_gesto_id) {
-          <div class="gesto-card" (click)="verDetalle(gesto)">
-            <div class="gesto-card-header">
-              <div class="gesto-icon-circle">
-                <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="24" class="gesto-icon-img"></svg>
-              </div>
-            </div>
-            <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
-            <div class="info-group">
-              <p class="info-label">DISPOSITIVO</p>
-              <p class="info-value"> {{ obtenerNombreDispositivo( gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
-            </div>
-            <div class="info-group">
-              <p class="info-label">ESTADO</p>
-              <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
-            </div>
-            <div class="gesto-card-footer">
-              <svg lucideClock class="footer-icon" [size]="14"></svg>
-            </div>
+    <div class="gestos-grid">
+      @for (gesto of gestosFiltrados(); track gesto.sk_gesto_id) {
+      <div class="gesto-card" (click)="verDetalle(gesto)">
+        <div class="gesto-card-header">
+          <div class="gesto-icon-circle">
+            <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="24" class="gesto-icon-img"></svg>
           </div>
-        }
+        </div>
+        <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
+        <div class="info-group">
+          <p class="info-label">DISPOSITIVO</p>
+          <p class="info-value"> {{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
+        </div>
+        <div class="info-group">
+          <p class="info-label">ESTADO</p>
+          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
+        </div>
+        <div class="gesto-card-footer">
+          <svg lucideClock class="footer-icon" [size]="14"></svg>
+        </div>
       </div>
+      }
+    </div>
     }
 
     <!-- Empty/Loading/Error states -->
     @if (!loading() && !error() && gestosFiltrados().length === 0) {
-      <div class="empty-state">
-        <svg lucideSearch [size]="48" style="opacity: 0.3;"></svg>
-        <p>No se encontraron gestos que coincidan con los filtros.</p>
-      </div>
+    <div class="empty-state">
+      <svg lucideSearch [size]="48" style="opacity: 0.3;"></svg>
+      <p>No se encontraron gestos que coincidan con los filtros.</p>
+    </div>
     }
 
     @if (loading()) {
-      <div class="empty-state">
-        <svg lucideSun [size]="24" class="spin"></svg>
-        <p>Cargando gestos…</p>
-      </div>
+    <div class="empty-state">
+      <svg lucideSun [size]="24" class="spin"></svg>
+      <p>Cargando gestos…</p>
+    </div>
     }
 
     @if (error()) {
-      <div class="empty-state">
-        <svg lucideTriangleAlert [size]="24"></svg>
-        <p>{{ error() }}</p>
-      </div>
+    <div class="empty-state">
+      <svg lucideTriangleAlert [size]="24"></svg>
+      <p>{{ error() }}</p>
+    </div>
     }
   </div>
 

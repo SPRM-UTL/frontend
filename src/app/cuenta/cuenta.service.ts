@@ -1,11 +1,8 @@
-// cuenta.service.ts
-
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
-
 import { isPlatformBrowser } from '@angular/common';
 
 const BASE_URL = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.cuenta}`;
@@ -15,12 +12,12 @@ export class CuentaService {
 
   private platformId = inject(PLATFORM_ID);
 
-  readonly userName  = signal('');
+  readonly userName = signal('');
   readonly userEmail = signal('');
   readonly userImage = signal('');
 
   readonly loading = signal<boolean>(false);
-  readonly error   = signal<string | null>(null);
+  readonly error = signal<string | null>(null);
 
   constructor(private http: HttpClient) {
     if (isPlatformBrowser(this.platformId)) {
@@ -56,7 +53,7 @@ export class CuentaService {
   loadPerfil(): void {
     const userId = this.getUserId();
     if (!userId) {
-      if(isPlatformBrowser (this.platformId)){
+      if (isPlatformBrowser(this.platformId)) {
         this.error.set('No se encontró el ID de usuario.');
       }
       return;
@@ -188,4 +185,10 @@ export class CuentaService {
       })
     );
   }
+}
+
+export interface UsuarioData {
+  id: number;
+  nombre: string;
+  correo: string;
 }

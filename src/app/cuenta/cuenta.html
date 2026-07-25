@@ -1,7 +1,3 @@
-
-
-
-
 <div class="cuenta-wrapper">
   <!-- Perfil Principal Card -->
   <div class="profile-card">
@@ -9,14 +5,14 @@
       <div class="avatar-container">
         <div class="avatar-circle">
           @if (userImage()) {
-            <img [src]="userImage()" alt="Avatar" class="profile-img" (error)="onImageError()">
+          <img [src]="userImage()" alt="Avatar" class="profile-img" (error)="onImageError()">
           } @else {
-            <svg lucideUser></svg>
+          <svg lucideUser></svg>
           }
           @if (isUploadingImage()) {
-            <div class="avatar-loading" aria-label="Subiendo imagen">
-              <span></span>
-            </div>
+          <div class="avatar-loading" aria-label="Subiendo imagen">
+            <span></span>
+          </div>
           }
         </div>
         <button class="avatar-edit-btn" (click)="onEditAvatar()" aria-label="Editar avatar" [disabled]="isSaving() || isUploadingImage()">
@@ -43,30 +39,29 @@
       <div class="info-content">
         <label>Nombres</label>
         @if (editingField() !== 'nombre') {
-          <div class="info-value">{{ userName() }}</div>
+        <div class="info-value">{{ userName() }}</div>
         } @else {
-          <input
-                 class="info-input"
-                 type="text"
-                 [(ngModel)]="editValue"
-                 (keydown.enter)="saveField('nombre')"
-                 (keydown.escape)="cancelEdit()"
-                 [disabled]="isSaving()"
-                 autoFocus />
+        <input class="info-input"
+               type="text"
+               [(ngModel)]="editValue"
+               (keydown.enter)="saveField('nombre')"
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()"
+               autoFocus />
         }
       </div>
       <div class="info-actions">
         @if (editingField() !== 'nombre') {
-          <button class="edit-pill-btn" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
-            <svg lucidePencil></svg>
-          </button>
+        <button class="edit-pill-btn" (click)="startEdit('nombre', userName() || '')" aria-label="Editar nombre">
+          <svg lucidePencil></svg>
+        </button>
         } @else {
-          <div class="save-cancel">
-            <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
-              {{ isSaving() ? '...' : 'Guardar' }}
-            </button>
-            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-          </div>
+        <div class="save-cancel">
+          <button class="btn-save" (click)="saveField('nombre')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+        </div>
         }
       </div>
     </div>
@@ -74,34 +69,33 @@
     <!-- Correo -->
     <div class="info-item" [class.editing]="editingField() === 'correo'">
       <div class="info-icon">
-        <svg lucideUser></svg>
+        <svg lucideMail></svg>
       </div>
       <div class="info-content">
         <label>Correo</label>
         @if (editingField() !== 'correo') {
-          <div class="info-value email">{{ userEmail() }}</div>
+        <div class="info-value email">{{ userEmail() }}</div>
         } @else {
-          <input
-                 class="info-input"
-                 type="email"
-                 [(ngModel)]="editValue"
-                 (keydown.enter)="saveField('correo')"
-                 (keydown.escape)="cancelEdit()"
-                 [disabled]="isSaving()" />
+        <input class="info-input"
+               type="email"
+               [(ngModel)]="editValue"
+               (keydown.enter)="saveField('correo')"
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
         }
       </div>
       <div class="info-actions">
         @if (editingField() !== 'correo') {
-          <button class="edit-pill-btn" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
-            <svg lucidePencil></svg>
-          </button>
+        <button class="edit-pill-btn" (click)="startEdit('correo', userEmail() || '')" aria-label="Editar correo">
+          <svg lucidePencil></svg>
+        </button>
         } @else {
-          <div class="save-cancel">
-            <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
-              {{ isSaving() ? '...' : 'Guardar' }}
-            </button>
-            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-          </div>
+        <div class="save-cancel">
+          <button class="btn-save" (click)="saveField('correo')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+        </div>
         }
       </div>
     </div>
@@ -114,30 +108,29 @@
       <div class="info-content">
         <label>Contraseña</label>
         @if (editingField() !== 'password') {
-          <div class="info-value dots">••••••••••••</div>
+        <div class="info-value dots">••••••••••••</div>
         } @else {
-          <input
-                 class="info-input"
-                 type="password"
-                 [(ngModel)]="editValue"
-                 placeholder="Nueva contraseña"
-                 (keydown.enter)="saveField('password')"
-                 (keydown.escape)="cancelEdit()"
-                 [disabled]="isSaving()" />
+        <input class="info-input"
+               type="password"
+               [(ngModel)]="editValue"
+               placeholder="Nueva contraseña"
+               (keydown.enter)="saveField('password')"
+               (keydown.escape)="cancelEdit()"
+               [disabled]="isSaving()" />
         }
       </div>
       <div class="info-actions">
         @if (editingField() !== 'password') {
-          <button class="edit-pill-btn" (click)="startEdit('password', '')" aria-label="Editar contraseña">
-            <svg lucidePencil></svg>
-          </button>
+        <button class="edit-pill-btn" (click)="startEdit('password', '')" aria-label="Editar contraseña">
+          <svg lucidePencil></svg>
+        </button>
         } @else {
-          <div class="save-cancel">
-            <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
-              {{ isSaving() ? '...' : 'Guardar' }}
-            </button>
-            <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
-          </div>
+        <div class="save-cancel">
+          <button class="btn-save" (click)="saveField('password')" [disabled]="isSaving()">
+            {{ isSaving() ? '...' : 'Guardar' }}
+          </button>
+          <button class="btn-cancel" (click)="cancelEdit()" [disabled]="isSaving()">Cancelar</button>
+        </div>
         }
       </div>
     </div>
@@ -159,49 +152,46 @@
       <svg lucideArrowRight></svg>
     </button>
   </div>
-
 </div>
 
 @if (showCropper()) {
-  <div class="cropper-overlay" (click)="cancelImageCrop()">
-    <section class="cropper-modal" role="dialog" aria-modal="true" aria-label="Recortar imagen" (click)="$event.stopPropagation()">
-      <header class="cropper-header">
-        <h3>Recortar imagen</h3>
-        <button class="cropper-close" type="button" aria-label="Cerrar" (click)="cancelImageCrop()" [disabled]="isUploadingImage()">×</button>
-      </header>
+<div class="cropper-overlay" (click)="cancelImageCrop()">
+  <section class="cropper-modal" role="dialog" aria-modal="true" aria-label="Recortar imagen" (click)="$event.stopPropagation()">
+    <header class="cropper-header">
+      <h3>Recortar imagen</h3>
+      <button class="cropper-close" type="button" aria-label="Cerrar" (click)="cancelImageCrop()" [disabled]="isUploadingImage()">×</button>
+    </header>
 
-      <div class="cropper-stage">
-        <canvas
-          #cropCanvas
-          width="320"
-          height="320"
-          class="cropper-canvas"
-          (pointerdown)="startCropDrag($event)"
-          (pointermove)="moveCropDrag($event)"
-          (pointerup)="endCropDrag($event)"
-          (pointercancel)="endCropDrag($event)">
-        </canvas>
-        <div class="cropper-ring" aria-hidden="true"></div>
-      </div>
+    <div class="cropper-stage">
+      <canvas #cropCanvas
+              width="320"
+              height="320"
+              class="cropper-canvas"
+              (pointerdown)="startCropDrag($event)"
+              (pointermove)="moveCropDrag($event)"
+              (pointerup)="endCropDrag($event)"
+              (pointercancel)="endCropDrag($event)">
+      </canvas>
+      <div class="cropper-ring" aria-hidden="true"></div>
+    </div>
 
-      <label class="cropper-slider">
-        <span>Zoom</span>
-        <input
-          type="range"
-          min="1"
-          max="3"
-          step="0.01"
-          [ngModel]="cropZoom()"
-          (ngModelChange)="setCropZoom($event)"
-          [disabled]="isUploadingImage()">
-      </label>
+    <label class="cropper-slider">
+      <span>Zoom</span>
+      <input type="range"
+             min="1"
+             max="3"
+             step="0.01"
+             [ngModel]="cropZoom()"
+             (ngModelChange)="setCropZoom($event)"
+             [disabled]="isUploadingImage()">
+    </label>
 
-      <footer class="cropper-actions">
-        <button class="cropper-secondary" type="button" (click)="cancelImageCrop()" [disabled]="isUploadingImage()">Cancelar</button>
-        <button class="cropper-primary" type="button" (click)="confirmImageCrop()" [disabled]="isUploadingImage()">
-          {{ isUploadingImage() ? 'Subiendo...' : 'Guardar imagen' }}
-        </button>
-      </footer>
-    </section>
-  </div>
+    <footer class="cropper-actions">
+      <button class="cropper-secondary" type="button" (click)="cancelImageCrop()" [disabled]="isUploadingImage()">Cancelar</button>
+      <button class="cropper-primary" type="button" (click)="confirmImageCrop()" [disabled]="isUploadingImage()">
+        {{ isUploadingImage() ? 'Subiendo...' : 'Guardar imagen' }}
+      </button>
+    </footer>
+  </section>
+</div>
 }

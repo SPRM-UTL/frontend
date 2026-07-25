@@ -1,4 +1,5 @@
 <div class="inicio-page">
+  <!-- ── 1. TARJETAS SUPERIORES (STATS) ────────────────────────────────── -->
   <section class="stats-grid card">
     <article class="stat-card stat-card--teal stat-card--link" routerLink="/dashboard/dispositivos">
       <span class="stat-ico">
@@ -43,9 +44,9 @@
         <p class="stat-sub">Ubicaciones</p>
       </div>
     </article>
-
   </section>
 
+  <!-- ── 2. SECCIÓN DE GRÁFICOS DE CONSUMO ─────────────────────────────── -->
   <section class="charts-grid card">
     <article class="chart-card radial-box">
       <div class="chart-header chart-header--space">
@@ -58,21 +59,20 @@
         </span>
       </div>
       <div class="chart-body chart-body--radial">
-        <app-dynamic-chart
-          chartType="donut"
-          [series]="eficienciaSeries()"
-          [labels]="eficienciaLabels()"
-          [colors]="eficienciaColors"
-          [height]="280"
-          valueFormatKind="kwh"
-          [additionalOptions]="{
+        <app-dynamic-chart chartType="donut"
+                           [series]="eficienciaSeries()"
+                           [labels]="eficienciaLabels()"
+                           [colors]="eficienciaColors"
+                           [height]="280"
+                           valueFormatKind="kwh"
+                           [additionalOptions]="{
             plotOptions: {
               pie: {
                 donut: {
                   size: '60%',
                   labels: {
                     show: true,
-                     name: {
+                    name: {
                       show: true,
                       fontSize: '14px',
                       color: '#ffffff',
@@ -127,13 +127,12 @@
         </div>
       </div>
       <div class="chart-body" style="padding-bottom: 1rem;">
-        <app-dynamic-chart
-          chartType="bar"
-          [series]="actividadSeries()"
-          [categories]="actividadCategorias()"
-          [colors]="['#ffffff']"
-          [height]="300"
-          [additionalOptions]="{
+        <app-dynamic-chart chartType="bar"
+                           [series]="actividadSeries()"
+                           [categories]="actividadCategorias()"
+                           [colors]="['#ffffff']"
+                           [height]="300"
+                           [additionalOptions]="{
             plotOptions: { bar: { borderRadius: 4, columnWidth: '40%' } },
             dataLabels: { enabled: false },
             yaxis: {
@@ -167,6 +166,7 @@
     </article>
   </section>
 
+  <!-- ── 3. INTERPRETACIÓN DE CONSUMO ──────────────────────────────────── -->
   <section class="insights-section card">
     <div class="insights-head">
       <div class="panel-head-left">
@@ -183,29 +183,32 @@
 
     <div class="insights-grid">
       @for (insight of insights(); track insight.title) {
-        <article
-          class="insight-card"
-          [class.insight-card--success]="insight.type === 'success'"
-          [class.insight-card--warning]="insight.type === 'warning'"
-          [class.insight-card--info]="insight.type === 'info'">
-          <span class="insight-icon">
-            <svg [lucideIcon]="getDeviceIcon(insight.type === 'warning' ? 'warning' : insight.type === 'success' ? 'check-circle' : 'info')"></svg>
-          </span>
-          <div class="insight-copy">
-            <h4>{{ insight.title }}</h4>
-            <p [innerHTML]="insight.description"></p>
-          </div>
-        </article>
+      <article class="insight-card"
+               [class.insight-card--success]="insight.type === 'success'"
+               [class.insight-card--warning]="insight.type === 'warning'"
+               [class.insight-card--info]="insight.type === 'info'">
+        <span class="insight-icon">
+          <svg [lucideIcon]="getDeviceIcon(insight.type === 'warning' ? 'warning' : insight.type === 'success' ? 'check-circle' : 'info')"></svg>
+        </span>
+        <div class="insight-copy">
+          <h4>{{ insight.title }}</h4>
+          <p [innerHTML]="insight.description"></p>
+        </div>
+      </article>
       }
     </div>
   </section>
 
+  <!-- ── 4. SECCIÓN INFERIOR: DISPOSITIVOS Y GESTOS ────────────────────── -->
   <section class="content-grid card">
-    <article class="panel-card panel-card--device">
+
+    <!-- Dispositivos Conectados -->
+    <article class="panel-card panel-card-device">
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
-            <svg [lucideIcon]="getDeviceIcon('layout-dashboard')"></svg>
+            <!-- Ícono cambiado a teléfono ('smartphone') -->
+            <svg [lucideIcon]="getDeviceIcon('smartphone')"></svg>
           </span>
           <div>
             <h3 class="panel-title">Dispositivos conectados</h3>
@@ -213,35 +216,37 @@
           </div>
         </div>
         <button class="text-link-box" type="button" routerLink="/dashboard/dispositivos">
-          <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" [size]="14"></svg>
+          <!-- Ícono del botón cambiado a 'smartphone' -->
+          <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="14"></svg>
           Ver todos
         </button>
       </div>
 
       <div class="devices-strip">
         @for (device of displayedDevices(); track device.sk_aparato_id; let i = $index) {
-          <div class="device-chip-new">
-            <div class="chip-ico-circle">
-              <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" class="panel-icon-main"></svg>
-            </div>
-            <strong>{{ device.nombre_aparato }}</strong>
-            <span>{{ device.tipo_aparato }}</span>
-            <div class="status-pill" [class.on]="connectedDevices().includes(device.mac_bluetooth || '')">
-              <span class="dot"></span>
-              {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
-            </div>
+        <div class="device-chip-new">
+          <div class="chip-ico-circle">
+            <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)"></svg>
           </div>
+          <strong>{{ device.nombre_aparato }}</strong>
+          <span>{{ device.tipo_aparato }}</span>
+          <div class="status-pill" [class.on]="connectedDevices().includes(device.mac_bluetooth || '')">
+            <span class="dot"></span>
+            {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
+          </div>
+        </div>
         }
 
         @if (displayedDevices().length === 0) {
-          <div class="notif-empty" style="grid-column: span 3;">
-            <p>No hay dispositivos conectados</p>
-          </div>
+        <div class="notif-empty" style="grid-column: span 3;">
+          <p>No hay dispositivos conectados</p>
+        </div>
         }
       </div>
     </article>
 
-    <article class="panel-card panel-card--dark">
+    <!-- Gestos -->
+    <article class="panel-card panel-card-device">
       <div class="panel-head">
         <div class="panel-head-left">
           <span class="panel-icon-main">
@@ -261,7 +266,7 @@
       <div class="automation-list">
         @for(gesto of displayedGestos(); track gesto.sk_gesto_id; let i = $index){
         <div class="automation-row">
-          <span class="automation-icon automation-icon--moon">
+          <span class="automation-icon">
             <svg [lucideIcon]="getGestureIcon(gesto.icono)"></svg>
           </span>
           <div class="automation-copy">
@@ -272,7 +277,6 @@
         }
       </div>
     </article>
+
   </section>
-
-
 </div>

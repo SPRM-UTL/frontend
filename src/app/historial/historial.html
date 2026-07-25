@@ -20,11 +20,11 @@
         </button>
 
         @if (isFilterOpen()) {
-          <div class="dropdown-menu">
-            <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los estados')">Todos los estados</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Ejecutado'" (click)="selectFilter('Ejecutado', 'Ejecutados')">Ejecutados</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Error'" (click)="selectFilter('Error', 'Errores')">Errores</div>
-          </div>
+        <div class="dropdown-menu">
+          <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los estados')">Todos los estados</div>
+          <div class="dropdown-option" [class.active]="selectedFilter() === 'Ejecutado'" (click)="selectFilter('Ejecutado', 'Ejecutados')">Ejecutados</div>
+          <div class="dropdown-option" [class.active]="selectedFilter() === 'Error'" (click)="selectFilter('Error', 'Errores')">Errores</div>
+        </div>
         }
       </div>
     </div>
@@ -46,94 +46,92 @@
 
     <!-- Estado de carga -->
     @if (loading()) {
-      <div class="table-feedback">
-        <svg lucideSun [size]="20" class="spin"></svg>
-        Cargando historial…
-      </div>
+    <div class="table-feedback">
+      <svg lucideSun [size]="20" class="spin"></svg>
+      Cargando historial…
+    </div>
     }
 
     <!-- Estado de error -->
     @if (error()) {
-      <div class="table-feedback table-feedback--error">
-        <svg lucideTriangleAlert [size]="18"></svg>
-        {{ error() }}
-      </div>
+    <div class="table-feedback table-feedback--error">
+      <svg lucideTriangleAlert [size]="18"></svg>
+      {{ error() }}
+    </div>
     }
 
     <!-- Table -->
     @if (!loading()) {
-      <div class="table-wrapper">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>EVENTO / ACCIÓN</th>
-              <th>DISPOSITIVO</th>
-              <th>HORA</th>
-              @if (showActions()) {
-                <th>ACCIONES</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            @for (a of actividadesPaginadas(); track $index) {
-              <tr class="history-row" (click)="openModal(a); selectedId.set(a.id)" [class.is-selected]="selectedId() === a.id" style="cursor: pointer;">
-                <!-- Action / Event -->
-                <td class="action-cell">
-                  <div class="action-content">
-                    <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#ffffff'" [style.background]="a.estado === 'Error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.15)'">
-                      <svg [lucideIcon]="getActivityIcon(a.icono, a.estado, a.accion)" [size]="20"></svg>
-                    </div>
-                    <div class="event-details">
-                      <span class="action-text">{{ a.accion }}</span>
-                      @if ($any(a).sk_aparato_id) {
-                        <div class="event-id-tag">
-                          <svg lucideSmartphone [size]="12"></svg>
-                          {{ $any(a).sk_aparato_id }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </td>
-
-                <!-- Device -->
-                <td class="device-cell">
-                  <div class="device-tag">
-                    <svg [lucideIcon]="getDeviceIcon(a.dispositivo)" [size]="14"></svg>
-                    {{ a.dispositivo }}
-                  </div>
-                </td>
-
-
-
-                <!-- Time -->
-                <td class="time-cell">
-                  <span class="time-text">{{ a.hora }}</span>
-                </td>
-
-                <!-- Actions -->
-                @if (showActions()) {
-                  <td class="actions-cell">
-                    <button class="row-action-btn" title="Ver detalles">
-                      <svg lucideChevronDown [size]="18" style="transform: rotate(-90deg);"></svg>
-                    </button>
-                  </td>
-                }
-              </tr>
-            } @empty {
-              @if (!loading()) {
-                <tr>
-                  <td [attr.colspan]="showActions() ? 5 : 4">
-                    <div class="empty-state">
-                      <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
-                      <p>No se encontraron registros en el historial</p>
-                    </div>
-                  </td>
-                </tr>
-              }
+    <div class="table-wrapper">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>EVENTO / ACCIÓN</th>
+            <th>DISPOSITIVO</th>
+            <th>HORA</th>
+            @if (showActions()) {
+            <th>ACCIONES</th>
             }
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of actividadesPaginadas(); track $index) {
+          <tr class="history-row" (click)="openModal(a); selectedId.set(a.id)" [class.is-selected]="selectedId() === a.id" style="cursor: pointer;">
+            <!-- Action / Event -->
+            <td class="action-cell">
+              <div class="action-content">
+                <div class="event-avatar" [style.color]="a.estado === 'Error' ? '#ef4444' : '#ffffff'" [style.background]="a.estado === 'Error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.15)'">
+                  <svg [lucideIcon]="getActivityIcon(a.icono, a.estado, a.accion)" [size]="20"></svg>
+                </div>
+                <div class="event-details">
+                  <span class="action-text">{{ a.accion }}</span>
+                  @if ($any(a).sk_aparato_id) {
+                  <div class="event-id-tag">
+                    <svg lucideSmartphone [size]="12"></svg>
+                    {{ $any(a).sk_aparato_id }}
+                  </div>
+                  }
+                </div>
+              </div>
+            </td>
+
+            <!-- Device -->
+            <td class="device-cell">
+              <div class="device-tag">
+                <svg [lucideIcon]="getDeviceIcon(a.dispositivo)" [size]="14"></svg>
+                <span>{{ a.dispositivo }}</span>
+              </div>
+            </td>
+
+            <!-- Time -->
+            <td class="time-cell">
+              <span class="time-text">{{ a.hora }}</span>
+            </td>
+
+            <!-- Actions -->
+            @if (showActions()) {
+            <td class="actions-cell">
+              <button class="row-action-btn" title="Ver detalles">
+                <svg lucideChevronDown [size]="18" style="transform: rotate(-90deg); display: block;"></svg>
+              </button>
+            </td>
+            }
+          </tr>
+          } @empty {
+          @if (!loading()) {
+          <tr>
+            <td [attr.colspan]="showActions() ? 4 : 3">
+              <div class="empty-state">
+                <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                <p>No se encontraron registros en el historial</p>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
     }
 
     <!-- Pagination -->
@@ -141,83 +139,83 @@
       <p class="results-count">Mostrando {{ startIndex() }} a {{ endIndex() }} de {{ actividadesFiltradas().length }} registros</p>
       <div class="pagination">
         <button class="page-btn" (click)="prevPage()" [disabled]="currentPage() === 1" [class.disabled]="currentPage() === 1">
-          <svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg>
+          <svg lucideChevronDown [size]="14" style="transform: rotate(90deg); display: block;"></svg>
         </button>
         <button class="page-btn active">{{ currentPage() }}</button>
         <span class="page-text">de {{ totalPages() }}</span>
         <button class="page-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()" [class.disabled]="currentPage() === totalPages()">
-          <svg lucideChevronDown [size]="12" style="transform: rotate(-90deg);"></svg>
+          <svg lucideChevronDown [size]="14" style="transform: rotate(-90deg); display: block;"></svg>
         </button>
       </div>
     </footer>
   </div>
 </div>
 
-<!-- ── Modal: detalle de actividad ──────────────────────────────────────── -->
+<!-- Modal: Detalle de actividad -->
 @if (isModalOpen() && selectedActividad()) {
-  <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal-detail-container" (click)="$event.stopPropagation()">
+<div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal-detail-container" (click)="$event.stopPropagation()">
 
-      <header class="modal-header">
-        <div class="header-titles">
-          <h2 class="modal-main-title">Detalle de Actividad</h2>
-          <p class="modal-main-subtitle">Información del evento registrado en el historial.</p>
-        </div>
-        <button class="btn-close-modal" aria-label="Cerrar" (click)="closeModal()">✕</button>
-      </header>
+    <header class="modal-header">
+      <div class="header-titles">
+        <h2 class="modal-main-title">Detalle de Actividad</h2>
+        <p class="modal-main-subtitle">Información del evento registrado en el historial.</p>
+      </div>
+      <button class="btn-close-modal" aria-label="Cerrar" (click)="closeModal()">✕</button>
+    </header>
 
-      <div class="modal-body">
-        <div class="detail-layout">
+    <div class="modal-body">
+      <div class="detail-layout">
 
-          <div class="detail-main">
-            <section class="card hero-info-card">
-              <div class="hero-header">
-                <div class="hero-icon-box">
-                  <svg [lucideIcon]="getActivityIcon(selectedActividad().icono, selectedActividad().estado, selectedActividad().accion)" [size]="44" class="gesto-hero-img"></svg>
-                </div>
-                <div class="hero-titles">
-                  <h2 class="hero-name">{{ selectedActividad().accion }}</h2>
-                  <span class="status-indicator">
-                    <span class="dot" [class.offline]="selectedActividad().estado === 'Error'"></span>
-                    {{ selectedActividad().estado }}
-                  </span>
-                  <p class="hero-desc">Este evento fue originado mediante {{ selectedActividad().metodo | lowercase }} y afectó al dispositivo {{ selectedActividad().dispositivo }}.</p>
-                </div>
+        <div class="detail-main">
+          <section class="card hero-info-card">
+            <div class="hero-header">
+              <div class="hero-icon-box">
+                <svg [lucideIcon]="getActivityIcon(selectedActividad().icono, selectedActividad().estado, selectedActividad().accion)" [size]="44" class="gesto-hero-img"></svg>
               </div>
-            </section>
-          </div>
-
-          <aside class="detail-sidebar">
-            <div class="sidebar-info-card">
-              <h3 class="sidebar-card-title">Información del Evento</h3>
-              <div class="info-rows">
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg lucideClock class="info-icon"></svg>
-                    <span>Fecha y Hora</span>
-                  </div>
-                  <span class="info-row-val">{{ selectedActividad().hora }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg lucideSmartphone class="info-icon"></svg>
-                    <span>Dispositivo</span>
-                  </div>
-                  <span class="info-row-val">{{ selectedActividad().dispositivo }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg lucideHand class="info-icon"></svg>
-                    <span>Método</span>
-                  </div>
-                  <span class="info-row-val">{{ selectedActividad().metodo }}</span>
-                </div>
+              <div class="hero-titles">
+                <h2 class="hero-name">{{ selectedActividad().accion }}</h2>
+                <span class="status-indicator">
+                  <span class="dot" [class.offline]="selectedActividad().estado === 'Error'"></span>
+                  {{ selectedActividad().estado }}
+                </span>
+                <p class="hero-desc">Este evento fue originado mediante {{ selectedActividad().metodo | lowercase }} y afectó al dispositivo {{ selectedActividad().dispositivo }}.</p>
               </div>
             </div>
-          </aside>
-
+          </section>
         </div>
+
+        <aside class="detail-sidebar">
+          <div class="sidebar-info-card">
+            <h3 class="sidebar-card-title">Información del Evento</h3>
+            <div class="info-rows">
+              <div class="info-row">
+                <div class="info-row-left">
+                  <svg lucideClock class="info-icon"></svg>
+                  <span>Fecha y Hora</span>
+                </div>
+                <span class="info-row-val">{{ selectedActividad().hora }}</span>
+              </div>
+              <div class="info-row">
+                <div class="info-row-left">
+                  <svg lucideSmartphone class="info-icon"></svg>
+                  <span>Dispositivo</span>
+                </div>
+                <span class="info-row-val">{{ selectedActividad().dispositivo }}</span>
+              </div>
+              <div class="info-row">
+                <div class="info-row-left">
+                  <svg lucideHand class="info-icon"></svg>
+                  <span>Método</span>
+                </div>
+                <span class="info-row-val">{{ selectedActividad().metodo }}</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
       </div>
     </div>
   </div>
+</div>
 }
