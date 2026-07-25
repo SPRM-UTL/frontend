@@ -151,7 +151,7 @@ export class ConsumosService {
   }
 
   getAparatosConsumoHistoricoPorUsuario(userId: number, desde?: Date, hasta?: Date): Observable<AparatosConsumoHistorico[]> {
-    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/${userId}/consumo_historico`;
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/usuario/${userId}/consumo_historico`;
     let params = new HttpParams();
 
     if (desde) params = params.set('desde', this.formatDateParam(desde));
@@ -206,17 +206,33 @@ export class ConsumosService {
         })
       );
   }
-  // src/app/aparatosConsumo/consumo.service.ts
 
-  // Asegúrate de que HttpParams esté importado junto a HttpHeaders en la parte superior:
-  // import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+  getAparatosConsumoHistorico(aparatoId: number, desde?: Date | string, hasta?: Date | string): Observable<AparatosConsumoHistorico[]> {
+    let params = new HttpParams();
+
+    if (desde) params = params.set('desde', this.formatDateParam(desde));
+    if (hasta) params = params.set('hasta', this.formatDateParam(hasta));
+
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/aparato/${aparatoId}/consumo_historico`;
+    return this.http
+      .get<ApiResponseConsumo>(url, {
+      headers: this.getHeaders(),
+      params: params
+    }).pipe(
+      map(response => this.normalizeConsumoResponse(response)),
+      catchError((err) => {
+        if (err.status === 404) return of([]);
+        throw err;
+      })
+    );
+  }
 
   getConsumoDona(usuarioId: number, desde?: Date | string, hasta?: Date | string): Observable<{ aparato: string; totalEnergiaWh: number }[]> {
     let params = new HttpParams();
     if (desde) params = params.set('desde', this.formatDateParam(desde));
     if (hasta) params = params.set('hasta', this.formatDateParam(hasta));
 
-    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/${usuarioId}/resumen_dona`;
+    const url = `${APP_CONFIG.apiBaseUrl}${ENDPOINTS.consumoPorUsuario}/usuario/${usuarioId}/resumen_dona`;
     return this.http.get<any>(url, {
       headers: this.getHeaders(),
       params: params

@@ -9,7 +9,7 @@ export interface UnifiedNotification {
   timeLabel: string;
   icon: any;
   statusText?: string;
-  originalId: number;
+  originalId: string | number;
 }
 
 export interface WeatherInfo {

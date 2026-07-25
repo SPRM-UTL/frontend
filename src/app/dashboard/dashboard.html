@@ -188,13 +188,10 @@
 
                 @if (weatherService.info(); as w) {
                   <span>{{ w.summary }} · {{ w.temperature }}</span>
-                  <small>{{ w.place }} · {{ w.updatedAt }}</small>
                 } @else if (weatherService.loading()) {
                   <span>Cargando clima...</span>
-                  <small>Consultando ubicación</small>
                 } @else {
                   <span>Día y clima</span>
-                  <small>{{ weatherService.error() || 'Toca para actualizar' }}</small>
                 }
               </div>
 

@@ -498,7 +498,7 @@ body {
   right: 0;
   width: min(335px, calc(100vw - 2rem));
   min-height: auto;
-  padding: 2.05rem 1.35rem 2.05rem;
+  padding: 2.05rem 1.35rem 1rem;
   background: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.72);
   border-radius: 22px;
