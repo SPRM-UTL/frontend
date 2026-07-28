@@ -10,6 +10,7 @@ import {
   effect,
   viewChild,
   ElementRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -60,6 +61,7 @@ export class Dashboard implements OnDestroy {
   private alertService         = inject(AlertNotificationService);
   private audioService         = inject(AudioService);
   public authService           = inject(AuthService);
+  private cdr                  = inject(ChangeDetectorRef);
   public cuentaService         = inject(CuentaService);
   public inicioService         = inject(InicioService);
   public gestosService         = inject(GestosService);
@@ -88,7 +90,7 @@ export class Dashboard implements OnDestroy {
 
   // ── Notificaciones ────────────────────────────────────────────────────────
 
-  readonly dismissedIds        = signal<number[]>([])
+  readonly dismissedIds        = signal<(string | number)[]>([])
   readonly panelLoading        = this.historialService.loading;
   readonly panelError        = this.historialService.error;
 
@@ -380,6 +382,8 @@ export class Dashboard implements OnDestroy {
       .toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true })
       .replace(/\./g, '')
       .toUpperCase());
+    
+    this.cdr.markForCheck();
   }
 
   private mapAlerts(): UnifiedNotification[] {
@@ -406,7 +410,7 @@ export class Dashboard implements OnDestroy {
     return all
       .filter(a => {
         const id = a.id ?? (a as any).Id ?? (a as any).sk_actividad_id;
-        return !dismissed.includes(id);
+        return !dismissed.some(d => String(d) === String(id));
       })
       .map(a => {
         const id = a.id ?? (a as any).Id ?? (a as any).sk_actividad_id;
