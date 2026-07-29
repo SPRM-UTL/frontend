@@ -1,3 +1,3 @@
 export const APP_CONFIG = {
-  apiBaseUrl: 'https://manordomo-api.onrender.com'
+  apiBaseUrl: 'http://192.168.1.7:5295'
 };

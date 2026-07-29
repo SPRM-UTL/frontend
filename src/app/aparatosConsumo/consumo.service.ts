@@ -207,7 +207,7 @@ export class ConsumosService {
       );
   }
 
-  getAparatosConsumoHistorico(aparatoId: number, desde?: Date | string, hasta?: Date | string): Observable<AparatosConsumoHistorico[]> {
+  getConsumoHistoricoPorAparato(aparatoId: number, desde?: Date | string, hasta?: Date | string): Observable<AparatosConsumoHistorico[]> {
     let params = new HttpParams();
 
     if (desde) params = params.set('desde', this.formatDateParam(desde));

@@ -301,7 +301,7 @@ export class Dashboard implements OnDestroy {
 
   dismissNotification(item: UnifiedNotification): void {
     if (item.type === 'alert') {
-      this.alertService.dismiss(item.originalId);
+      this.alertService.dismiss(Number(item.originalId));
     } else {
       this.dismissedIds.update(ids => {
         const next = [...ids, item.originalId];

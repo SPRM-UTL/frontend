@@ -77,7 +77,12 @@ export class Control implements OnInit, OnDestroy {
     const connectedMacs = this.dispositivosService.connectedDevices();
 
     // Solo mantener dispositivos conectados (cuya MAC esté en la lista)
-    const conectados = all.filter(d => d.mac_bluetooth && connectedMacs.includes(d.mac_bluetooth));
+    // EXCEPCIÓN: Mostrar siempre las cámaras (el componente interno maneja su propia conexión IP local)
+    const conectados = all.filter(d => 
+      (d.tipo_aparato || '').toLowerCase() === 'cámara' || 
+      (d.tipo_aparato || '').toLowerCase() === 'camara' || 
+      (d.mac_bluetooth && connectedMacs.includes(d.mac_bluetooth))
+    );
 
     if (seleccion === 'Todos los tipos') return conectados;
     return conectados.filter(d => (d.tipo_aparato || '').toLowerCase() === seleccion.toLowerCase());

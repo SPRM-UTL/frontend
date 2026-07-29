@@ -11,9 +11,7 @@ import {
   LucideBell,
   LucideSearch,
   LucideHand,
-  LucideSparkles,
-  LucideTriangleAlert,
-  LucideX
+  LucideSparkles
 } from '@lucide/angular';
 import { DispositivosService } from '../dispositivos/dispositivos.service';
 import { GestosService } from '../gestos/gestos.service';
@@ -33,9 +31,7 @@ import { GestosService } from '../gestos/gestos.service';
     LucideBell,
     LucideSearch,
     LucideHand,
-    LucideSparkles,
-    LucideTriangleAlert,
-    LucideX
+    LucideSparkles
   ],
   templateUrl: './ajustes.html',
   styleUrl: './ajustes.css',

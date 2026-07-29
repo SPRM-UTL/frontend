@@ -100,9 +100,9 @@
                   <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
 
                   <!-- SOLO SE PERMITE ENCENDER/APAGAR -->
-                  @if (d.tipo_aparato.toLowerCase() === 'cámara') {
+                  @if (d.tipo_aparato.toLowerCase() === 'cámara' || d.tipo_aparato.toLowerCase() === 'camara') {
                     <div class="camera-container" style="margin-top: 1rem; border-radius: 8px; overflow: hidden; background: #000; width: 100%;">
-                       <app-camara [deviceKey]="d.mac_bluetooth || ''"></app-camara>
+                       <app-camara [deviceKey]="d.mac_bluetooth || ''" [aparatoId]="d.id"></app-camara>
                     </div>
                   }
 
