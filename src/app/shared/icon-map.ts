@@ -84,7 +84,10 @@ const DEVICE_ICONS_BY_NAME: Record<string, LucideIcon> = {
   tv: LucideTv,
   sockets: LucidePlug,
   socket: LucidePlug,
+  multisocket: LucidePlug,
   asistente: LucideCirclePlus,
+  camara: LucideCamera,
+  cámara: LucideCamera,
   predeterminado: LucideHelpCircle,
   headphones: LucideHeadphones,
   speaker: LucideSpeaker,
@@ -193,7 +196,20 @@ function normalizeIconName(value: string | undefined): string {
 
 export function getDeviceIcon(tipoOIcono: string | undefined): LucideIcon {
   const key = normalizeIconName(tipoOIcono);
-  return DEVICE_ICONS_BY_NAME[key] ?? TOAST_ICONS_BY_NAME[key] ?? LucideHelpCircle;
+  
+  if (DEVICE_ICONS_BY_NAME[key]) return DEVICE_ICONS_BY_NAME[key];
+  if (TOAST_ICONS_BY_NAME[key]) return TOAST_ICONS_BY_NAME[key];
+
+  if (key.includes('foco') || key.includes('luz') || key.includes('luces')) return LucideLightbulb;
+  if (key.includes('camara') || key.includes('cámara') || key.includes('cam')) return LucideCamera;
+  if (key.includes('socket') || key.includes('enchufe')) return LucidePlug;
+  if (key.includes('ventilador')) return LucideWind;
+  if (key.includes('bocina') || key.includes('speaker')) return LucideSpeaker;
+  if (key.includes('tv') || key.includes('tele')) return LucideTvMinimal;
+  if (key.includes('audifono') || key.includes('headphone')) return LucideHeadphones;
+  if (key.includes('asistente')) return LucideCirclePlus;
+
+  return LucideHelpCircle;
 }
 
 export function getGestureIcon(icono: string | undefined): LucideIcon {

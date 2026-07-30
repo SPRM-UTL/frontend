@@ -549,7 +549,8 @@
 
 .modal-header {
   padding: 1.25rem 2rem;
-  border-bottom: 1px solid #f3f4f6;
+  background: linear-gradient(135deg, var(--cafe-primary) 0%, var(--cafe-dark) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -558,13 +559,13 @@
 .modal-main-title {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #1a2e2a;
+  color: #ffffff;
   margin: 0;
 }
 
 .modal-main-subtitle {
   font-size: 0.82rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.15rem;
 }
 
@@ -573,22 +574,20 @@
   height: 40px;
   border-radius: 12px;
   border: none;
-  background: #f1f5f9;
-  color: #64748b;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   cursor: pointer;
   transition: all 0.2s;
-  padding: 0;
 }
 
-  .btn-close-modal:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    transform: rotate(90deg);
-  }
+.btn-close-modal:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
 
 .modal-body {
   padding: 1.5rem 2rem;

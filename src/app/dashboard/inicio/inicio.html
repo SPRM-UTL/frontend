@@ -59,54 +59,62 @@
         </span>
       </div>
       <div class="chart-body chart-body--radial">
-        <app-dynamic-chart chartType="donut"
-                           [series]="eficienciaSeries()"
-                           [labels]="eficienciaLabels()"
-                           [colors]="eficienciaColors"
-                           [height]="280"
-                           valueFormatKind="kwh"
-                           [additionalOptions]="{
-            plotOptions: {
-              pie: {
-                donut: {
-                  size: '60%',
-                  labels: {
-                    show: true,
-                    name: {
+        <ng-container *ngIf="eficienciaSeries().length > 0; else emptyDona">
+          <app-dynamic-chart chartType="donut"
+                             [series]="eficienciaSeries()"
+                             [labels]="eficienciaLabels()"
+                             [colors]="eficienciaColors"
+                             [height]="280"
+                             valueFormatKind="kwh"
+                             [additionalOptions]="{
+              plotOptions: {
+                pie: {
+                  donut: {
+                    size: '60%',
+                    labels: {
                       show: true,
-                      fontSize: '14px',
-                      color: '#ffffff',
-                      formatter: donutNameFormatter
-                    },
-                    value: {
-                      show: true,
-                      fontSize: '16px',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      formatter: donutValueFormatter
-                    },
-                    total: {
-                      show: true,
-                      label: 'Total',
-                      color: '#ffffff',
-                      fontSize: '13px',
-                      formatter: donutTotalFormatter
+                      name: {
+                        show: true,
+                        fontSize: '14px',
+                        color: '#ffffff',
+                        formatter: donutNameFormatter
+                      },
+                      value: {
+                        show: true,
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: '#ffffff',
+                        formatter: donutValueFormatter
+                      },
+                      total: {
+                        show: true,
+                        label: 'Total',
+                        color: '#ffffff',
+                        fontSize: '13px',
+                        formatter: donutTotalFormatter
+                      }
                     }
                   }
                 }
-              }
-            },
-            legend: {
-              show: true,
-              position: 'bottom',
-              horizontalAlign: 'center',
-              labels: { colors: '#ffffff' },
-              markers: { width: 10, height: 10, radius: 10 },
-              itemMargin: { horizontal: 8, vertical: 4 }
-            },
-            dataLabels: { enabled: false }
-          }">
-        </app-dynamic-chart>
+              },
+              legend: {
+                show: true,
+                position: 'bottom',
+                horizontalAlign: 'center',
+                labels: { colors: '#ffffff' },
+                markers: { width: 10, height: 10, radius: 10 },
+                itemMargin: { horizontal: 8, vertical: 4 }
+              },
+              dataLabels: { enabled: false }
+            }">
+          </app-dynamic-chart>
+        </ng-container>
+        <ng-template #emptyDona>
+          <div class="empty-chart">
+            <svg [lucideIcon]="getDeviceIcon('plug')" class="empty-icon"></svg>
+            <p>No hay consumo registrado</p>
+          </div>
+        </ng-template>
       </div>
     </article>
 
@@ -127,41 +135,46 @@
         </div>
       </div>
       <div class="chart-body" style="padding-bottom: 1rem;">
-        <app-dynamic-chart chartType="bar"
-                           [series]="actividadSeries()"
-                           [categories]="actividadCategorias()"
-                           [colors]="['#ffffff']"
-                           [height]="300"
-                           [additionalOptions]="{
-            plotOptions: { bar: { borderRadius: 4, columnWidth: '40%' } },
-            dataLabels: { enabled: false },
-            yaxis: {
-              labels: {
-                style: { colors: ['rgba(255,255,255,0.8)'] },
-                formatter: yAxisFormatter
+        <ng-container *ngIf="consumoTotalKwh() > 0; else emptyHistorial">
+          <app-dynamic-chart chartType="bar"
+                             [series]="actividadSeries()"
+                             [categories]="actividadCategorias()"
+                             [colors]="['#ffffff']"
+                             [height]="300"
+                             [additionalOptions]="{
+              plotOptions: { bar: { borderRadius: 4, columnWidth: '40%' } },
+              dataLabels: { enabled: false },
+              yaxis: {
+                labels: {
+                  style: { colors: ['rgba(255,255,255,0.8)'] },
+                  formatter: yAxisFormatter
+                },
+                forceNiceScale: true,
+                decimalsInFloat: 4,
+                min: 0,
+                max: consumoTotalKwh() === 0 ? 1 : undefined
               },
-              forceNiceScale: true,
-              decimalsInFloat: 4,
-              min: 0,
-              max: consumoTotalKwh() === 0 ? 1 : undefined
-            },
-            xaxis: {
-              categories: actividadCategorias(),
-              labels: { style: { colors: 'rgba(255,255,255,0.8)' } }
-            },
-            grid: {
-              show: true,
-              borderColor: 'rgba(255,255,255,0.16)',
-              strokeDashArray: 0,
-              position: 'back',
-              xaxis: { lines: { show: false } },
-              yaxis: { lines: { show: true } }
-            },
-            tooltip: {
-              y: { formatter: tooltipFormatter }
-            }
-          }">
-        </app-dynamic-chart>
+              xaxis: {
+                categories: actividadCategorias(),
+                labels: { style: { colors: 'rgba(255,255,255,0.8)' } }
+              },
+              grid: {
+                borderColor: 'rgba(255,255,255,0.1)',
+                strokeDashArray: 4
+              },
+              tooltip: {
+                theme: 'dark',
+                y: { formatter: tooltipFormatter }
+              }
+            }">
+          </app-dynamic-chart>
+        </ng-container>
+        <ng-template #emptyHistorial>
+          <div class="empty-chart empty-chart--wide">
+            <svg [lucideIcon]="getDeviceIcon('bar-chart')" class="empty-icon"></svg>
+            <p>Aún no hay datos históricos para este periodo</p>
+          </div>
+        </ng-template>
       </div>
     </article>
   </section>

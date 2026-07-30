@@ -6,6 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { APP_CONFIG } from '../core/config/app-config';
 import { ENDPOINTS } from '../core/config/endpoints';
 import { LoaderService } from './loader.service';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,58 +16,69 @@ export class AuthService {
   private readonly sessionKeys = ['token', 'nombre', 'userId', 'token_exp', 'user_image', 'user_email'];
 
   readonly showLogoutModal = signal(false);
+  private socialAuthService = inject(SocialAuthService, { optional: true });
 
 
   constructor(private http: HttpClient, private router: Router, private loaderService: LoaderService) {
     // No navegamos automáticamente a /sesion-expirada solo por la expiración local del token.
     // El backend debe devolver 401 cuando la sesión ya no es válida y entonces se muestra la pantalla.
   }
+  private handleAuthResponse(response: any, correoFallback: string = '') {
+    const payload = response?.data ?? response;
+    const data = payload?.data ?? payload;
+
+    const token = data?.token ?? payload?.token ?? '';
+    const nombre = data?.nombre ?? payload?.nombre ?? data?.name ?? payload?.name
+      ?? data?.usuario?.nombre ?? payload?.usuario?.nombre
+      ?? data?.user?.nombre ?? payload?.user?.nombre
+      ?? data?.user?.name ?? payload?.user?.name
+      ?? '';
+    const userId = data?.id ?? payload?.id ?? data?.userId ?? payload?.userId
+      ?? data?.usuario?.id ?? payload?.usuario?.id
+      ?? data?.user?.id ?? payload?.user?.id
+      ?? data?.user?.userId ?? payload?.user?.userId;
+
+    if (isPlatformBrowser(this.platformId)) {
+      if (token) {
+        localStorage.setItem('token', token);
+        const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
+        localStorage.setItem('token_exp', expirationDate.toISOString());
+      }
+
+      if (nombre) {
+        localStorage.setItem('nombre', nombre);
+      }
+
+      if (userId) {
+        localStorage.setItem('userId', String(userId));
+      }
+
+      const userEmail = data?.correo ?? payload?.correo ?? data?.email ?? payload?.email ?? correoFallback;
+      if (userEmail) {
+        localStorage.setItem('user_email', userEmail);
+      }
+
+      const rutaImagen = data?.ruta_imagen ?? payload?.ruta_imagen ?? data?.user?.ruta_imagen ?? '';
+      if (rutaImagen) {
+        localStorage.setItem('user_image', rutaImagen);
+      }
+    }
+  }
+
   // En tu AuthService.ts
   login(correo: string, contrasenia: string): Observable<any> {
     const body = { correo, contrasenia };
 
     return this.http.post<any>(`${this.apiUrl}/login`, body).pipe(
-      tap(response => {
-        const payload = response?.data ?? response;
-        const data = payload?.data ?? payload;
+      tap(response => this.handleAuthResponse(response, correo))
+    );
+  }
 
-        const token = data?.token ?? payload?.token ?? '';
-        const nombre = data?.nombre ?? payload?.nombre ?? data?.name ?? payload?.name
-          ?? data?.usuario?.nombre ?? payload?.usuario?.nombre
-          ?? data?.user?.nombre ?? payload?.user?.nombre
-          ?? data?.user?.name ?? payload?.user?.name
-          ?? '';
-        const userId = data?.id ?? payload?.id ?? data?.userId ?? payload?.userId
-          ?? data?.usuario?.id ?? payload?.usuario?.id
-          ?? data?.user?.id ?? payload?.user?.id
-          ?? data?.user?.userId ?? payload?.user?.userId;
+  loginWithGoogle(idToken: string): Observable<any> {
+    const body = { idToken };
 
-        if (isPlatformBrowser(this.platformId)) {
-          if (token) {
-            localStorage.setItem('token', token);
-            const expirationDate = new Date(Date.now() + 30 * 60 * 1000);
-            localStorage.setItem('token_exp', expirationDate.toISOString());
-          }
-
-          if (nombre) {
-            localStorage.setItem('nombre', nombre);
-          }
-
-          if (userId) {
-            localStorage.setItem('userId', String(userId));
-          }
-
-          const userEmail = data?.correo ?? payload?.correo ?? data?.email ?? payload?.email ?? correo;
-          if (userEmail) {
-            localStorage.setItem('user_email', userEmail);
-          }
-
-          const rutaImagen = data?.ruta_imagen ?? payload?.ruta_imagen ?? data?.user?.ruta_imagen ?? '';
-          if (rutaImagen) {
-            localStorage.setItem('user_image', rutaImagen);
-          }
-        }
-      })
+    return this.http.post<any>(`${this.apiUrl}/google-login`, body).pipe(
+      tap(response => this.handleAuthResponse(response))
     );
   }
 
@@ -92,6 +104,15 @@ export class AuthService {
     // cuando el Dashboard se destruye y pierde su suscripción al router
     this.loaderService.hide();
     this.clearSession();
+    
+    if (this.socialAuthService) {
+      try {
+        this.socialAuthService.signOut().catch(() => {});
+      } catch (e) {
+        // Ignorar si no había sesión de Google activa
+      }
+    }
+    
     this.router.navigate(['/']);
   }
 

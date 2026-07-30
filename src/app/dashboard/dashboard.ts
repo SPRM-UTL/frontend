@@ -442,6 +442,13 @@ export class Dashboard implements OnDestroy {
     return t.includes('multisocket') || t.includes('multi socket');
   }
 
+  hasDirectToggle(tipo?: string): boolean {
+    if (!tipo) return false;
+    const t = tipo.toLowerCase();
+    const allowedTypes = ['foco', 'luces', 'socket', 'multisocket', 'ventilador', 'bocina', 'audifono'];
+    return allowedTypes.some(a => t.includes(a));
+  }
+
   /** Retorna true si el contacto N del MultiSocket en el detalle está encendido */
   getContactoEstadoDetalle(contacto: 1 | 2 | 3 | 4): boolean {
     const id = this.dispositivosService.selectedDevice()?.sk_aparato_id;

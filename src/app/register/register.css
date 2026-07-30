@@ -271,3 +271,45 @@ footer p {
     padding: 2rem;
   }
 }
+
+/* Custom Google Button Hack */
+.custom-google-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.custom-google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  width: 100%;
+  background: white;
+  color: var(--cafe-dark);
+  border: 1.5px solid #e2e8f0;
+}
+
+.custom-google-btn:hover {
+  background: #f8f9fa;
+  border-color: #cbd5e1;
+}
+
+.google-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.01;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.google-overlay asl-google-signin-button {
+  transform: scale(2);
+  transform-origin: top left;
+  display: block;
+}

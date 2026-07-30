@@ -722,13 +722,13 @@ body {
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
   margin-bottom: 0.35rem;
 }
 
 .hero-copy h1 {
-  font-size: clamp(1.65rem, 2vw, 2.2rem);
+  font-size: clamp(1.5rem, 1.8vw, 2.0rem);
   font-weight: 800;
   color: var(--cafe-dark);
 }
@@ -741,12 +741,12 @@ body {
 
 .wave-icon {
   display: inline-block;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   color: var(--cafe-dark);
   animation: wave 2s infinite;
   vertical-align: middle;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 @keyframes wave {
@@ -769,8 +769,8 @@ body {
   position: relative;
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   background: var(--white);
   border: 2px solid rgba(26, 46, 42, 0.08);
   border-radius: 14px;
@@ -1021,17 +1021,17 @@ body {
 .date-pill {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
   background: var(--white);
   border: 1px solid rgba(26, 46, 42, 0.08);
   border-radius: 16px;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.9rem;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
 }
 
 .date-pill strong {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: var(--cafe-dark);
 }
 
@@ -1229,7 +1229,8 @@ body {
 
 .modal-header {
   padding: 1.25rem 2rem;
-  border-bottom: 1px solid #f3f4f6;
+  background: linear-gradient(135deg, var(--cafe-primary) 0%, var(--cafe-dark) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1238,13 +1239,13 @@ body {
 .modal-main-title {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #1a2e2a;
+  color: #ffffff;
   margin: 0;
 }
 
 .modal-main-subtitle {
   font-size: 0.82rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.15rem;
 }
 
@@ -1253,8 +1254,8 @@ body {
   height: 40px;
   border-radius: 12px;
   border: none;
-  background: #f1f5f9;
-  color: #64748b;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   font-size: 1.2rem;
   display: grid;
   place-items: center;
@@ -1263,8 +1264,8 @@ body {
 }
 
 .btn-close-modal:hover {
-  background: #fee2e2;
-  color: #ef4444;
+  background: #ef4444;
+  color: #ffffff;
   transform: rotate(90deg);
 }
 
@@ -1864,44 +1865,70 @@ body {
   overflow-y: auto;
 }
 
-/* Action Status Modal Button */
-.action-btn-status {
+/* ===== CUSTOM TOGGLE PARA EL MODAL ===== */
+.toggle-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 1rem;
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  min-width: 110px;
-  justify-content: center;
-  user-select: none;
+  gap: 0.8rem;
   cursor: pointer;
+  user-select: none;
 }
 
-.action-btn-status:hover {
-  background: #e2e8f0;
+.toggle-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: color 0.3s;
+  min-width: 65px;
+  text-align: right;
 }
 
-.action-btn-status.on {
-  background: #e6f7f5;
-  color: #2bbfaa;
+.toggle-label.on {
+  color: #2bbfaa !important;
+}
+
+.custom-toggle {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.custom-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider-light {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #cbd5e1; /* Fondo gris claro */
+  transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border-radius: 30px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.toggle-slider-light:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.custom-toggle input:checked + .toggle-slider-light {
+  background-color: #2bbfaa;
   border-color: #2bbfaa;
 }
 
-.action-btn-status.on:hover {
-  background: #d4f0eb;
-}
-
-.action-btn-status svg {
-  transition: transform 0.3s;
-}
-
-.action-btn-status.on svg {
-  transform: scale(1.1);
+.custom-toggle input:checked + .toggle-slider-light:before {
+  transform: translateX(24px);
 }
 
 /* ===== MULTISOCKET PANEL (modal de detalle) ===== */

@@ -81,35 +81,25 @@ export class Dispositivos implements OnInit, OnDestroy {
 
     // Filtro por tipo
     if (type) {
-      const filterKeyMap: Record<string, string> = {
-        'Audífonos': 'headphones',
-        'Bocinas': 'speaker',
-        'Focos': 'lightbulb',
-        'Luces': 'lamp-floor',
-        'Ventilador': 'wind',
-        'Televisión': 'tv-minimal',
-        'Sockets': 'plug',
-        'Asistente': 'circle-plus',
-        'Predeterminado': 'circle-plus'
-      };
-
-      filtered = filtered.filter(device => {
-        const devIcon = (device.icono || '').toLowerCase().trim();
-        const devType = (device.tipo_aparato || '').toLowerCase().trim();
-        const mappedKey = filterKeyMap[device.tipo_aparato || ''] || '';
-
-        return (
-          devIcon === type ||
-          devType === type.toLowerCase() ||
-          mappedKey === type ||
-          (type === 'lamp-floor' && devType === 'luces') ||
-          (type === 'circle-plus' && devType === 'asistente') ||
-          (type === 'circle-plus' && devType === 'predeterminado')
-        );
-      });
+      filtered = filtered.filter(device => device.tipo_aparato === type);
     }
 
     return filtered;
+  });
+
+  readonly onlineDevicesCount = computed(() => {
+    return this.filteredDevices().filter(d => this.connectedDevices().includes(d.mac_bluetooth || '')).length;
+  });
+
+  readonly availableTypes = computed(() => {
+    const devices = this.devices();
+    const types = new Set<string>();
+    for (const d of devices) {
+      if (d.tipo_aparato) {
+        types.add(d.tipo_aparato);
+      }
+    }
+    return Array.from(types).sort();
   });
 
   ngOnInit(): void {
@@ -165,5 +155,12 @@ export class Dispositivos implements OnInit, OnDestroy {
 
   getMultisocketActiveCount(device: Dispositivo): number {
     return this.devicesService.getActiveContactCount(device.sk_aparato_id);
+  }
+
+  hasDirectToggle(device: Dispositivo): boolean {
+    const tipo = (device.tipo_aparato || '').toLowerCase();
+    // Lista de tipos que SÍ deben mostrar el toggle directo
+    const allowedTypes = ['foco', 'luces', 'socket', 'multisocket', 'ventilador', 'bocina', 'audifono'];
+    return allowedTypes.some(t => tipo.includes(t));
   }
 }

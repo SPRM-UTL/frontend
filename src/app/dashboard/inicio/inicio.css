@@ -699,3 +699,34 @@ app-dynamic-chart {
     flex-shrink: 0;
   }
 }
+
+/* =====================================================
+   EMPTY STATES
+   ===================================================== */
+.empty-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 280px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  gap: 1rem;
+}
+
+.empty-chart--wide {
+  height: 300px;
+}
+
+.empty-chart .empty-icon {
+  width: 48px;
+  height: 48px;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1.5;
+}
+
+.empty-chart p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}

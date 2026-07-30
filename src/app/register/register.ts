@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 
 import { Router, RouterLink } from '@angular/router';
 
@@ -12,6 +12,7 @@ import { LoaderService } from '../services/loader.service';
 
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import {
   LucideEye,
   LucideEyeOff,
@@ -32,14 +33,15 @@ import {
     LucideEyeOff,
     LucideLock,
     LucideMail,
-    LucideUser
+    LucideUser,
+    GoogleSigninButtonModule
   ],
 
   templateUrl: './register.html',
 
   styleUrl: './register.css'
 })
-export class Register {
+export class Register implements OnInit {
 
   showPassword = signal(false);
 
@@ -53,8 +55,33 @@ export class Register {
     private authService: AuthService,
     private toastService: ToastService,
     private loaderService: LoaderService,
-    private router: Router
+    private router: Router,
+    private socialAuthService: SocialAuthService
   ) { }
+
+  ngOnInit() {
+    this.socialAuthService.authState.subscribe((user) => {
+      if (user && user.idToken) {
+        this.loaderService.show(true);
+        this.authService.loginWithGoogle(user.idToken)
+        .pipe(
+          finalize(() => {
+            this.loaderService.hide();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.toastService.success('Registro completado', 'hand');
+            this.router.navigate(['/dashboard']);
+          },
+          error: (error) => {
+            console.error(error);
+            this.toastService.error('Error al registrarse con Google');
+          }
+        });
+      }
+    });
+  }
 
   togglePassword() {
 

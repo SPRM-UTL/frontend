@@ -390,68 +390,75 @@
   font-weight: 700;
 }
 
-/* Action Status (New design - Non-clickable) */
-.action-btn-status {
+/* ══════════════════════════════
+   CUSTOM TOGGLE
+══════════════════════════════ */
+.toggle-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 1rem;
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  min-width: 110px;
-  justify-content: center;
+  gap: 0.8rem;
+  cursor: pointer;
   user-select: none;
 }
 
-.action-btn-status.on {
-  background: #e6f7f5;
-  color: #2bbfaa;
-  border-color: #2bbfaa;
-}
-
-.action-btn-status svg {
-  transition: transform 0.3s;
-}
-
-.action-btn-status.on svg {
-  transform: scale(1.1);
-}
-
-/* Action Status (Non-clickable) */
-.action-btn-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 1rem;
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.8rem;
+.toggle-label {
+  font-size: 0.85rem;
   font-weight: 700;
-  min-width: 110px;
-  justify-content: center;
-  user-select: none;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s;
+  min-width: 65px;
+  text-align: right;
 }
 
-.action-btn-status.on {
-  background: #e6f7f5;
-  color: #2bbfaa;
+.toggle-label.on {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.custom-toggle {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.custom-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border-radius: 30px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.custom-toggle input:checked + .toggle-slider {
+  background-color: #2bbfaa;
   border-color: #2bbfaa;
 }
 
-.action-btn-status svg {
-  transition: transform 0.3s;
+.custom-toggle input:checked + .toggle-slider:before {
+  transform: translateX(24px);
 }
-
-.action-btn-status.on svg {
-  transform: scale(1.1);
-}
-
 .action-btn-toggle:active {
   transform: translateY(0);
 }

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 
@@ -14,6 +14,7 @@ import { LoaderService } from '../services/loader.service';
 
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 import {
   LucideEye,
@@ -32,7 +33,8 @@ import {
     LucideMail,
     LucideLock,
     LucideEye,
-    LucideEyeOff
+    LucideEyeOff,
+    GoogleSigninButtonModule
   ],
 
   templateUrl: './login.html',
@@ -40,7 +42,7 @@ import {
   styleUrl: './login.css'
 })
 
-export class Login {
+export class Login implements OnInit {
   showPassword = signal(false);
 
   correo = '';
@@ -51,8 +53,33 @@ export class Login {
     private router: Router,
     private authService: AuthService,
     private toastService: ToastService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private socialAuthService: SocialAuthService
   ) { }
+
+  ngOnInit() {
+    this.socialAuthService.authState.subscribe((user) => {
+      if (user && user.idToken) {
+        this.loaderService.show(true);
+        this.authService.loginWithGoogle(user.idToken)
+        .pipe(
+          finalize(() => {
+            this.loaderService.hide();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.toastService.success('Bienvenido', 'hand');
+            this.router.navigate(['/dashboard']);
+          },
+          error: (error) => {
+            console.error(error);
+            this.toastService.error('Error al iniciar sesión con Google');
+          }
+        });
+      }
+    });
+  }
 
   togglePassword() {
 

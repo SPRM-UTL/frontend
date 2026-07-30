@@ -21,14 +21,9 @@
         @if (isFilterOpen()) {
           <div class="dropdown-menu">
             <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Audifonos'" (click)="selectFilter('Audifonos', 'Audifonos')">Audifonos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Bocinas'" (click)="selectFilter('Bocinas', 'Bocinas')">Bocinas</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Focos'" (click)="selectFilter('Focos', 'Focos')">Focos</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Luces'" (click)="selectFilter('Luces', 'Luces')">Luces</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Ventilador'" (click)="selectFilter('Ventilador', 'Ventilador')">Ventilador</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Television'" (click)="selectFilter('Television', 'Television')">Television</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Sockets'" (click)="selectFilter('Sockets', 'Sockets')">Sockets</div>
-            <div class="dropdown-option" [class.active]="selectedFilter() === 'Asistente'" (click)="selectFilter('Asistente', 'Asistente')">Asistente</div>
+            @for (tipo of availableTypes(); track tipo) {
+              <div class="dropdown-option" [class.active]="selectedFilter() === tipo" (click)="selectFilter(tipo, tipo)">{{ tipo }}</div>
+            }
           </div>
         }
       </div>
@@ -43,7 +38,7 @@
         </div>
         <div>
           <h2 class="section-title">Todos los dispositivos</h2>
-          <p class="section-sub">{{ filteredDevices().length }} dispositivos en linea</p>
+          <p class="section-sub">{{ onlineDevicesCount() }} dispositivos en linea</p>
         </div>
       </div>
     </div>
@@ -84,7 +79,7 @@
                   style="cursor: pointer;">
                 <td class="device-cell">
                  <div class="device-avatar">
-                   <svg [lucideIcon]="getDeviceIcon(device.icono)" [size]="20"></svg>
+                   <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="20"></svg>
                  </div>
                  <div class="device-info">
                    <span class="device-name">{{ device.nombre_aparato }}</span>
@@ -103,13 +98,18 @@
                        <span class="ms-dot" [class.ms-dot--on]="getMultisocketActiveCount(device) > 0"></span>
                        <span class="ms-label">{{ getMultisocketActiveCount(device) }}/4 activos</span>
                      </div>
+                   } @else if (hasDirectToggle(device)) {
+                     <label class="toggle-wrapper" (click)="$event.stopPropagation()">
+                       <span class="toggle-label" [class.on]="device.estado_encendido">{{ device.estado_encendido ? 'Encendido' : 'Apagado' }}</span>
+                       <div class="custom-toggle">
+                         <input type="checkbox"
+                                [checked]="device.estado_encendido"
+                                (change)="onToggleDevice(device)" />
+                         <span class="toggle-slider"></span>
+                       </div>
+                     </label>
                    } @else {
-                     <div class="action-btn-status"
-                          [class.on]="device.estado_encendido"
-                          (click)="onToggleDevice(device); $event.stopPropagation()">
-                       <svg lucidePower [size]="14"></svg>
-                       <span>{{ device.estado_encendido ? 'Encendido' : 'Apagado' }}</span>
-                     </div>
+                     <span style="color: rgba(255, 255, 255, 0.4); font-weight: 500;">—</span>
                    }
                  </td>
 

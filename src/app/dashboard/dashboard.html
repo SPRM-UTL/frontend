@@ -425,13 +425,17 @@
                     <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
                   </div>
 
-                  @if (!isMultisocket(device.tipo_aparato)) {
-                    <div class="action-btn-status"
-                         [class.on]="device.accion_nombre === 'Encendido'"
-                         (click)="dispositivosService.toggleDevice(device); $event.stopPropagation()"
-                         style="position: absolute; right: 24px; top: 24px; z-index: 10;">
-                      <svg [lucideIcon]="getDeviceIcon('power')" [size]="14"></svg>
-                      <span>{{ device.accion_nombre }}</span>
+                  @if (!isMultisocket(device.tipo_aparato) && hasDirectToggle(device.tipo_aparato)) {
+                    <div style="position: absolute; right: 24px; top: 24px; z-index: 10;">
+                      <label class="toggle-wrapper" (click)="$event.stopPropagation()">
+                        <span class="toggle-label" style="color: #64748b;" [class.on]="device.accion_nombre === 'Encendido'">{{ device.accion_nombre }}</span>
+                        <div class="custom-toggle">
+                          <input type="checkbox"
+                                 [checked]="device.accion_nombre === 'Encendido'"
+                                 (change)="dispositivosService.toggleDevice(device)" />
+                          <span class="toggle-slider toggle-slider-light"></span>
+                        </div>
+                      </label>
                     </div>
                   }
 
@@ -492,10 +496,6 @@
         <footer class="modal-footer-actions">
           <button class="btn-action-outline-gray" (click)="dispositivosService.cerrarDetalle()">
             Cerrar
-          </button>
-          <button class="btn-action-solid-teal">
-            <svg [lucideIcon]="getDeviceIcon('bolt')" [size]="18"></svg>
-            Ejecutar prueba
           </button>
         </footer>
 
