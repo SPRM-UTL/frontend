@@ -199,14 +199,18 @@ export class DynamicChartComponent implements OnInit, AfterViewInit, OnDestroy, 
           if (isPieOrDonut) {
             const idx = this.resolvePointIndex(seriesIndex, dataPointIndex);
             name = w.globals.labels[idx] || '';
-            raw = Number(w.globals.series[idx] || 0);
-            if (w.globals && Array.isArray(w.globals.seriesPercent) && w.globals.seriesPercent[idx] !== undefined) {
-              const pct = w.globals.seriesPercent[idx];
+            const rawVal = w.globals.series[idx];
+            raw = Number(Array.isArray(rawVal) ? rawVal[0] : rawVal) || 0;
+
+            const rawPct = w.globals?.seriesPercent?.[idx];
+            const pctVal = Number(Array.isArray(rawPct) ? rawPct[0] : rawPct);
+
+            if (!Number.isNaN(pctVal)) {
               const cost = raw * 0.95;
               const costText = cost < 0.01 && cost > 0 ? cost.toFixed(4) : cost.toFixed(2);
-              percentText = ` (${pct.toFixed(1)}% | $${costText})`;
+              percentText = ` (${pctVal.toFixed(1)}% | $${costText})`;
             } else if (w.globals && Array.isArray(w.globals.series)) {
-              const total = w.globals.series.reduce((a: number, b: number) => a + b, 0);
+              const total = w.globals.series.reduce((a: number, b: number) => a + Number(b) || 0, 0);
               if (total > 0) {
                 const pct = (raw / total) * 100;
                 const cost = raw * 0.95;

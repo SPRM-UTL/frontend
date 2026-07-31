@@ -1,18 +1,18 @@
-<div class="dashboard-wrapper"
-     [class.sidebar-collapsed]="sidebarCollapsed()"
-     [class.menu-open]="menuOpen()"
-     (click)="closePanel(); closeMenu(); datePanelOpen.set(false)">
+<div class="dashboard-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()" [class.menu-open]="menuOpen()"
+  (click)="closePanel(); closeMenu(); datePanelOpen.set(false)">
 
   <!-- ── Overlay móvil ─────────────────────────────────────────────────── -->
   @if (menuOpen()) {
-    <div class="sidebar-overlay" (click)="closeMenu()"></div>
+  <div class="sidebar-overlay" (click)="closeMenu()"></div>
   }
 
   <!-- ── Sidebar ───────────────────────────────────────────────────────── -->
   <aside class="sidebar" [class.first-item-active]="isFirstItemActive()" (click)="$event.stopPropagation()">
 
     <div class="sidebar-logo">
-      <a routerLink="/dashboard/inicio" class="logo-link" style="display: flex; align-items: center; text-decoration: none; color: inherit; cursor: pointer; outline: none;" (click)="closeMenu()">
+      <a routerLink="/dashboard/inicio" class="logo-link"
+        style="display: flex; align-items: center; text-decoration: none; color: inherit; cursor: pointer; outline: none;"
+        (click)="closeMenu()">
         <img src="/icons/logo.svg" class="logo-icon" alt="Logo">
         <span class="logo-text">Manordomo</span>
       </a>
@@ -24,7 +24,7 @@
     <nav class="sidebar-nav">
       <div class="nav-active-indicator" [style.transform]="'translateY(' + indicatorTop() + 'px)'"></div>
 
-      <a class="nav-item" routerLink="/dashboard/inicio"      routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/inicio" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Dashboard</span>
       </a>
@@ -36,31 +36,30 @@
         <svg [lucideIcon]="getDeviceIcon('home')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Casas</span>
       </a>
-      <a class="nav-item" routerLink="/dashboard/gestos"      routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/gestos" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('hand')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Gestos</span>
       </a>
-      <a class="nav-item" routerLink="/dashboard/historial"   routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/historial" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('clock')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Historial de actividad</span>
       </a>
-      <a class="nav-item" routerLink="/dashboard/control"     routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/control" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('sliders-horizontal')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Control</span>
       </a>
 
       <div class="nav-spacer"></div>
 
-      <a class="nav-item" routerLink="/dashboard/ajustes"     routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/ajustes" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('bolt')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Ajustes</span>
       </a>
-      <a class="nav-item" routerLink="/dashboard/cuenta"      routerLinkActive="active" (click)="closeMenu()">
+      <a class="nav-item" routerLink="/dashboard/cuenta" routerLinkActive="active" (click)="closeMenu()">
         <svg [lucideIcon]="getDeviceIcon('user')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Cuenta</span>
       </a>
-      <a class="nav-item signout" style="cursor:pointer"
-         (click)="onLogout(); closeMenu(); $event.stopPropagation()">
+      <a class="nav-item signout" style="cursor:pointer" (click)="onLogout(); closeMenu(); $event.stopPropagation()">
         <svg [lucideIcon]="getDeviceIcon('log-out')" class="nav-icon-no-mask"></svg>
         <span class="nav-text">Salir</span>
       </a>
@@ -71,8 +70,7 @@
   <header class="top-bar">
     <section class="hero-panel">
 
-      <button class="mobile-menu-btn" aria-label="Abrir menú"
-              (click)="toggleMenu(); $event.stopPropagation()">
+      <button class="mobile-menu-btn" aria-label="Abrir menú" (click)="toggleMenu(); $event.stopPropagation()">
         <svg [lucideIcon]="getDeviceIcon('menu')" [size]="28"></svg>
       </button>
 
@@ -88,68 +86,70 @@
       <div class="hero-actions" (click)="$event.stopPropagation()">
 
         <!-- Botón de notificaciones -->
-        <button class="notif-button" type="button" aria-label="Notificaciones"
-                [class.is-active]="panelOpen()"
-                (click)="togglePanel()">
+        <button class="notif-button" type="button" aria-label="Notificaciones" [class.is-active]="panelOpen()"
+          (click)="togglePanel()">
           <svg [lucideIcon]="getDeviceIcon('bell')"></svg>
           @if (notifCount() > 0) {
-            <span class="notif-badge">{{ notifCount() }}</span>
+          <span class="notif-badge">{{ notifCount() }}</span>
           }
         </button>
 
         <!-- Panel de notificaciones -->
         @if (panelOpen()) {
-          <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones"
-                   (click)="$event.stopPropagation()"
-                   (mouseleave)="closePanel()">
+        <section class="notif-panel" role="dialog" aria-label="Panel de notificaciones"
+          (click)="$event.stopPropagation()" (mouseleave)="closePanel()">
 
-            <header class="notif-header">
-              <h3>Notificaciones</h3>
-              <span class="notif-count-label">{{ notifCount() }} nuevas</span>
-            </header>
+          <header class="notif-header">
+            <h3>Notificaciones</h3>
+            <span class="notif-count-label">{{ notifCount() }} nuevas</span>
+          </header>
 
-            @if (panelLoading()) {
-              <div class="notif-empty">
-                <span class="notif-spin"><svg [lucideIcon]="getDeviceIcon('sun')"></svg></span>
-                <p>Cargando notificaciones…</p>
+          @if (panelLoading()) {
+          <div class="notif-empty">
+            <span class="notif-spin"><svg [lucideIcon]="getDeviceIcon('sun')"></svg></span>
+            <p>Cargando notificaciones…</p>
+          </div>
+          } @else {
+          <div class="notif-list">
+            @for (n of recentActivities(); track n.id) {
+            <article class="notif-item" [class]="'severity-' + n.severity">
+              <span class="notif-icon">
+                <svg [lucideIcon]="n.icon" [size]="18"></svg>
+              </span>
+              <div class="notif-content">
+                <p class="notif-action">{{ n.title }}</p>
+                <p class="notif-meta">{{ n.subtitle }} · {{ n.timeLabel }}</p>
               </div>
-            } @else {
-              <div class="notif-list">
-                @for (n of recentActivities(); track n.id) {
-                  <article class="notif-item" [class]="'severity-' + n.severity">
-                    <span class="notif-icon">
-                      <svg [lucideIcon]="n.icon" [size]="18"></svg>
-                    </span>
-                    <div class="notif-content">
-                      <p class="notif-action">{{ n.title }}</p>
-                      <p class="notif-meta">{{ n.subtitle }} · {{ n.timeLabel }}</p>
-                    </div>
-                    @if (n.statusText) {
-                      <span class="notif-status" [class.is-error]="n.severity === 'error'">
-                        {{ n.statusText }}
-                      </span>
-                    }
-                    <button class="notif-close-btn" type="button" aria-label="Cerrar notificación"
-                            (click)="dismissNotification(n); $event.stopPropagation()">
-                      <svg [lucideIcon]="getDeviceIcon('x')" [size]="14"></svg>
-                    </button>
-                  </article>
-                }
-                @if (recentActivities().length === 0 && !panelError()) {
-                  <div class="notif-empty"><p>No hay actividad reciente</p></div>
-                }
-                @if (recentActivities().length === 0 && panelError()) {
-                  <div class="notif-empty"><p>No hay notificaciones</p></div>
-                }
-              </div>
-              @if (panelError()) {
-                <div class="notif-error-note">
-                  <svg [lucideIcon]="getDeviceIcon('triangle-alert')" [size]="12"></svg>
-                  Historial no disponible temporalmente
-                </div>
+              @if (n.statusText) {
+              <span class="notif-status" [class.is-error]="n.severity === 'error'">
+                {{ n.statusText }}
+              </span>
               }
+              <button class="notif-close-btn" type="button" aria-label="Cerrar notificación"
+                (click)="dismissNotification(n); $event.stopPropagation()">
+                <svg [lucideIcon]="getDeviceIcon('x')" [size]="14"></svg>
+              </button>
+            </article>
             }
-          </section>
+            @if (recentActivities().length === 0 && !panelError()) {
+            <div class="notif-empty">
+              <p>No hay actividad reciente</p>
+            </div>
+            }
+            @if (recentActivities().length === 0 && panelError()) {
+            <div class="notif-empty">
+              <p>No hay notificaciones</p>
+            </div>
+            }
+          </div>
+          @if (panelError()) {
+          <div class="notif-error-note">
+            <svg [lucideIcon]="getDeviceIcon('triangle-alert')" [size]="12"></svg>
+            Historial no disponible temporalmente
+          </div>
+          }
+          }
+        </section>
         }
 
         <!-- Pill de fecha / panel de clima -->
@@ -162,42 +162,42 @@
           </button>
 
           @if (datePanelOpen()) {
-            <div class="weather-date-panel" (mouseleave)="closeDatePanel()">
+          <div class="weather-date-panel" (mouseleave)="closeDatePanel()">
 
-              <div class="weather-orbit">
-                <div [class]="'weather-circle ' + (weatherService.info()?.cssClass || 'sunny')">
-                  @if (weatherService.loading()) {
-                    <svg [lucideIcon]="getDeviceIcon('sun')" class="spin" [size]="76"></svg>
-                  } @else if (weatherService.info(); as w) {
-                    <svg [lucideIcon]="w.icon" [size]="76"></svg>
-                  } @else {
-                    <svg [lucideIcon]="getDeviceIcon('sun')" [size]="76"></svg>
-                  }
-                </div>
-                <div class="weather-time-box">
-                  <span class="weather-clock-main">{{ clockTime() }}</span>
-                  <span class="weather-clock-period">{{ clockMeridiem() }}</span>
-                </div>
-              </div>
-
-              <div class="weather-info-box">
-                <div class="weather-calendar-badge">
-                  <svg [lucideIcon]="getDeviceIcon('calendar-days')" [size]="28"></svg>
-                </div>
-                <strong>{{ dayLabel() }}</strong>
-
-                @if (weatherService.info(); as w) {
-                  <span>{{ w.summary }} · {{ w.temperature }}</span>
-                } @else if (weatherService.loading()) {
-                  <span>Cargando clima...</span>
+            <div class="weather-orbit">
+              <div [class]="'weather-circle ' + (weatherService.info()?.cssClass || 'sunny')">
+                @if (weatherService.loading()) {
+                <svg [lucideIcon]="getDeviceIcon('sun')" class="spin" [size]="76"></svg>
+                } @else if (weatherService.info(); as w) {
+                <svg [lucideIcon]="w.icon" [size]="76"></svg>
                 } @else {
-                  <span>Día y clima</span>
+                <svg [lucideIcon]="getDeviceIcon('sun')" [size]="76"></svg>
                 }
               </div>
-
-
-
+              <div class="weather-time-box">
+                <span class="weather-clock-main">{{ clockTime() }}</span>
+                <span class="weather-clock-period">{{ clockMeridiem() }}</span>
+              </div>
             </div>
+
+            <div class="weather-info-box">
+              <div class="weather-calendar-badge">
+                <svg [lucideIcon]="getDeviceIcon('calendar-days')" [size]="28"></svg>
+              </div>
+              <strong>{{ dayLabel() }}</strong>
+
+              @if (weatherService.info(); as w) {
+              <span>{{ w.summary }} · {{ w.temperature }}</span>
+              } @else if (weatherService.loading()) {
+              <span>Cargando clima...</span>
+              } @else {
+              <span>Día y clima</span>
+              }
+            </div>
+
+
+
+          </div>
           }
         </div>
 
@@ -212,358 +212,407 @@
 
   <!-- ── Modal: confirmar cierre de sesión ────────────────────────────── -->
   @if (authService.showLogoutModal()) {
-    <div class="logout-modal-overlay" (click)="authService.cancelLogout()">
-      <div class="logout-modal-card" (click)="$event.stopPropagation()">
-        <div class="logout-modal-icon-container">
-          <svg [lucideIcon]="getDeviceIcon('log-out')" class="logout-modal-icon"></svg>
-        </div>
-        <h2 class="logout-modal-title">¿Estás seguro de que deseas salir?</h2>
-        <p class="logout-modal-desc">Tu sesión se cerrará de forma segura en este dispositivo.</p>
-        <div class="logout-modal-buttons">
-          <button class="logout-btn-cancel"  (click)="authService.cancelLogout()">Cancelar</button>
-          <button class="logout-btn-confirm" (click)="authService.logout()">Sí, salir</button>
-        </div>
+  <div class="logout-modal-overlay" (click)="authService.cancelLogout()">
+    <div class="logout-modal-card" (click)="$event.stopPropagation()">
+      <div class="logout-modal-icon-container">
+        <svg [lucideIcon]="getDeviceIcon('log-out')" class="logout-modal-icon"></svg>
+      </div>
+      <h2 class="logout-modal-title">¿Estás seguro de que deseas salir?</h2>
+      <p class="logout-modal-desc">Tu sesión se cerrará de forma segura en este dispositivo.</p>
+      <div class="logout-modal-buttons">
+        <button class="logout-btn-cancel" (click)="authService.cancelLogout()">Cancelar</button>
+        <button class="logout-btn-confirm" (click)="authService.logout()">Sí, salir</button>
       </div>
     </div>
+  </div>
   }
 
   <!-- ── Modal: detalle de gesto ──────────────────────────────────────── -->
   @if (gestosService.selectedGesto(); as gesto) {
-    <div class="modal-backdrop" (click)="gestosService.cerrarDetalle()">
-      <div class="modal-detail-container" (click)="$event.stopPropagation()">
+  <div class="modal-backdrop" (click)="gestosService.cerrarDetalle()">
+    <div class="modal-detail-container" (click)="$event.stopPropagation()">
 
-        <header class="modal-header">
-          <div class="header-titles">
-            <h2 class="modal-main-title">Detalle del Gesto</h2>
-            <p class="modal-main-subtitle">Información técnica y recomendaciones.</p>
-          </div>
-          <button class="btn-close-modal" aria-label="Cerrar" (click)="gestosService.cerrarDetalle()">✕</button>
-        </header>
+      <header class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-main-title">Detalle del Gesto</h2>
+          <p class="modal-main-subtitle">Información técnica, recomendaciones y material multimedia.</p>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar" (click)="gestosService.cerrarDetalle()">✕</button>
+      </header>
 
-        <div class="modal-body">
-          <div class="detail-layout">
+      <div class="modal-body">
+        <div class="detail-layout">
 
-            <div class="detail-main">
+          <div class="detail-main">
 
-              <section class="card hero-info-card">
-                <div class="hero-header" style="align-items: center; margin-bottom: 0;">
-                  <div class="hero-icon-box">
-                    <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-hero-img"></svg>
-                  </div>
-                  <div class="hero-titles">
-                    <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
-                    <p class="hero-desc">{{ gesto.descripcion }}</p>
-                  </div>
+            <section class="card hero-info-card">
+              <div class="hero-header">
+                <div class="hero-icon-box">
+                  <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-hero-img"></svg>
                 </div>
-              </section>
-
-              <section class="section-container">
-                <h3 class="section-title">Recomendaciones</h3>
-                <div class="rec-grid">
-                  @for (rec of gesto.recomendaciones; track $index) {
-                    <div class="rec-pill">
-                      <div class="rec-check-circle">
-                        <svg [lucideIcon]="getDeviceIcon('check')" [size]="12" class="check-icon"></svg>
-                      </div>
-                      <p>{{ rec }}</p>
-                    </div>
-                  }
-                </div>
-              </section>
-
-
-            </div>
-
-            <aside class="detail-sidebar">
-              <div class="sidebar-info-card">
-                <h3 class="sidebar-card-title">Información rápida</h3>
-                <div class="info-rows">
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
-                      <span>Acción</span>
-                    </div>
-                    <span class="info-row-val">{{ formatAccionGesto(gesto.tipo_disparador_nombre) }}</span>
-                  </div>
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('play-circle')" class="info-icon"></svg>
-                      <span>Activador</span>
-                    </div>
-                    <span class="info-row-val" 
-                          [style.cursor]="getGestoImagePath(getActivadorGesto(gesto)) ? 'pointer' : 'default'"
-                          [style.text-decoration]="getGestoImagePath(getActivadorGesto(gesto)) ? 'underline' : 'none'"
-                          (click)="showReferenceImage(getActivadorGesto(gesto))">
-                      {{ getActivadorGesto(gesto) }}
-                    </span>
-                  </div>
-                  <div class="info-row" style="flex-direction: column; align-items: flex-start; gap: 12px; border-bottom: none;">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('list')" class="info-icon"></svg>
-                      <span>Secuencia</span>
-                    </div>
-                    @if (getPasosSecuencia(gesto).length > 0) {
-                      <div class="stepper-container">
-                        @for (paso of getPasosSecuencia(gesto); track $index) {
-                          <div class="stepper-item" 
-                               [style.cursor]="getGestoImagePath(paso.nombre_gesto) ? 'pointer' : 'default'"
-                               (click)="showReferenceImage(paso.nombre_gesto)">
-                            <div class="stepper-circle">{{ $index + 1 }}</div>
-                            <div class="stepper-label" [style.text-decoration]="getGestoImagePath(paso.nombre_gesto) ? 'underline' : 'none'">{{ paso.nombre_gesto }}</div>
-                            @if ($index < getPasosSecuencia(gesto).length - 1) {
-                              <div class="stepper-line"></div>
-                            }
-                          </div>
-                        }
-                      </div>
-                    } @else {
-                      <span class="info-row-val" style="margin-left: 28px;">Sin secuencia</span>
-                    }
-                  </div>
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('smartphone')" class="info-icon"></svg>
-                      <span>Dispositivo</span>
-                    </div>
-                    <span class="info-row-val">{{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}</span>
-                  </div>
+                <div class="hero-titles">
+                  <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
+                  <span class="status-indicator">
+                    <span class="dot"></span>
+                    {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
+                  </span>
+                  <p class="hero-desc">{{ gesto.descripcion }}</p>
                 </div>
               </div>
-            </aside>
+            </section>
+
+            <section class="section-container">
+              <h3 class="section-title">Recomendaciones</h3>
+              <div class="rec-grid">
+                @for (rec of gesto.recomendaciones; track $index) {
+                <div class="rec-pill">
+                  <div class="rec-check-circle">
+                    <svg [lucideIcon]="getDeviceIcon('check')" [size]="12" class="check-icon"></svg>
+                  </div>
+                  <p>{{ rec }}</p>
+                </div>
+                }
+              </div>
+            </section>
+
+            @if (gesto.multimedia) {
+            <section class="section-container media-container">
+              <h3 class="media-title">Fotos y videos</h3>
+              <p class="media-subtitle">Material de referencia para este gesto.</p>
+              <div class="media-row">
+                @for (media of consolidatedMedia(); track media.sk_media_id) {
+                @if (media.tipo_media === 1) {
+                <!-- Foto Box -->
+                <div class="media-thumb foto-box" (click)="openMediaViewer($index)">
+                  <div class="thumb-content">
+                    @if (media.url_archivo && media.url_archivo.startsWith('http')) {
+                    <img [src]="media.url_archivo" alt="Referencia Gesto"
+                      style="width:100%;height:100%;object-fit:cover">
+                    } @else {
+                    <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-thumb-fallback-img"></svg>
+                    }
+                  </div>
+                  <span class="thumb-icon-overlay">
+                    <svg [lucideIcon]="getDeviceIcon('camera')" [size]="14"></svg>
+                  </span>
+                </div>
+                } @else {
+                <!-- Video Box -->
+                <div class="media-thumb video-box" (click)="openMediaViewer($index)">
+                  <div class="video-preview-mask">
+                    <svg [lucideIcon]="getDeviceIcon('play')" [size]="32" color="white"></svg>
+                  </div>
+                </div>
+                }
+                }
+              </div>
+            </section>
+            }
 
           </div>
+
+          <aside class="detail-sidebar">
+            <div class="sidebar-info-card">
+              <h3 class="sidebar-card-title">Información rápida</h3>
+              <div class="info-rows">
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
+                    <span>Acción</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.tipo_disparador_nombre || 'Sin acción' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('list')" class="info-icon"></svg>
+                    <span>Secuencia</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.nombre_gesto }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('check')" class="info-icon"></svg>
+                    <span>Estado</span>
+                  </div>
+                  <span class="info-row-val status-text-green">
+                    {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
+                  </span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('clock')" class="info-icon"></svg>
+                    <span>Duración</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.duracion_segundos || 1 }} seg.</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('sun')" class="info-icon"></svg>
+                    <span>Iluminación</span>
+                  </div>
+                  <span class="info-row-val">{{ gesto.iluminacion_requerida || 'Alta' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" class="info-icon"></svg>
+                    <span>Distancia recomendada</span>
+                  </div>
+                  <span class="info-row-val">
+                    @if (gesto.detalle?.distancia_recomendada) {
+                    {{ gesto.detalle?.distancia_recomendada }}
+                    } @else {
+                    {{ gesto.distancia_minima_m || 0.5 }} – {{ gesto.distancia_maxima_m || 1.5 }} m
+                    }
+                  </span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('smartphone')" class="info-icon"></svg>
+                    <span>Dispositivo</span>
+                  </div>
+                  <span class="info-row-val">{{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
         </div>
-
-
-
       </div>
+
+      <footer class="modal-footer-actions">
+        <button class="btn-action-outline-gray">
+          <svg [lucideIcon]="getDeviceIcon('download')" [size]="18"></svg>
+          Descargar guía
+        </button>
+        <button class="btn-action-solid-teal">
+          <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="18"></svg>
+          Probar gesto
+        </button>
+      </footer>
+
     </div>
+  </div>
   }
 
   <!-- ── Modal: detalle de dispositivo ────────────────────────────────── -->
   @if (dispositivosService.selectedDevice(); as device) {
-    <div class="modal-backdrop" (click)="dispositivosService.cerrarDetalle()">
-      <div class="modal-detail-container" (click)="$event.stopPropagation()">
+  <div class="modal-backdrop" (click)="dispositivosService.cerrarDetalle()">
+    <div class="modal-detail-container" (click)="$event.stopPropagation()">
 
-        <header class="modal-header">
-          <div class="header-titles">
-            <h2 class="modal-main-title">Detalle del Dispositivo</h2>
-            <p class="modal-main-subtitle">Información técnica y configuración actual.</p>
-          </div>
-          <button class="btn-close-modal" aria-label="Cerrar" (click)="dispositivosService.cerrarDetalle()">✕</button>
-        </header>
+      <header class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-main-title">Detalle del Dispositivo</h2>
+          <p class="modal-main-subtitle">Información técnica y configuración actual.</p>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar" (click)="dispositivosService.cerrarDetalle()">✕</button>
+      </header>
 
-        <div class="modal-body">
-          <div class="detail-layout">
+      <div class="modal-body">
+        <div class="detail-layout">
 
-            <div class="detail-main">
+          <div class="detail-main">
 
-              <section class="card hero-info-card" style="position: relative;">
-                <div class="hero-header">
-                  <div class="hero-icon-box">
-                    <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="44"></svg>
-                  </div>
-                  <div class="hero-titles">
-                    <h2 class="hero-name">{{ device.nombre_aparato }}</h2>
-                    <span class="status-indicator">
-                      <span class="dot" [class.offline]="!dispositivosService.connectedDevices().includes(device.mac_bluetooth || '')"></span>
-                      {{ dispositivosService.connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
-                    </span>
-                    <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
-                  </div>
-
-                  @if (!isMultisocket(device.tipo_aparato) && hasDirectToggle(device.tipo_aparato)) {
-                    <div style="position: absolute; right: 24px; top: 24px; z-index: 10;">
-                      <label class="toggle-wrapper" (click)="$event.stopPropagation()">
-                        <span class="toggle-label" style="color: #64748b;" [class.on]="device.accion_nombre === 'Encendido'">{{ device.accion_nombre }}</span>
-                        <div class="custom-toggle">
-                          <input type="checkbox"
-                                 [checked]="device.accion_nombre === 'Encendido'"
-                                 (change)="dispositivosService.toggleDevice(device)" />
-                          <span class="toggle-slider toggle-slider-light"></span>
-                        </div>
-                      </label>
-                    </div>
-                  }
-
-                  @if (isMultisocket(device.tipo_aparato)) {
-                    <div class="modal-multisocket-panel">
-                      <p class="modal-ms-label">
-                        Contactos • {{ getActiveContactCountDetalle() }}/4 activos
-                      </p>
-                    </div>
-                  }
+            <section class="card hero-info-card" style="position: relative;">
+              <div class="hero-header">
+                <div class="hero-icon-box">
+                  <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="44"></svg>
                 </div>
-              </section>
-
-              <section class="section-container">
-                <h3 class="section-title">Información del Sistema</h3>
-                <div class="tech-grid">
-                  <div class="tech-item">
-                    <p class="tech-label">FECHA DE ALTA</p>
-                    <p class="tech-value">{{ device.fecha_sincronizacion || '2026-06-17' }}</p>
-                  </div>
+                <div class="hero-titles">
+                  <h2 class="hero-name">{{ device.nombre_aparato }}</h2>
+                  <span class="status-indicator">
+                    <span class="dot"
+                      [class.offline]="!dispositivosService.connectedDevices().includes(device.mac_bluetooth || '')"></span>
+                    {{ dispositivosService.connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' :
+                    'Desconectado' }}
+                  </span>
+                  <p class="hero-desc">{{ device.tipo_aparato }} – Control inteligente vía Bluetooth</p>
                 </div>
-              </section>
 
-            </div>
+                @if (!isMultisocket(device.tipo_aparato) && hasDirectToggle(device.tipo_aparato)) {
+                  @let isOnlineModal = dispositivosService.connectedDevices().includes(device.mac_bluetooth || '');
+                  <div style="position: absolute; right: 24px; top: 24px; z-index: 10;">
+                    <label class="toggle-wrapper"
+                           (click)="$event.stopPropagation()"
+                           [style.opacity]="isOnlineModal ? '1' : '0.4'"
+                           [style.cursor]="isOnlineModal ? 'pointer' : 'not-allowed'"
+                           [title]="isOnlineModal ? '' : 'Dispositivo desconectado'">
+                      <span class="toggle-label" style="color: #64748b;"
+                            [class.on]="isOnlineModal && device.estado_encendido">
+                        {{ (isOnlineModal && device.estado_encendido) ? 'Encendido' : 'Apagado' }}
+                      </span>
+                      <div class="custom-toggle">
+                        <input type="checkbox"
+                               [checked]="isOnlineModal && device.estado_encendido"
+                               [disabled]="!isOnlineModal"
+                               (change)="isOnlineModal && dispositivosService.toggleDevice(device)" />
+                        <span class="toggle-slider toggle-slider-light"></span>
+                      </div>
+                    </label>
+                  </div>
+                }
 
-            <aside class="detail-sidebar">
-              <div class="sidebar-info-card">
-                <h3 class="sidebar-card-title">Estado Bluetooth</h3>
-                <div class="info-rows">
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('bluetooth')" class="info-icon"></svg>
-                      <span>Nombre</span>
-                    </div>
-                    <span class="info-row-val">{{ device.nombre_bluetooth || 'Sin nombre' }}</span>
-                  </div>
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('hash')" class="info-icon"></svg>
-                      <span>MAC</span>
-                    </div>
-                    <span class="info-row-val">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</span>
-                  </div>
-                  <div class="info-row">
-                    <div class="info-row-left">
-                      <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
-                      <span>Acción</span>
-                    </div>
-                    <span class="info-row-val status-text-green">{{ device.accion_nombre }}</span>
-                  </div>
+                @if (isMultisocket(device.tipo_aparato)) {
+                <div class="modal-multisocket-panel">
+                  <p class="modal-ms-label">
+                    Contactos • {{ getActiveContactCountDetalle() }}/4 activos
+                  </p>
+                </div>
+                }
+              </div>
+            </section>
+
+            <section class="section-container">
+              <h3 class="section-title">Información del Sistema</h3>
+              <div class="tech-grid">
+                <div class="tech-item">
+                  <p class="tech-label">FECHA DE ALTA</p>
+                  <p class="tech-value">{{ device.fecha_sincronizacion || '2026-06-17' }}</p>
                 </div>
               </div>
-            </aside>
+            </section>
 
           </div>
+
+          <aside class="detail-sidebar">
+            <div class="sidebar-info-card">
+              <h3 class="sidebar-card-title">Estado Bluetooth</h3>
+              <div class="info-rows">
+                @let isOnlineSidebar = dispositivosService.connectedDevices().includes(device.mac_bluetooth || '');
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('bluetooth')" class="info-icon"></svg>
+                    <span>Nombre</span>
+                  </div>
+                  <span class="info-row-val">{{ device.nombre_bluetooth || 'Sin nombre' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('hash')" class="info-icon"></svg>
+                    <span>MAC</span>
+                  </div>
+                  <span class="info-row-val">{{ device.mac_bluetooth || '00:00:00:00:00:00' }}</span>
+                </div>
+                <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
+                    <span>Acción</span>
+                  </div>
+                  <span class="info-row-val" [class.status-text-green]="isOnlineSidebar && device.estado_encendido">
+                    {{ (isOnlineSidebar && device.estado_encendido) ? 'Encendido' : 'Apagado' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
         </div>
-
-        <footer class="modal-footer-actions">
-          <button class="btn-action-outline-gray" (click)="dispositivosService.cerrarDetalle()">
-            Cerrar
-          </button>
-        </footer>
-
       </div>
+
+      <footer class="modal-footer-actions">
+        <button class="btn-action-outline-gray" (click)="dispositivosService.cerrarDetalle()">
+          Cerrar
+        </button>
+      </footer>
+
     </div>
+  </div>
   }
 
   <!-- ── Overlay: Visor Multimedia Avanzado ────────────────────────────── -->
   @if (mediaViewerOpen() && currentMedia()) {
-    @let media = currentMedia();
-    <div class="media-viewer-overlay" (click)="closeMediaViewer()">
-      <div class="media-viewer-content" (click)="$event.stopPropagation()">
+  @let media = currentMedia();
+  <div class="media-viewer-overlay" (click)="closeMediaViewer()">
+    <div class="media-viewer-content" (click)="$event.stopPropagation()">
 
-        <!-- Cabecera del Visor -->
-        <header class="viewer-header">
-          <div class="viewer-gesto-info">
-            <div class="viewer-icon-box">
-              <svg [lucideIcon]="getGestureIcon(gestosService.selectedGesto()?.icono)" [size]="24"></svg>
-            </div>
-            <div>
-              <h4 class="viewer-title">{{ gestosService.selectedGesto()?.nombre_gesto }}</h4>
-              <p class="viewer-status">● {{ gestosService.selectedGesto()?.estado || 'Pausado' }}</p>
-            </div>
+      <!-- Cabecera del Visor -->
+      <header class="viewer-header">
+        <div class="viewer-gesto-info">
+          <div class="viewer-icon-box">
+            <svg [lucideIcon]="getGestureIcon(gestosService.selectedGesto()?.icono)" [size]="24"></svg>
           </div>
-          <button class="viewer-close-btn" (click)="closeMediaViewer()">
-            <svg [lucideIcon]="getDeviceIcon('x')" [size]="20"></svg>
-          </button>
-        </header>
-
-        <!-- Área Principal de Media -->
-        <div class="viewer-main-area">
-          <button class="nav-arrow prev" (click)="prevMedia()">
-            <svg [lucideIcon]="getDeviceIcon('chevron-left')" [size]="32"></svg>
-            <span>Anterior</span>
-          </button>
-
-          <div class="main-media-container">
-            @if (media?.tipo_media === 1) {
-              <img [src]="media?.url_archivo" class="main-media-img" alt="Referencia">
-            } @else {
-              <video class="main-media-video"
-                     [src]="media?.url_archivo"
-                     [autoplay]="isPlaying()"
-                     [muted]="isMuted()"
-                     (loadedmetadata)="onVideoMetadata($event)"
-                     (timeupdate)="onVideoTimeUpdate($event)"
-                     #videoPlayer>
-              </video>
-            }
+          <div>
+            <h4 class="viewer-title">{{ gestosService.selectedGesto()?.nombre_gesto }}</h4>
+            <p class="viewer-status">● {{ gestosService.selectedGesto()?.estado || 'Pausado' }}</p>
           </div>
-
-          <button class="nav-arrow next" (click)="nextMedia()">
-            <svg [lucideIcon]="getDeviceIcon('chevron-right')" [size]="32"></svg>
-            <span>Siguiente</span>
-          </button>
         </div>
+        <button class="viewer-close-btn" (click)="closeMediaViewer()">
+          <svg [lucideIcon]="getDeviceIcon('x')" [size]="20"></svg>
+        </button>
+      </header>
 
-        <!-- Controles Inferiores (Solo para Video) -->
-        <footer class="viewer-footer">
-          @if (media?.tipo_media === 2) {
-            <div class="video-controls-wrapper">
-              <div class="seek-bar-container">
-                <span class="time-label">{{ formatVideoTime(currentTime()) }}</span>
-                <input type="range" class="viewer-seek-bar"
-                       [value]="(currentTime() / duration()) * 100 || 0"
-                       (input)="seekVideo($event)">
-                <span class="time-label">{{ formatVideoTime(duration()) }}</span>
-              </div>
+      <!-- Área Principal de Media -->
+      <div class="viewer-main-area">
+        <button class="nav-arrow prev" (click)="prevMedia()">
+          <svg [lucideIcon]="getDeviceIcon('chevron-left')" [size]="32"></svg>
+          <span>Anterior</span>
+        </button>
 
-              <div class="bottom-actions-row">
-                <div class="left-actions">
-                  <button class="action-btn" (click)="togglePlay()">
-                    @if (isPlaying()) {
-                      <svg [lucideIcon]="getDeviceIcon('pause')" [size]="20"></svg>
-                    } @else {
-                      <svg [lucideIcon]="getDeviceIcon('play')" [size]="20"></svg>
-                    }
-                  </button>
-                  <button class="action-btn" (click)="toggleMute()">
-                    @if (isMuted()) {
-                      <svg [lucideIcon]="getDeviceIcon('volume-x')" [size]="20"></svg>
-                    } @else {
-                      <svg [lucideIcon]="getDeviceIcon('volume-2')" [size]="20"></svg>
-                    }
-                  </button>
-                  <button class="action-btn" (click)="skip(-10)">
-                    <svg [lucideIcon]="getDeviceIcon('rotate-ccw')" [size]="20"></svg>
-                  </button>
-                  <button class="action-btn" (click)="skip(10)">
-                    <svg [lucideIcon]="getDeviceIcon('rotate-cw')" [size]="20"></svg>
-                  </button>
-                </div>
-
-                <div class="right-actions">
-                  <button class="action-btn">
-                    <svg [lucideIcon]="getDeviceIcon('settings')" [size]="20"></svg>
-                  </button>
-                  <button class="action-btn">
-                    <svg [lucideIcon]="getDeviceIcon('maximize')" [size]="20"></svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+        <div class="main-media-container">
+          @if (media?.tipo_media === 1) {
+          <img [src]="media?.url_archivo" class="main-media-img" alt="Referencia">
+          } @else {
+          <video class="main-media-video" [src]="media?.url_archivo" [autoplay]="isPlaying()" [muted]="isMuted()"
+            (loadedmetadata)="onVideoMetadata($event)" (timeupdate)="onVideoTimeUpdate($event)" #videoPlayer>
+          </video>
           }
-        </footer>
+        </div>
+
+        <button class="nav-arrow next" (click)="nextMedia()">
+          <svg [lucideIcon]="getDeviceIcon('chevron-right')" [size]="32"></svg>
+          <span>Siguiente</span>
+        </button>
       </div>
+
+      <!-- Controles Inferiores (Solo para Video) -->
+      <footer class="viewer-footer">
+        @if (media?.tipo_media === 2) {
+        <div class="video-controls-wrapper">
+          <div class="seek-bar-container">
+            <span class="time-label">{{ formatVideoTime(currentTime()) }}</span>
+            <input type="range" class="viewer-seek-bar" [value]="(currentTime() / duration()) * 100 || 0"
+              (input)="seekVideo($event)">
+            <span class="time-label">{{ formatVideoTime(duration()) }}</span>
+          </div>
+
+          <div class="bottom-actions-row">
+            <div class="left-actions">
+              <button class="action-btn" (click)="togglePlay()">
+                @if (isPlaying()) {
+                <svg [lucideIcon]="getDeviceIcon('pause')" [size]="20"></svg>
+                } @else {
+                <svg [lucideIcon]="getDeviceIcon('play')" [size]="20"></svg>
+                }
+              </button>
+              <button class="action-btn" (click)="toggleMute()">
+                @if (isMuted()) {
+                <svg [lucideIcon]="getDeviceIcon('volume-x')" [size]="20"></svg>
+                } @else {
+                <svg [lucideIcon]="getDeviceIcon('volume-2')" [size]="20"></svg>
+                }
+              </button>
+              <button class="action-btn" (click)="skip(-10)">
+                <svg [lucideIcon]="getDeviceIcon('rotate-ccw')" [size]="20"></svg>
+              </button>
+              <button class="action-btn" (click)="skip(10)">
+                <svg [lucideIcon]="getDeviceIcon('rotate-cw')" [size]="20"></svg>
+              </button>
+            </div>
+
+            <div class="right-actions">
+              <button class="action-btn">
+                <svg [lucideIcon]="getDeviceIcon('settings')" [size]="20"></svg>
+              </button>
+              <button class="action-btn">
+                <svg [lucideIcon]="getDeviceIcon('maximize')" [size]="20"></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </footer>
+
     </div>
+  </div>
   }
 
-  @if (referenceImage()) {
-    <div class="modal-backdrop" style="z-index: 999999;" (click)="closeReferenceImage()">
-      <div class="modal-detail-container" style="max-width: 400px; text-align: center;" (click)="$event.stopPropagation()">
-        <header class="modal-header" style="justify-content: space-between;">
-          <div style="width: 40px;"></div> <!-- Espaciador para centrar el título -->
-          <h2 class="modal-main-title">{{ referenceImageTitle() }}</h2>
-          <button class="btn-close-modal" aria-label="Cerrar" (click)="closeReferenceImage()">✕</button>
-        </header>
-        <div class="modal-body" style="padding: 20px;">
-          <img [src]="referenceImage()" alt="Gesto" style="width: 100%; border-radius: 12px; object-fit: contain;">
-        </div>
-      </div>
-    </div>
-  }
 </div>

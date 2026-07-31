@@ -14,7 +14,6 @@ import {
   LucideTriangleAlert,
   LucideLogOut,
   LucideBolt,
-  LucidePower,
   LucideDynamicIcon,
 } from '@lucide/angular';
 
@@ -34,7 +33,6 @@ import { getDeviceIcon } from '../shared/icon-map';
     LucideTriangleAlert,
     LucideLogOut,
     LucideBolt,
-    LucidePower,
     LucideDynamicIcon,
   ],
   templateUrl: './dispositivos.html',
