@@ -3,7 +3,6 @@ import { afterNextRender, Component, computed, inject, signal } from '@angular/c
 import { FormsModule } from '@angular/forms';
 import {
   LucideChevronDown,
-  LucideClock,
   LucideDynamicIcon,
   LucideFilter,
   LucideHand,
@@ -27,7 +26,6 @@ import { GestosService } from './gestos.service';
     LucideFilter,
     LucideChevronDown,
     LucideHand,
-    LucideClock,
     LucideSun,
     LucideTriangleAlert,
     LucideDynamicIcon,

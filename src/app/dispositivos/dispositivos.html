@@ -3,11 +3,8 @@
   <div class="search-filter-row">
     <div class="search-wrapper">
       <svg lucideSearch class="search-icon" [size]="18"></svg>
-      <input class="search-input"
-             type="text"
-             placeholder="Buscar dispositivo..."
-             [value]="searchQuery()"
-             (input)="onSearch($any($event.target).value)" />
+      <input class="search-input" type="text" placeholder="Buscar dispositivo..." [value]="searchQuery()"
+        (input)="onSearch($any($event.target).value)" />
     </div>
 
     <div class="filter-wrapper">
@@ -15,16 +12,20 @@
         <button class="dropdown-trigger" (click)="toggleFilter()">
           <svg lucideFilter class="filter-icon" [size]="16"></svg>
           <span class="trigger-label">{{ selectedFilterLabel() }}</span>
-          <svg lucideChevronDown class="arrow-icon" [size]="14" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
+          <svg lucideChevronDown class="arrow-icon" [size]="14"
+            [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'"
+            style="transition: transform 0.2s;"></svg>
         </button>
 
         @if (isFilterOpen()) {
-          <div class="dropdown-menu">
-            <div class="dropdown-option" [class.active]="selectedFilter() === ''" (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
-            @for (tipo of availableTypes(); track tipo) {
-              <div class="dropdown-option" [class.active]="selectedFilter() === tipo" (click)="selectFilter(tipo, tipo)">{{ tipo }}</div>
-            }
-          </div>
+        <div class="dropdown-menu">
+          <div class="dropdown-option" [class.active]="selectedFilter() === ''"
+            (click)="selectFilter('', 'Todos los tipos')">Todos los tipos</div>
+          @for (tipo of availableTypes(); track tipo) {
+          <div class="dropdown-option" [class.active]="selectedFilter() === tipo" (click)="selectFilter(tipo, tipo)">{{
+            tipo }}</div>
+          }
+        </div>
         }
       </div>
     </div>
@@ -44,112 +45,119 @@
     </div>
 
     @if (loading()) {
-      <div class="table-feedback">
-        <svg lucideSun [size]="20" class="spin"></svg>
-        Cargando dispositivos...
-      </div>
+    <div class="table-feedback">
+      <svg lucideSun [size]="20" class="spin"></svg>
+      Cargando dispositivos...
+    </div>
     }
 
     @if (error()) {
-      <div class="table-feedback table-feedback--error">
-        <svg lucideTriangleAlert [size]="18"></svg>
-        {{ error() }}
-      </div>
+    <div class="table-feedback table-feedback--error">
+      <svg lucideTriangleAlert [size]="18"></svg>
+      {{ error() }}
+    </div>
     }
 
     @if (!loading()) {
-      <div class="table-wrapper">
-        <table class="devices-table">
-          <thead>
-            <tr>
-              <th>DISPOSITIVOS</th>
-              <th>TIPO</th>
-              <th>ACCION</th>
-              <th>BLUETOOTH</th>
-              @if (showActions()) {
-                <th>ACCIONES</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            @for (device of filteredDevices(); track device.sk_aparato_id) {
-              <tr class="device-row"
-                  (click)="verDetalle(device)"
-                  [class.is-selected]="devicesService.selectedDevice()?.sk_aparato_id === device.sk_aparato_id"
-                  style="cursor: pointer;">
-                <td class="device-cell">
-                 <div class="device-avatar">
-                   <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="20"></svg>
-                 </div>
-                 <div class="device-info">
-                   <span class="device-name">{{ device.nombre_aparato }}</span>
-                   <div class="status-pill-connection" [class.offline]="!connectedDevices().includes(device.mac_bluetooth || '')">
-                     <span class="dot"></span>
-                     {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
-                   </div>
-                 </div>
-                </td>
-
-                <td class="type-cell">{{ device.tipo_aparato }}</td>
-
-                 <td class="power-cell">
-                   @if (isMultisocket(device)) {
-                     <div class="multisocket-status-badge">
-                       <span class="ms-dot" [class.ms-dot--on]="getMultisocketActiveCount(device) > 0"></span>
-                       <span class="ms-label">{{ getMultisocketActiveCount(device) }}/4 activos</span>
-                     </div>
-                   } @else if (hasDirectToggle(device)) {
-                     <label class="toggle-wrapper" (click)="$event.stopPropagation()">
-                       <span class="toggle-label" [class.on]="device.estado_encendido">{{ device.estado_encendido ? 'Encendido' : 'Apagado' }}</span>
-                       <div class="custom-toggle">
-                         <input type="checkbox"
-                                [checked]="device.estado_encendido"
-                                (change)="onToggleDevice(device)" />
-                         <span class="toggle-slider"></span>
-                       </div>
-                     </label>
-                   } @else {
-                     <span style="color: rgba(255, 255, 255, 0.4); font-weight: 500;">—</span>
-                   }
-                 </td>
-
-                <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
-
-                @if (showActions()) {
-                  <td class="actions-cell">
-                    <div class="action-buttons-group">
-                      <button class="row-action-btn" title="Cerrar sesion">
-                        <svg lucideLogOut [size]="18"></svg>
-                      </button>
-                      <button class="row-action-btn" title="Ajustes">
-                        <svg lucideBolt [size]="18"></svg>
-                      </button>
-                      <button class="row-action-btn" title="Mas opciones">
-                        <svg lucideChevronDown [size]="18"></svg>
-                      </button>
-                    </div>
-                  </td>
-                }
-              </tr>
-            } @empty {
-              @if (!loading()) {
-                <tr>
-                  <td [attr.colspan]="showActions() ? 5 : 4">
-                    <div class="empty-state">
-                      <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
-                      <p>No se encontraron dispositivos</p>
-                    </div>
-                  </td>
-                </tr>
-              }
+    <div class="table-wrapper">
+      <table class="devices-table">
+        <thead>
+          <tr>
+            <th>DISPOSITIVOS</th>
+            <th>TIPO</th>
+            <th>ACCION</th>
+            <th>BLUETOOTH</th>
+            @if (showActions()) {
+            <th>ACCIONES</th>
             }
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          @for (device of filteredDevices(); track device.sk_aparato_id) {
+          <tr class="device-row" (click)="verDetalle(device)"
+            [class.is-selected]="devicesService.selectedDevice()?.sk_aparato_id === device.sk_aparato_id"
+            style="cursor: pointer;">
+            <td class="device-cell">
+              <div class="device-avatar">
+                <svg [lucideIcon]="getDeviceIcon(device.tipo_aparato || device.icono)" [size]="20"></svg>
+              </div>
+              <div class="device-info">
+                <span class="device-name">{{ device.nombre_aparato }}</span>
+                <div class="status-pill-connection"
+                  [class.offline]="!connectedDevices().includes(device.mac_bluetooth || '')">
+                  <span class="dot"></span>
+                  {{ connectedDevices().includes(device.mac_bluetooth || '') ? 'En línea' : 'Desconectado' }}
+                </div>
+              </div>
+            </td>
+
+            <td class="type-cell">{{ device.tipo_aparato }}</td>
+
+            <td class="power-cell">
+              @if (isMultisocket(device)) {
+                <div class="multisocket-status-badge">
+                  <span class="ms-dot" [class.ms-dot--on]="getMultisocketActiveCount(device) > 0"></span>
+                  <span class="ms-label">{{ getMultisocketActiveCount(device) }}/4 activos</span>
+                </div>
+              } @else if (hasDirectToggle(device)) {
+                @let isOnline = connectedDevices().includes(device.mac_bluetooth || '');
+                <label class="toggle-wrapper"
+                       (click)="$event.stopPropagation()"
+                       [style.opacity]="isOnline ? '1' : '0.4'"
+                       [style.cursor]="isOnline ? 'pointer' : 'not-allowed'"
+                       [title]="isOnline ? '' : 'Dispositivo desconectado'">
+                  <span class="toggle-label" [class.on]="isOnline && device.estado_encendido">{{ (isOnline && device.estado_encendido) ? 'Encendido' : 'Apagado' }}</span>
+                  <div class="custom-toggle">
+                    <input type="checkbox"
+                           [checked]="isOnline && device.estado_encendido"
+                           [disabled]="!isOnline"
+                           (change)="isOnline && onToggleDevice(device)" />
+                    <span class="toggle-slider"></span>
+                  </div>
+                </label>
+              } @else {
+                <span style="color: rgba(255, 255, 255, 0.4); font-weight: 500;">—</span>
+              }
+            </td>
+
+            <td class="bt-cell">{{ device.nombre_bluetooth || 'N/A' }}</td>
+
+            @if (showActions()) {
+            <td class="actions-cell">
+              <div class="action-buttons-group">
+                <button class="row-action-btn" title="Cerrar sesion">
+                  <svg lucideLogOut [size]="18"></svg>
+                </button>
+                <button class="row-action-btn" title="Ajustes">
+                  <svg lucideBolt [size]="18"></svg>
+                </button>
+                <button class="row-action-btn" title="Mas opciones">
+                  <svg lucideChevronDown [size]="18"></svg>
+                </button>
+              </div>
+            </td>
+            }
+          </tr>
+          } @empty {
+          @if (!loading()) {
+          <tr>
+            <td [attr.colspan]="showActions() ? 5 : 4">
+              <div class="empty-state">
+                <svg lucideSearch [size]="32" style="opacity: 0.3;"></svg>
+                <p>No se encontraron dispositivos</p>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
     }
 
     <footer class="table-footer">
-      <p class="results-count">Mostrando 1 a {{ filteredDevices().length }} de {{ filteredDevices().length }} dispositivos</p>
+      <p class="results-count">Mostrando 1 a {{ filteredDevices().length }} de {{ filteredDevices().length }}
+        dispositivos</p>
       <div class="pagination">
         <button class="page-btn"><svg lucideChevronDown [size]="12" style="transform: rotate(90deg);"></svg></button>
         <button class="page-btn active">1</button>

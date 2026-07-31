@@ -119,7 +119,18 @@ export class DispositivosService {
   private pollingInterval: any;
 
   verDetalle(device: Dispositivo | null) {
-    this.selectedDevice.set(device);
+    if (device) {
+      // Normalizar estado_encendido desde accion_nombre si el booleano no está definido
+      const normalized: Dispositivo = {
+        ...device,
+        estado_encendido: device.estado_encendido !== undefined && device.estado_encendido !== null
+          ? device.estado_encendido
+          : (device.accion_nombre?.toLowerCase() === 'encendido')
+      };
+      this.selectedDevice.set(normalized);
+    } else {
+      this.selectedDevice.set(null);
+    }
 
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
@@ -192,12 +203,32 @@ export class DispositivosService {
               return list.map(existing => {
                 const fresh = data.find((d: any) => d.sk_aparato_id === existing.sk_aparato_id);
                 if (!fresh) return existing;
-                if (existing.accion_nombre !== fresh.accion_nombre) {
-                  return { ...existing, accion_nombre: fresh.accion_nombre };
+                const newAccion = fresh.accion_nombre ?? existing.accion_nombre;
+                // Normalizar estado_encendido: preferir booleano del API, sino derivar de accion_nombre
+                const newEstado = fresh.estado_encendido !== undefined && fresh.estado_encendido !== null
+                  ? fresh.estado_encendido
+                  : (newAccion?.toLowerCase() === 'encendido');
+                if (existing.accion_nombre !== newAccion || existing.estado_encendido !== newEstado) {
+                  return { ...existing, accion_nombre: newAccion, estado_encendido: newEstado };
                 }
                 return existing;
               });
             });
+
+            // Si el dispositivo del modal está en la lista, también actualizarlo
+            const sel = this.selectedDevice();
+            if (sel) {
+              const freshSel = data.find((d: any) => d.sk_aparato_id === sel.sk_aparato_id);
+              if (freshSel) {
+                const newAccion = freshSel.accion_nombre ?? sel.accion_nombre;
+                const newEstado = freshSel.estado_encendido !== undefined && freshSel.estado_encendido !== null
+                  ? freshSel.estado_encendido
+                  : (newAccion?.toLowerCase() === 'encendido');
+                if (sel.accion_nombre !== newAccion || sel.estado_encendido !== newEstado) {
+                  this.selectedDevice.update(d => d ? { ...d, accion_nombre: newAccion, estado_encendido: newEstado } : null);
+                }
+              }
+            }
 
             // Actualizamos los estados de contacto de los MultiSocket
             data.forEach(d => {

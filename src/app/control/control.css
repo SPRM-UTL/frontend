@@ -63,9 +63,9 @@
 }
 
 .category-card.is-active {
-  background: #1e9282; /* Aún más oscuro cuando está activo */
+  background: var(--cafe-dark, #258379); /* Color de la barra de navegación al seleccionar la categoría */
   border-color: #ffffff;
-  box-shadow: 0 8px 25px rgba(43, 191, 170, 0.3);
+  box-shadow: 0 8px 25px rgba(37, 131, 121, 0.35);
   transform: translateY(-2px);
 }
 
