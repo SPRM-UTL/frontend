@@ -324,6 +324,72 @@ export class Dashboard implements OnDestroy {
     );
   }
 
+  formatAccionGesto(accion?: string): string {
+    if (!accion) return 'Sin acción';
+    const upper = accion.toUpperCase();
+    if (upper === 'ON' || upper === 'ENCENDER') return 'ENCENDER';
+    if (upper === 'OFF' || upper === 'APAGAR') return 'APAGAR';
+    if (upper === 'TOGGLE' || upper === 'ALTERNAR ESTADO') return 'ALTERNAR ESTADO';
+    return upper;
+  }
+
+  getActivadorGesto(gesto: any): string {
+    const p = gesto.pasos?.find((x: any) => x.es_activador) || gesto.detalle?.PasosSecuencia?.find((x: any) => x.es_activador);
+    return p ? p.nombre_gesto : 'N/A';
+  }
+
+  getSecuenciaGesto(gesto: any): string {
+    const pasos = (gesto.pasos || gesto.detalle?.PasosSecuencia)?.filter((x: any) => !x.es_activador).sort((a: any, b: any) => a.orden - b.orden);
+    if (!pasos || pasos.length === 0) return 'Sin secuencia';
+    return pasos.map((p: any) => p.nombre_gesto).join(', ');
+  }
+
+  getPasosSecuencia(gesto: any): any[] {
+    const pasos = (gesto.pasos || gesto.detalle?.PasosSecuencia)?.filter((x: any) => !x.es_activador).sort((a: any, b: any) => a.orden - b.orden);
+    return pasos || [];
+  }
+
+  readonly referenceImage = signal<string | null>(null);
+  readonly referenceImageTitle = signal<string>('');
+
+  getGestoImagePath(nombreGesto: string): string | null {
+    if (!nombreGesto) return null;
+    const nameMap: Record<string, string> = {
+      'B CUATRO': 'b-cuatro.webp',
+      'CINCO MANO ABIERTA': 'cinco-mano-abierta.webp',
+      'ROCK': 'cuernos-rock.webp',
+      'D UNO': 'd-uno.webp',
+      'F OK': 'f-ok.webp',
+      'I': 'I.webp',
+      'L': 'L.webp',
+      'PULGAR ABAJO': 'pulgar-abajo.webp',
+      'PULGAR ARRIBA': 'pulgar-arriba.webp',
+      'A PULGAR ABAJO': 'pulgar-abajo.webp',
+      'A PULGAR ARRIBA': 'pulgar-arriba.webp',
+      'PUNO': 'puno.webp',
+      'PUÑO': 'puno.webp',
+      'TE AMO ILY': 'te-amo-ily.webp',
+      'U': 'U.webp',
+      'V PAZ': 'v-paz.webp',
+      'W TRES': 'w-tres.webp',
+      'Y': 'Y.webp'
+    };
+    const filename = nameMap[nombreGesto.toUpperCase()];
+    return filename ? `/gestos/${filename}` : null;
+  }
+
+  showReferenceImage(nombreGesto: string) {
+    const path = this.getGestoImagePath(nombreGesto);
+    if (path) {
+      this.referenceImage.set(path);
+      this.referenceImageTitle.set(nombreGesto);
+    }
+  }
+
+  closeReferenceImage() {
+    this.referenceImage.set(null);
+  }
+
   updateIndicator(): void {
     if (!this.isBrowser) return;
     setTimeout(() => {

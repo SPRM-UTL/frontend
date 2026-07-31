@@ -121,6 +121,17 @@ export class Gestos {
     )?.nombre_aparato ?? 'Sin Dispositivo';
   }
 
+  getActivador(gesto: Gesto): string {
+    const p = gesto.pasos?.find(x => x.es_activador);
+    return p ? p.nombre_gesto : 'N/A';
+  }
+
+  getSecuencia(gesto: Gesto): string {
+    const pasos = gesto.pasos?.filter(x => !x.es_activador).sort((a,b) => a.orden - b.orden);
+    if (!pasos || pasos.length === 0) return 'Sin secuencia';
+    return pasos.map(p => p.nombre_gesto).join(', ');
+  }
+
   verDetalle(gesto: Gesto): void {
     // Primero seteamos el gesto básico para que el modal se abra inmediatamente
     this.gestosService.selectedGesto.set(gesto);
