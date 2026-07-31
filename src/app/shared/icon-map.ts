@@ -64,7 +64,9 @@ import {
   LucideCar,
   LucideTreePine,
   LucideImage,
-  LucideSlidersHorizontal
+  LucideSlidersHorizontal,
+  LucideListOrdered,
+  LucidePlayCircle
 } from '@lucide/angular';
 
 type LucideIcon = any;
@@ -151,6 +153,8 @@ const DEVICE_ICONS_BY_NAME: Record<string, LucideIcon> = {
   image: LucideImage,
   power: LucidePower,
   zap: LucideZap,
+  list: LucideListOrdered,
+  'play-circle': LucidePlayCircle,
   // Iconos para habitaciones
   armchair: LucideSofa,
   sofa: LucideSofa,
@@ -254,5 +258,5 @@ export const ALL_ICONS = [
   LucideDownload, LucideMaximize, LucideSettings, LucideRotateCw, LucideRotateCcw,
   LucideVolume2, LucideVolumeX, LucidePause, LucidePlay, LucideBluetooth,
   LucideHash, LucideCalendarDays, LucideMenu, LucideSun, LucidePencil,
-  LucideLogOut, LucideUser
+  LucideLogOut, LucideUser, LucideListOrdered, LucidePlayCircle
 ];

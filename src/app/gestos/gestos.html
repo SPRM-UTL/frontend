@@ -62,11 +62,8 @@
           <p class="info-value"> {{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
         </div>
         <div class="info-group">
-          <p class="info-label">ESTADO</p>
-          <p class="info-value">{{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}</p>
-        </div>
-        <div class="gesto-card-footer">
-          <svg lucideClock class="footer-icon" [size]="14"></svg>
+          <p class="info-label">GESTO ACTIVADOR</p>
+          <p class="info-value">{{ getActivador(gesto) }}</p>
         </div>
       </div>
       }

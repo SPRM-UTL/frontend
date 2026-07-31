@@ -50,4 +50,6 @@ export interface Gesto {
 
   // El detalle completo cargado de la API
   detalle?: GestoDetalle;
+
+  pasos?: any[];
 }

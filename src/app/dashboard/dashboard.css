@@ -1997,3 +1997,56 @@ body {
   border-color: #24d4b8;
   color: #fff;
 }
+
+.stepper-container {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  min-width: 60px;
+}
+
+.stepper-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #2BBFAA;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.stepper-label {
+  margin-top: 8px;
+  font-size: 0.7rem;
+  color: #4b5563;
+  text-align: center;
+  font-weight: 600;
+  max-width: 80px;
+  word-wrap: break-word;
+}
+
+.stepper-line {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #2BBFAA;
+  z-index: 1;
+}
+
