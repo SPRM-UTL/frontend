@@ -14,36 +14,6 @@
                (input)="onSearch($any($event.target).value)" />
       </div>
 
-      <div class="filter-wrapper">
-        <div class="custom-dropdown">
-          <button class="dropdown-trigger" (click)="toggleFilter()">
-            <svg lucideFilter class="filter-icon"></svg>
-            <span class="trigger-label">{{ selectedFilterLabel() }}</span>
-            <svg lucideChevronDown class="arrow-icon" [style.transform]="isFilterOpen() ? 'rotate(180deg)' : 'rotate(0deg)'" style="transition: transform 0.2s;"></svg>
-          </button>
-
-          @if (isFilterOpen()) {
-          <div class="dropdown-menu">
-            <div class="dropdown-option" [class.active]="statusFilter() === ''" (click)="onFilterStatus('', 'Todos los gestos')">Todos los gestos</div>
-            <div class="dropdown-option" [class.active]="statusFilter() === 'Activo'" (click)="onFilterStatus('Activo', 'Activos')">Activos</div>
-            <div class="dropdown-option" [class.active]="statusFilter() === 'Pausado'" (click)="onFilterStatus('Pausado', 'Pausados')">Pausados</div>
-          </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Summary Card -->
-    <div class="summary-card">
-      <div class="summary-left">
-        <div class="summary-icon-wrapper">
-          <svg lucideHand [size]="20"></svg>
-        </div>
-        <div>
-          <p class="summary-title">Todos los gestos</p>
-          <p class="summary-subtitle">{{ totalActivos() }} gestos activos en total</p>
-        </div>
-      </div>
     </div>
 
     <!-- Gestos grid -->
@@ -55,15 +25,17 @@
           <div class="gesto-icon-circle">
             <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="24" class="gesto-icon-img"></svg>
           </div>
+          <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
         </div>
-        <h3 class="gesto-nombre">{{ gesto.nombre_gesto }}</h3>
-        <div class="info-group">
-          <p class="info-label">DISPOSITIVO</p>
-          <p class="info-value"> {{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
-        </div>
-        <div class="info-group">
-          <p class="info-label">GESTO ACTIVADOR</p>
-          <p class="info-value">{{ getActivador(gesto) }}</p>
+        <div class="gesto-card-info-grid">
+          <div class="info-group">
+            <p class="info-label">DISPOSITIVO</p>
+            <p class="info-value"> {{ obtenerNombreDispositivo(gesto.sk_aparato_id) }}{{ gesto.contacto_outlet ? ' Contacto ' + gesto.contacto_outlet : '' }}</p>
+          </div>
+          <div class="info-group">
+            <p class="info-label">GESTO ACTIVADOR</p>
+            <p class="info-value">{{ getActivador(gesto) }}</p>
+          </div>
         </div>
       </div>
       }

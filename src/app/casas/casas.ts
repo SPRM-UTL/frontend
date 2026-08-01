@@ -99,6 +99,16 @@ export class Casas implements OnInit {
     this.searchQuery.set(val);
   }
 
+  getDeviceCountForCasa(casa: Casa | null): number {
+    if (!casa || !casa.habitaciones) return 0;
+    const habIds = casa.habitaciones.map(h => h.sk_habitacion_id);
+    return this.allDevices().filter(d => d.sk_habitacion_id && habIds.includes(d.sk_habitacion_id)).length;
+  }
+
+  getDeviceCountForHabitacion(habId: number): number {
+    return this.allDevices().filter(d => d.sk_habitacion_id === habId).length;
+  }
+
   toggleCasaMenu(event: Event, id: number) {
     event.stopPropagation();
     this.activeHabitacionMenuId.set(null); // Cerrar otros menús
