@@ -23,8 +23,6 @@ import { GestosService } from './gestos.service';
     CommonModule,
     FormsModule,
     LucideSearch,
-    LucideFilter,
-    LucideChevronDown,
     LucideHand,
     LucideSun,
     LucideTriangleAlert,
@@ -41,13 +39,8 @@ export class Gestos {
   public gestos = signal<Gesto[]>([]);
 
   readonly searchQuery = signal('');
-  readonly statusFilter = signal('');
-  readonly selectedFilterLabel = signal('Todos los gestos');
-  readonly isFilterOpen = signal(false);
-
   readonly gestosFiltrados = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-    const status = this.statusFilter();
 
     let filtered = this.gestos();
 
@@ -59,25 +52,8 @@ export class Gestos {
       );
     }
 
-    if (status) {
-      filtered = filtered.filter(g => {
-        const isActive = g.estado === 'Activo' || g.activo === true || (g.activo as any) == 1;
-
-        if (status === 'Activo') return isActive;
-        if (status === 'Pausado') return !isActive;
-
-        return true;
-      });
-    }
-
     return filtered;
   });
-
-  readonly totalActivos = computed(() =>
-    this.gestos().filter(
-      g => g.estado === 'Activo' || g.activo === true || (g.activo as any) == 1
-    ).length
-  );
 
   readonly loading = this.gestosService.loading;
   readonly error = this.gestosService.error;
@@ -103,15 +79,6 @@ export class Gestos {
     this.searchQuery.set(value);
   }
 
-  onFilterStatus(value: string, label: string): void {
-    this.statusFilter.set(value);
-    this.selectedFilterLabel.set(label);
-    this.isFilterOpen.set(false);
-  }
-
-  toggleFilter(): void {
-    this.isFilterOpen.update(v => !v);
-  }
 
   obtenerNombreDispositivo(id: number | null): string {
     return this.dispositivosService.devices().find(

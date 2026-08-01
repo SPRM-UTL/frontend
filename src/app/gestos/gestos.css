@@ -273,6 +273,12 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
+.gesto-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .gesto-icon-circle {
   width: 44px;
   height: 44px;
@@ -297,7 +303,15 @@
   font-size: 1.05rem;
   font-weight: 800;
   color: white;
-  margin: 0.25rem 0;
+  margin: 0;
+  flex: 1;
+}
+
+.gesto-card-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: auto;
 }
 
 .info-group {

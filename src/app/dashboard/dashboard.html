@@ -235,7 +235,7 @@
       <header class="modal-header">
         <div class="header-titles">
           <h2 class="modal-main-title">Detalle del Gesto</h2>
-          <p class="modal-main-subtitle">Información técnica, recomendaciones y material multimedia.</p>
+          <p class="modal-main-subtitle">Información técnica y recomendaciones.</p>
         </div>
         <button class="btn-close-modal" aria-label="Cerrar" (click)="gestosService.cerrarDetalle()">✕</button>
       </header>
@@ -252,10 +252,6 @@
                 </div>
                 <div class="hero-titles">
                   <h2 class="hero-name">{{ gesto.nombre_gesto }}</h2>
-                  <span class="status-indicator">
-                    <span class="dot"></span>
-                    {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
-                  </span>
                   <p class="hero-desc">{{ gesto.descripcion }}</p>
                 </div>
               </div>
@@ -275,39 +271,7 @@
               </div>
             </section>
 
-            @if (gesto.multimedia) {
-            <section class="section-container media-container">
-              <h3 class="media-title">Fotos y videos</h3>
-              <p class="media-subtitle">Material de referencia para este gesto.</p>
-              <div class="media-row">
-                @for (media of consolidatedMedia(); track media.sk_media_id) {
-                @if (media.tipo_media === 1) {
-                <!-- Foto Box -->
-                <div class="media-thumb foto-box" (click)="openMediaViewer($index)">
-                  <div class="thumb-content">
-                    @if (media.url_archivo && media.url_archivo.startsWith('http')) {
-                    <img [src]="media.url_archivo" alt="Referencia Gesto"
-                      style="width:100%;height:100%;object-fit:cover">
-                    } @else {
-                    <svg [lucideIcon]="getGestureIcon(gesto.icono)" [size]="44" class="gesto-thumb-fallback-img"></svg>
-                    }
-                  </div>
-                  <span class="thumb-icon-overlay">
-                    <svg [lucideIcon]="getDeviceIcon('camera')" [size]="14"></svg>
-                  </span>
-                </div>
-                } @else {
-                <!-- Video Box -->
-                <div class="media-thumb video-box" (click)="openMediaViewer($index)">
-                  <div class="video-preview-mask">
-                    <svg [lucideIcon]="getDeviceIcon('play')" [size]="32" color="white"></svg>
-                  </div>
-                </div>
-                }
-                }
-              </div>
-            </section>
-            }
+
 
           </div>
 
@@ -320,50 +284,43 @@
                     <svg [lucideIcon]="getDeviceIcon('zap')" class="info-icon"></svg>
                     <span>Acción</span>
                   </div>
-                  <span class="info-row-val">{{ gesto.tipo_disparador_nombre || 'Sin acción' }}</span>
+                  <span class="info-row-val">{{ formatAccionGesto(gesto.tipo_disparador_nombre) }}</span>
                 </div>
                 <div class="info-row">
+                  <div class="info-row-left">
+                    <svg [lucideIcon]="getDeviceIcon('play-circle')" class="info-icon"></svg>
+                    <span>Activador</span>
+                  </div>
+                  <span class="info-row-val"
+                        [style.cursor]="getGestoImagePath(getActivadorGesto(gesto)) ? 'pointer' : 'default'"
+                        [style.text-decoration]="getGestoImagePath(getActivadorGesto(gesto)) ? 'underline' : 'none'"
+                        (click)="showReferenceImage(getActivadorGesto(gesto))">
+                    {{ getActivadorGesto(gesto) }}
+                  </span>
+                </div>
+
+                <div class="info-row" style="flex-direction: column; align-items: flex-start; gap: 12px; border-bottom: none;">
                   <div class="info-row-left">
                     <svg [lucideIcon]="getDeviceIcon('list')" class="info-icon"></svg>
                     <span>Secuencia</span>
                   </div>
-                  <span class="info-row-val">{{ gesto.nombre_gesto }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg [lucideIcon]="getDeviceIcon('check')" class="info-icon"></svg>
-                    <span>Estado</span>
-                  </div>
-                  <span class="info-row-val status-text-green">
-                    {{ gesto.estado || (gesto.activo ? 'Activo' : 'Pausado') }}
-                  </span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg [lucideIcon]="getDeviceIcon('clock')" class="info-icon"></svg>
-                    <span>Duración</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.duracion_segundos || 1 }} seg.</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg [lucideIcon]="getDeviceIcon('sun')" class="info-icon"></svg>
-                    <span>Iluminación</span>
-                  </div>
-                  <span class="info-row-val">{{ gesto.iluminacion_requerida || 'Alta' }}</span>
-                </div>
-                <div class="info-row">
-                  <div class="info-row-left">
-                    <svg [lucideIcon]="getDeviceIcon('layout-dashboard')" class="info-icon"></svg>
-                    <span>Distancia recomendada</span>
-                  </div>
-                  <span class="info-row-val">
-                    @if (gesto.detalle?.distancia_recomendada) {
-                    {{ gesto.detalle?.distancia_recomendada }}
-                    } @else {
-                    {{ gesto.distancia_minima_m || 0.5 }} – {{ gesto.distancia_maxima_m || 1.5 }} m
+                  @if (getPasosSecuencia(gesto).length > 0) {
+                  <div class="stepper-container">
+                    @for (paso of getPasosSecuencia(gesto); track $index) {
+                    <div class="stepper-item"
+                         [style.cursor]="getGestoImagePath(paso.nombre_gesto) ? 'pointer' : 'default'"
+                         (click)="showReferenceImage(paso.nombre_gesto)">
+                      <div class="stepper-circle">{{ $index + 1 }}</div>
+                      <div class="stepper-label" [style.text-decoration]="getGestoImagePath(paso.nombre_gesto) ? 'underline' : 'none'">{{ paso.nombre_gesto }}</div>
+                      @if ($index < getPasosSecuencia(gesto).length - 1) {
+                        <div class="stepper-line"></div>
+                      }
+                    </div>
                     }
-                  </span>
+                  </div>
+                  } @else {
+                  <span class="info-row-val" style="margin-left: 28px;">Sin secuencia</span>
+                  }
                 </div>
                 <div class="info-row">
                   <div class="info-row-left">
@@ -378,17 +335,6 @@
 
         </div>
       </div>
-
-      <footer class="modal-footer-actions">
-        <button class="btn-action-outline-gray">
-          <svg [lucideIcon]="getDeviceIcon('download')" [size]="18"></svg>
-          Descargar guía
-        </button>
-        <button class="btn-action-solid-teal">
-          <svg [lucideIcon]="getDeviceIcon('smartphone')" [size]="18"></svg>
-          Probar gesto
-        </button>
-      </footer>
 
     </div>
   </div>
@@ -611,6 +557,21 @@
         }
       </footer>
 
+    </div>
+  </div>
+  }
+
+  @if (referenceImage()) {
+  <div class="modal-backdrop" style="z-index: 999999;" (click)="closeReferenceImage()">
+    <div class="modal-detail-container" style="max-width: 400px; text-align: center;" (click)="$event.stopPropagation()">
+      <header class="modal-header" style="justify-content: space-between;">
+        <div style="width: 40px;"></div> <!-- Espaciador para centrar el título -->
+        <h2 class="modal-main-title">{{ referenceImageTitle() }}</h2>
+        <button class="btn-close-modal" aria-label="Cerrar" (click)="closeReferenceImage()">✕</button>
+      </header>
+      <div class="modal-body" style="padding: 20px;">
+        <img [src]="referenceImage()" alt="Gesto" style="width: 100%; border-radius: 12px; object-fit: contain;">
+      </div>
     </div>
   </div>
   }
