@@ -29,7 +29,7 @@
           </div>
           <div class="category-info">
             <h3>Ver Todo</h3>
-            <p>{{ dispositivos().length }} dispositivos</p>
+            <p>{{ dispositivosSinCamaras().length }} dispositivos</p>
           </div>
           <button class="category-arrow-btn">
             <svg lucideChevronDown style="transform: rotate(-90deg);"></svg>
@@ -97,7 +97,9 @@
 
                 <div class="device-card-body">
                   <strong>{{ d.nombre_aparato }}</strong>
-                  <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
+                  @if (d.ubicacion && d.ubicacion !== 'Sin ubicación') {
+                    <p class="location-text">{{ d.ubicacion }}</p>
+                  }
 
                   <!-- SOLO SE PERMITE ENCENDER/APAGAR -->
                   @if (d.tipo_aparato.toLowerCase() === 'cámara' || d.tipo_aparato.toLowerCase() === 'camara') {

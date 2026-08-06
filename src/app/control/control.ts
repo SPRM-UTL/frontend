@@ -59,13 +59,16 @@ export class Control implements OnInit, OnDestroy {
 
   tipoSeleccionado = signal<string>('Todos los tipos');
 
-  // Filtrar tipos que tienen al menos un dispositivo
+  dispositivosSinCamaras = computed(() => {
+    return this.dispositivos().filter(d => !(d.tipo_aparato || '').toUpperCase().includes('ESP32-CAM'));
+  });
+
   tiposConDispositivos = computed(() => {
-    const allDevices = this.dispositivos();
+    const validDevices = this.dispositivosSinCamaras();
     const allTypes = this.tipos();
 
     return allTypes.filter(t =>
-      allDevices.some(d => (d.tipo_aparato || '').toLowerCase() === t.nombre_tipo.toLowerCase())
+      validDevices.some(d => (d.tipo_aparato || '').toLowerCase() === t.nombre_tipo.toLowerCase())
     );
   });
 
@@ -73,7 +76,7 @@ export class Control implements OnInit, OnDestroy {
 
   dispositivosFiltrados = computed(() => {
     const seleccion = this.tipoSeleccionado();
-    const all = this.dispositivos();
+    const all = this.dispositivosSinCamaras();
     const connectedMacs = this.dispositivosService.connectedDevices();
 
     // Solo mantener dispositivos conectados (cuya MAC esté en la lista)
@@ -129,7 +132,7 @@ export class Control implements OnInit, OnDestroy {
   getDeviceIcon = getDeviceIcon;
 
   getDeviceCount(tipo: string): number {
-    return this.dispositivos().filter(d => (d.tipo_aparato || '').toLowerCase() === tipo.toLowerCase()).length;
+    return this.dispositivosSinCamaras().filter(d => (d.tipo_aparato || '').toLowerCase() === tipo.toLowerCase()).length;
   }
 
   toggleDevice(device: DispositivoControl): void {

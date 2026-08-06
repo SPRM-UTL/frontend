@@ -43,9 +43,21 @@ export class ControlService {
     const id = d.sk_aparato_id || d.id;
     const tipo = (d.tipo_aparato || '').toLowerCase();
     
-    // Verificamos el estado real del socket (estado_encendido).
-    // Si no está definido, usamos accion_nombre por compatibilidad hacia atrás.
-    const esEncendido = d.estado_encendido === true || (d.estado_encendido == null && d.accion_nombre === 'Encendido');
+    const parseBool = (val: any): boolean => {
+      if (val === null || val === undefined) return false;
+      if (typeof val === 'string') return val.toLowerCase() === 'true' || val === '1';
+      if (typeof val === 'number') return val !== 0;
+      return !!val;
+    };
+
+    let backendEstado: boolean;
+    if (d.estado_encendido !== undefined && d.estado_encendido !== null) {
+      backendEstado = parseBool(d.estado_encendido);
+    } else {
+      backendEstado = d.accion_nombre === 'Encendido';
+    }
+
+    const esEncendido = backendEstado;
 
     const base: DispositivoControl = {
       id: id,
@@ -113,8 +125,15 @@ export class ControlService {
             );
             if (!fresh) return existing;
 
-            const nuevoEncendido =
-              fresh.accion_nombre === 'Encendido' || fresh.encendido === true;
+            let parsedFresh: boolean;
+            if (fresh.estado_encendido !== undefined && fresh.estado_encendido !== null) {
+              const val = fresh.estado_encendido;
+              parsedFresh = typeof val === 'string' ? (val.toLowerCase() === 'true' || val === '1') : (typeof val === 'number' ? val !== 0 : !!val);
+            } else {
+              parsedFresh = fresh.accion_nombre === 'Encendido' || fresh.encendido === true;
+            }
+
+            const nuevoEncendido = parsedFresh;
 
             if (existing.encendido === nuevoEncendido) return existing;
             return { ...existing, encendido: nuevoEncendido };
@@ -164,15 +183,15 @@ export class ControlService {
     const device = this.todosLosDispositivos().find(d => d.id === id);
     if (!device) return;
 
-    const nuevoEstado = !device.encendido;
-    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}?estado=${nuevoEstado}`;
+    const nuevoEstadoUI = !device.encendido;
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}?estado=${nuevoEstadoUI}`;
 
     const headers = this.getHeaders().set('X-Skip-Loader', 'true');
 
     this.http.post(url, {}, { headers }).subscribe({
       next: () => {
         this.todosLosDispositivos.update(list =>
-          list.map(d => d.id === id ? { ...d, encendido: nuevoEstado } : d)
+          list.map(d => d.id === id ? { ...d, encendido: nuevoEstadoUI } : d)
         );
         this.audioService.play('interruptor', device.volumen ?? 50);
       },
@@ -214,15 +233,22 @@ export class ControlService {
 
     this.http.get<any>(url, { headers }).subscribe({
       next: (res) => {
+        const parseBool = (val: any): boolean => {
+          if (val === null || val === undefined) return true;
+          if (typeof val === 'string') return val.toLowerCase() === 'true' || val === '1';
+          if (typeof val === 'number') return val !== 0;
+          return !!val;
+        };
+
         this.todosLosDispositivos.update(list =>
           list.map(d => {
             if (d.id !== device.id) return d;
             return {
               ...d,
-              estado_contacto_1: res.estado_encendido   ?? false,
-              estado_contacto_2: res.estado_encendido_2 ?? false,
-              estado_contacto_3: res.estado_encendido_3 ?? false,
-              estado_contacto_4: res.estado_encendido_4 ?? false,
+              estado_contacto_1: !parseBool(res.estado_encendido),
+              estado_contacto_2: !parseBool(res.estado_encendido_2),
+              estado_contacto_3: !parseBool(res.estado_encendido_4), // UI 3 = Backend 4
+              estado_contacto_4: !parseBool(res.estado_encendido_3), // UI 4 = Backend 3
             };
           })
         );
@@ -236,7 +262,11 @@ export class ControlService {
    * Llama a POST /ws/toggle/{id}/contacto/{contacto}?estado={bool}
    */
   toggleContacto(device: DispositivoControl, contacto: 1 | 2 | 3 | 4, nuevoEstado: boolean): void {
-    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}/contacto/${contacto}?estado=${nuevoEstado}`;
+    // Invertir para active-low y cruzar contactos físicos 3 y 4
+    const estadoFisico = !nuevoEstado;
+    const contactoFisico = contacto === 3 ? 4 : contacto === 4 ? 3 : contacto;
+    
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.id}/contacto/${contactoFisico}?estado=${estadoFisico}`;
     const headers = this.getHeaders().set('X-Skip-Loader', 'true');
 
     this.http.post(url, {}, { headers }).subscribe({
