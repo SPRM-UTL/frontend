@@ -65,6 +65,8 @@ export class Dispositivos implements OnInit, OnDestroy {
       return [];
     }
 
+    filtered = filtered.filter(device => !(device.tipo_aparato || '').toUpperCase().includes('ESP32-CAM'));
+
     const q = this.searchQuery().toLowerCase().trim();
     const type = this.selectedFilter();
 

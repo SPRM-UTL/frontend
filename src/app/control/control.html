@@ -29,7 +29,7 @@
           </div>
           <div class="category-info">
             <h3>Ver Todo</h3>
-            <p>{{ dispositivos().length }} dispositivos</p>
+            <p>{{ dispositivosSinCamaras().length }} dispositivos</p>
           </div>
           <button class="category-arrow-btn">
             <svg lucideChevronDown style="transform: rotate(-90deg);"></svg>
@@ -82,22 +82,32 @@
           <div class="devices-grid">
             @for (d of dispositivosFiltrados(); track d.id) {
               <div class="device-control-card" [class.is-on]="isDeviceOn(d)">
-                <div class="device-card-head">
-                  <span class="device-type-icon" [class.on]="isDeviceOn(d)">
-                    <svg [lucideIcon]="getDeviceIcon(d.icono)"></svg>
-                  </span>
-
-                  <!-- El MultiSocket tiene sus propios botones C1-C4 independientes. -->
-                  @if (!isMultisocket(d)) {
+                @if (!isMultisocket(d)) {
+                  <div class="device-card-head">
+                    <span class="device-type-icon" [class.on]="isDeviceOn(d)">
+                      <svg [lucideIcon]="getDeviceIcon(d.icono !== 'ic_default' ? d.icono : d.tipo_aparato)"></svg>
+                    </span>
                     <button class="toggle-power-btn" [class.active]="d.encendido" (click)="toggleDevice(d)">
                        <svg lucidePower></svg>
                     </button>
-                  }
-                </div>
+                  </div>
+                }
 
-                <div class="device-card-body">
-                  <strong>{{ d.nombre_aparato }}</strong>
-                  <p class="location-text">{{ d.ubicacion || 'Sin ubicación' }}</p>
+                <div class="device-card-body" [style.padding-top]="isMultisocket(d) ? '0' : ''">
+                  @if (isMultisocket(d)) {
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; margin-top: 0.5rem;">
+                      <span class="device-type-icon" [class.on]="isDeviceOn(d)" style="width: 36px; height: 36px;">
+                        <svg [lucideIcon]="getDeviceIcon(d.icono !== 'ic_default' ? d.icono : d.tipo_aparato)" [size]="20"></svg>
+                      </span>
+                      <strong style="font-size: 1.1rem;">{{ d.nombre_aparato }}</strong>
+                    </div>
+                  } @else {
+                    <strong>{{ d.nombre_aparato }}</strong>
+                  }
+
+                  @if (d.ubicacion && d.ubicacion !== 'Sin ubicación') {
+                    <p class="location-text">{{ d.ubicacion }}</p>
+                  }
 
                   <!-- SOLO SE PERMITE ENCENDER/APAGAR -->
                   @if (d.tipo_aparato.toLowerCase() === 'cámara' || d.tipo_aparato.toLowerCase() === 'camara') {

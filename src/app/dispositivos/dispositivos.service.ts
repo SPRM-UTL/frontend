@@ -257,11 +257,18 @@ export class DispositivosService {
 
     this.http.get<any>(url, { headers }).subscribe({
       next: (res) => {
+        const parseBool = (val: any): boolean => {
+          if (val === null || val === undefined) return true; 
+          if (typeof val === 'string') return val.toLowerCase() === 'true' || val === '1';
+          if (typeof val === 'number') return val !== 0;
+          return !!val;
+        };
+
         const states = [
-          res.estado_encendido   ?? false,
-          res.estado_encendido_2 ?? false,
-          res.estado_encendido_3 ?? false,
-          res.estado_encendido_4 ?? false,
+          !parseBool(res.estado_encendido),
+          !parseBool(res.estado_encendido_2),
+          !parseBool(res.estado_encendido_4), // UI Contacto 3 = Backend 4
+          !parseBool(res.estado_encendido_3), // UI Contacto 4 = Backend 3
         ];
         this.multisocketContactStates.update(map => ({ ...map, [id]: states }));
       },
@@ -288,7 +295,12 @@ export class DispositivosService {
   toggleContacto(device: Dispositivo, contacto: 1 | 2 | 3 | 4): void {
     const estadoActual = this.getContactoEstado(device.sk_aparato_id, contacto);
     const nuevoEstado = !estadoActual;
-    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}/contacto/${contacto}?estado=${nuevoEstado}`;
+    
+    const estadoFisico = !nuevoEstado;
+    // Intercambiar contactos 3 y 4
+    const contactoFisico = contacto === 3 ? 4 : contacto === 4 ? 3 : contacto;
+    
+    const url = `${APP_CONFIG.apiBaseUrl}/ws/toggle/${device.sk_aparato_id}/contacto/${contactoFisico}?estado=${estadoFisico}`;
 
     this.http.post(url, {}, { headers: this.getHeaders().set('X-Skip-Loader', 'true') }).subscribe({
       next: () => {
