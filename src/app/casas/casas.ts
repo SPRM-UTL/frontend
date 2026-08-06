@@ -40,7 +40,9 @@ export class Casas implements OnInit {
   readonly casas = this.casasService.casas;
   readonly loading = this.casasService.loading;
   readonly error = this.casasService.error;
-  readonly allDevices = this.devicesService.devices;
+  readonly allDevices = computed(() => {
+    return this.devicesService.devices().filter(d => !(d.tipo_aparato || '').toUpperCase().includes('ESP32-CAM'));
+  });
 
   readonly searchQuery = signal('');
   readonly selectedCasa = signal<Casa | null>(null);

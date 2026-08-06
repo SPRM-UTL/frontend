@@ -61,11 +61,21 @@ export class Inicio {
   readonly connectedDevices = this.devicesService.connectedDevices;
 
   readonly displayedDevices = computed(() => {
-    const devices   = this.devicesService.devices();
+    const devices   = this.devicesService.devices().filter(d => !(d.tipo_aparato || '').toUpperCase().includes('ESP32-CAM'));
     const connected = this.connectedDevices();
     return devices
       .filter(d => connected.includes(d.mac_bluetooth || ''))
       .slice(0, 4);
+  });
+
+  readonly totalDispositivosValidos = computed(() => {
+    return this.devicesService.devices().filter(d => !(d.tipo_aparato || '').toUpperCase().includes('ESP32-CAM')).length;
+  });
+
+  readonly totalDispositivosConectados = computed(() => {
+    const devices = this.devicesService.devices().filter(d => !(d.tipo_aparato || '').toUpperCase().includes('ESP32-CAM'));
+    const connected = this.connectedDevices();
+    return devices.filter(d => connected.includes(d.mac_bluetooth || '')).length;
   });
 
   readonly displayedGestos = computed(() => this.gestosService.gestos().slice(0, 3));

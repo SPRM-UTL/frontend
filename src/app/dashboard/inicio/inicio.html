@@ -7,8 +7,8 @@
       </span>
       <div class="stat-copy">
         <p class="stat-label">Dispositivos</p>
-        <p class="stat-number">{{ inicioService.stats()?.dispositivosVinculados ?? 0 }}</p>
-        <p class="stat-sub">{{ inicioService.stats()?.devicesOnline ?? 0 }} conectados</p>
+        <p class="stat-number">{{ totalDispositivosValidos() }}</p>
+        <p class="stat-sub">{{ totalDispositivosConectados() }} conectados</p>
       </div>
     </article>
 
@@ -19,7 +19,6 @@
       <div class="stat-copy">
         <p class="stat-label">Gestos</p>
         <p class="stat-number">{{ inicioService.stats()?.activeAutomations ?? 0 }}</p>
-        <p class="stat-sub">{{ inicioService.stats()?.automatizaciones ?? 0 }} activos</p>
       </div>
     </article>
 
@@ -41,7 +40,6 @@
       <div class="stat-copy">
         <p class="stat-label">Casas</p>
         <p class="stat-number">{{ casasService.casas().length }}</p>
-        <p class="stat-sub">Ubicaciones</p>
       </div>
     </article>
   </section>

@@ -573,6 +573,10 @@
   transition: color 0.25s ease;
 }
 
+.socket-btn.socket-on .socket-number {
+  color: #ffffff;
+}
+
 .socket-state-label {
   font-size: 0.65rem;
   font-weight: 700;
